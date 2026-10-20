@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8"><title>Work Orders</title>
+<link rel="manifest" href="manifest.webmanifest">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<meta name="theme-color" content="#dbeaf3">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Work Orders"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" href="icons/icon-192.png">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="config.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#fafcfc;--card:#fff;--tx:#34464f;--mut:#7d8d97;--bd:#ecf1f3;--pri:#4a90a4;--ok:#58a784;--bad:#dd7b72;--sh:0 1px 2px rgba(60,90,110,.04),0 4px 14px rgba(60,90,110,.05);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="dark"]{--bg:#171c20;--card:#1f262b;--tx:#e8eef1;--mut:#9fb0ba;--bd:#2f3b43;--pri:#7fbfd2;--ok:#7cc4a0;--bad:#ef8f86;--sh:0 1px 2px rgba(0,0,0,.35);color-scheme:dark}:root[data-theme="dark"] .top{background:linear-gradient(135deg,#1f2a30,#22303a)}:root[data-theme="dark"] .top h1{color:#cfe6ee}:root[data-theme="dark"] .nav button{background:rgba(255,255,255,.08)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding:12px 14px 10px;background:linear-gradient(135deg,#f4faf8,#eef5fa);color:var(--tx);border-bottom:1px solid var(--bd);box-shadow:0 2px 10px rgba(60,90,110,.08)}
+.top h1{font-size:18px;margin:0 0 8px;letter-spacing:.2px;color:#3b6a7a}.top .mut,.top a{color:var(--mut);font-size:12px}
+.nav{display:flex;gap:6px;overflow-x:auto}.nav button{white-space:nowrap;padding:7px 14px;border:0;border-radius:999px;background:rgba(255,255,255,.75);color:var(--tx);font-weight:500}
+.nav .on{background:#e3f1f5;color:#2f6f84;font-weight:600}.nav .b1{background:#f2b66d;color:#3b2a10;font-weight:600}
+main{max-width:860px;margin:0 auto;padding:14px}
+.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--bd)}
+.card.click{transition:transform .12s,box-shadow .12s}.card.click:hover{transform:translateY(-2px)}
+.card h3{margin:0 0 8px;font-size:16px}
+h4{margin:16px 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--pri);padding-inline-start:8px;border-inline-start:3px solid var(--pri)}
+.click{cursor:pointer}
+button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:8px 14px;cursor:pointer;transition:filter .12s}button:hover{filter:brightness(.96)}
+.b1{background:var(--pri);color:#fff;border-color:var(--pri)}.b2{margin-top:6px;padding:5px 11px;font-size:13px}.w{width:100%;padding:12px;font-weight:600}
+.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.stat{background:var(--card);border-radius:14px;padding:10px;text-align:center;box-shadow:var(--sh);border:1px solid var(--bd)}
+.stat b{display:block;font-size:22px;color:var(--pri)}.stat span{font-size:12px;color:var(--mut)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px}.chip{white-space:nowrap;border-radius:999px;padding:5px 13px;font-size:13px}.chip.on{background:#e3f1f5;color:#2f6f84;border-color:#b9dbe5;font-weight:600}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}.mut{color:var(--mut);font-size:13px}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:10px 0 4px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#8cc3d1,#8fcfb1);border-radius:6px}
+.tag{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 10px;background:var(--bg);color:var(--mut);white-space:nowrap}
+.late{background:rgba(217,105,95,.14);color:var(--bad)}.cur{background:rgba(74,144,164,.15);color:var(--pri)}.dn{background:rgba(79,157,122,.15);color:var(--ok)}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}.dg .card{margin:0}.dg b.n{font-size:28px;display:block;color:var(--pri)}
+label{display:block;font-size:12px;font-weight:500;color:var(--mut)}
+input,textarea{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);margin-top:3px;outline:none}
+input:focus,textarea:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(74,144,164,.22)}
+input:disabled,textarea:disabled{background:transparent;opacity:.9}
+.sc{overflow-x:auto;border-radius:10px;border:1px solid var(--bd)}table{border-collapse:collapse;width:100%;min-width:480px}
+th{background:var(--bg);font-size:11px;letter-spacing:.04em;color:var(--mut)}th,td{border:1px solid var(--bd);padding:3px;text-align:center;font-size:12px}
+td input{margin:0;padding:5px;min-width:58px;border:0;background:transparent;border-radius:0}tbody tr:nth-child(even) td{background:rgba(127,127,127,.04)}
+tfoot td,tr.mt td{font-weight:700;background:var(--bg)}
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:6px}.chk label{color:var(--tx);display:flex;gap:8px;align-items:center;font-size:14px}.chk input{width:auto;margin:0}
+.st{border-inline-start:4px solid var(--bd);padding:2px 0 2px 12px;margin-bottom:10px}.st.c{border-color:var(--pri)}.st.d{border-color:var(--ok)}.wait{opacity:.55}
+.sig{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0;padding:8px 10px;border:1px dashed var(--bd);border-radius:10px;font-size:13px}
+.shotbox{margin-top:14px;padding:10px;border-radius:12px;background:var(--bg);border:1px dashed var(--pri)}
+.shot.new{border-inline-start:4px solid var(--pri)}.th{max-width:100%;max-height:220px;border-radius:10px;margin-top:8px;cursor:zoom-in;border:1px solid var(--bd)}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:20;padding:12px}.lb img{max-width:100%;max-height:100%;border-radius:8px}
+#toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:#33434d;color:#fff;padding:10px 18px;border-radius:999px;display:none;z-index:30;box-shadow:var(--sh)}
+body{-webkit-tap-highlight-color:transparent;overscroll-behavior-y:contain}
+@media(max-width:700px){input,textarea{font-size:16px}main{padding-bottom:92px}.top{padding-bottom:6px}
+.top .nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--bd);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 14px rgba(60,90,110,.1)}
+.top .nav button{flex:0 0 auto;background:transparent;color:var(--mut);padding:8px 13px;font-size:13px}.top .nav .on{background:#e3f1f5;color:#2f6f84;font-weight:600}.top .nav .b1{background:#f2b66d;color:#3b2a10}
+#toast{bottom:calc(86px + env(safe-area-inset-bottom,0px))}}
+select{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);margin-top:3px}input[type=search]{-webkit-appearance:none}
+.sc{direction:ltr}input[type=tel],input[type=password],input[type=email]{direction:ltr;text-align:start}
+</style></head><body>
+<div class="top"><div class="row"><h1 id="h1t">🏭 Work Order System</h1><button id="lgb" onclick="setLang(LANG==='ar'?'en':'ar')" style="margin:0 0 6px;padding:4px 14px;border-radius:999px;font-size:13px">العربية</button></div><div id="act"></div></div>
+<main id="app"><div class="card mut">Loading...</div></main><div id="toast"></div>
+<script>
+const ST=[["PLANNING","Planning"],["PLANFAB","Fabric Planning"],["FABRIC","Fabric Store"],["FABCUT","Fabric Cutting"],["MARKER","Marker"],["CUTTING","Cutting"],["ACCESSORIES","Accessories"],["SORTING","Sorting & Bundling"],["DTF","DTF"],["PRINTING","Printing"],["EMBRO","Embroidery"],["WASHING","Washing"],["SEWING","Sewing"],["PACKING","Packing"],["QUALITY","Quality"],["GRADEB","Grade B"],["ACCOUNT","Accounts"]];
+const OPT=["DTF","PRINTING","EMBRO","WASHING","GRADEB"];
+/* ---- form schemas, one per Excel tab. "id:Label|type" ; m.xxx = order master field ---- */
+const h=f=>({t:"h",f}),kv=(ti,f)=>({t:"k",ti,f}),mx=(ti,id)=>({t:"m",ti,id}),tb=(ti,id,c,pre)=>({t:"t",ti,id,c,pre}),nt=(ti,id)=>({t:"n",ti,id}),sg=(id,lb)=>({t:"s",id,lb});
+const H3=["m.po:PO/NO","m.co:CO/NO","m.item:ITEM NAME"],H0=[...H3,"m.date:ORDER DATE|date"],PA=["plan:PLANNING DATE|date","act:ACTUAL DATE|date"],RD=["rd:RECEIVE DATE|date","dd:DELIVERY DATE|date"],PL=["plan:PLANNING DATE|date"];
+const fg=x=>["g1"+x+":TOTAL FIRST GRADE|n","g2"+x+":TOTAL SECOND GRADE|n","sh"+x+":SHORTAGE|n"];
+const QS=["QUALITY & SHADE INSPECTION REPORT","qr"];
+const PI=[tb("PLANNING INFORMATION","pi",["parts:PARTS","fc:FABRIC COLOR","p1:PRINT COLOR 1","p2:PRINT COLOR 2","p3:PRINT COLOR 3","nt:NOTES"]),sg("p1"),nt("NOTES","nn"),sg("p2")];
+const FAB=[h([...H0,...PA]),tb("FABRIC INFORMATION","fi",["fab:FABRIC","col:COLOR","lot:LOT/NO","w1:DISPATCH WT|n","q1:DISPATCH QTY|n","s1:DISPATCH S/NO","w2:DISPATCH 2 WT|n","q2:DISPATCH 2 QTY|n","s2:DISPATCH 2 S/NO","w3:RETURN WT|n","q3:RETURN QTY|n","s3:RETURN S/NO"]),sg("a"),nt(...QS),sg("b")];
+const AC=["it:ITEM NAME","cd:CODE","qty:QTY|n","nt:NOTES"],QT=["col:COLOR","qty:QTY|n","stg:STAGE","emp:EMPLOYEE","ac:ACTION","sn:SIGNATURE"];
+const SCH={
+PLANNING:[h(["m.po:PO/NO","m.co:CO/NO","m.item:ITEM NAME","m.date:DATE|date","m.pattern:PATTERN","m.fitting:FITTING","m.code:ITEM CODE","m.gender:GENDER","m.type:ITEM TYPE","m.size:SIZE","m.cat:CATEGORY","m.season:SEASON"]),mx("PLANNING INFORMATION","pm"),sg("a"),nt("NOTES","n1"),sg("b"),nt("NOTES TECHNICAL","n2"),sg("c"),nt("NOTES PLANNING","n3"),sg("d")],
+PLANFAB:[h([...H0,...PA]),tb("PLANNING INFORMATION","pi",["fab:FABRIC","col:COLOR","lot:LOT/NO","wt:WEIGHT|n","qty:QUANTITY|n","tot:TOTAL|n","nt:NOTES"]),sg("a"),nt(...QS),sg("b")],
+FABRIC:FAB,FABCUT:FAB,
+MARKER:[h([...H0,"mp:PATTERN CODE","m.fitting:FITTING",...PA]),mx("MARKER INFORMATION","mi"),kv("",["pcs:PCS|n","fw1:FABRIC WIDTH","fw2:FABRIC WIDTH","rep:MARKER REPEATS|n"]),sg("a"),nt("PLANNING INFORMATION","pi"),sg("b"),nt(...QS),sg("c")],
+CUTTING:[h([...H0,"m.pattern:PATTERN","m.fitting:FITTING","cp:CUTTING POINT",...PA]),mx("CUTTING INFORMATION","ci"),kv("",["cl:CUTTING LINE"]),sg("a"),nt(...QS),tb("COLOR / FABRIC WIDTH & QTY ROLLS","rl",["col:COLOR","w1:190 CM","w2:195 CM","w3:WIDTH 3","w4:200 CM"]),kv("",["mw:MARKER WIDTH","ml:MARKER LENGTH","lay:FABRIC LAY","mwa:MARKER WASTE"]),sg("b"),nt("QUALITY REPORT","qr2"),sg("c")],
+ACCESSORIES:[h([...H0,...PA]),tb("PLANNING INFORMATION","pi",AC),sg("a"),tb("ACCESSORIES INFORMATION","ai",AC),sg("b"),nt("NOTES","nn"),sg("c")],
+SORTING:[h([...H0,"sl:SEWING LINE",...PL,...RD]),kv("CUTTING INFORMATION",["tt:TOTAL|n"]),mx("CONTROL INFORMATION","ci"),kv("",[...fg(""),"cl:CONTROL LINE"]),sg("a"),nt(...QS),tb("DEFECTS","df",["col:COLOR","dt:DEFECT TYPE","rq:REPLACEMENT QTY|n","dw:DEFECT WEIGHT|n"]),sg("b"),nt("QUALITY REPORT","qr2"),sg("c")],
+DTF:[h([...H0,"pp:PRINT POINT","mt:METERS|n","ln:LINE NO",...PL,...RD]),mx("CONTROL INFORMATION","ci"),kv("",["g1:TOTAL FIRST GRADE|n","g2:TOTAL SECOND GRADE|n"]),sg("a"),kv("PRINT INFORMATION",["di:DATE IN|date","do:DATE OUT|date","ti:CLOCK IN|time","to:CLOCK OUT|time","mq:METERS QTY|n","mn:MACHINE NO","pt:PROCESSING TIME"]),sg("b"),...PI],
+PRINTING:[h([...H3,"pp:PRINT POINT","ln:LINE NO",...PL,...RD]),mx("CONTROL INFORMATION","ci"),kv("",fg("")),mx("PRINT INFORMATION","pr"),kv("",fg("b")),sg("a"),...PI],
+EMBRO:[h([...H0,"pp:PRINT POINT",...PA]),mx("CONTROL INFORMATION","ci"),kv("",fg("")),mx("EMBRO INFORMATION","em"),kv("",fg("b")),sg("a"),...PI],
+WASHING:[h([...H0,"pp:PRINT POINT",...PA]),mx("CONTROL INFORMATION","ci"),kv("",fg("")),mx("WASHING INFORMATION","wi"),kv("",fg("b")),sg("a"),...PI],
+SEWING:[h([...H0,"ln:LINE NO",...PL,...RD]),kv("CONTROL INFORMATION",["tt:TOTAL|n"]),mx("SEWING INFORMATION","si"),kv("",fg("")),sg("a"),nt(...QS),sg("b"),nt("PLANNING NOTES","pn"),sg("c")],
+PACKING:[h([...H0,"ln:LINE NO",...PL,...RD]),mx("PACKING INFORMATION","pk"),kv("",[...fg(""),"pq:PACKING QTY|n"]),sg("a"),tb("TOTAL FIRST GRADE","f1",["qty:QUANTITY|n","inv:INVOICE","nt:NOTES"]),sg("b"),tb("TOTAL SECOND GRADE","f2",["qty:QUANTITY|n","inv:INVOICE","nt:NOTES"]),sg("c","ACC signature"),tb("SECOND GRADE PENALTY","pen",["emp:EMPLOYEE","qty:QTY|n","pn:PENALTY|n","nt:NOTES"]),sg("d","Sewing F/M signature"),sg("e","G/M signature")],
+QUALITY:[h([...H3,"m.date:DATE|date"]),tb("SEWING QUALITY","sq",QT),sg("a"),nt("QUALITY REPORT","qr"),sg("b"),tb("PACKING QUALITY","pq",QT),sg("c"),nt("QUALITY REPORT","qr2"),kv("",["sc:PRODUCT QUALITY SCORE"]),sg("d","QU F/M signature"),sg("e","Sewing F/M signature"),sg("f","G/M signature")],
+GRADEB:[h([...H3,"m.date:DATE|date"]),tb("GRADE B REPORT","gb",["rc:ROOT CAUSES","qty:QTY|n","grp:GROUP","sup:SUPERVISOR SIGNATURE"],["FABRIC/CUTTING DEFECTS","SEWING","PRINTING/EMBROIDERY","FINISHING"]),tb("ACTION REPORT","ar",["rc:ROOT CAUSES","qty:QTY|n","emp:EMPLOYEE","ac:ACTION","dd:DEDUCTION|n","sn:EMPLOYEE SIGNATURE"]),sg("a","Quality signature"),sg("b","Account signature"),nt("QUALITY REPORT","qr"),kv("",["sc:PRODUCT QUALITY SCORE"]),sg("c","QU F/M signature"),sg("d","Sewing F/M signature"),sg("e","G/M signature")],
+ACCOUNT:[h([...H3,"m.date:ORDER DATE|date","m.code:STYLE NO","sw:SEWING COST|n","m.season:SEASON","dm:PRINTED DTF METER|n","m.cat:CATEGORY","pc:PRINT COST|n","dt:DETAILS","ws:WHOLESALE PRICE|n","m.type:FIT TYPE","rt:RETAIL PRICE|n","m.gender:MAIN LINE","m.size:SIZE"]),mx("PACKING INFORMATION","pk"),kv("",fg("")),sg("a"),tb("FIRST GRADE","f1",["qty:QUANTITY|n","inv:INVOICE","gr:GRADE","nt:NOTES"]),sg("b"),nt("NOTES","nn"),sg("c")]};
+Object.keys(SCH).forEach(k=>{const hs=SCH[k][0];if(hs.t==="h"&&!hs.f.some(f=>f.startsWith("ln:"))){const i=hs.f.findIndex(f=>f.startsWith("m.date"));hs.f.splice(i>=0?i+1:3,0,"ln:LINE NO")}});
+const LINK=["ln","pp","sl","cl"],CAPD=["ACCESSORIES","FABRIC","FABCUT","CUTTING"];
+/* ---- state & helpers ---- */
+let db,U=null,me={name:""},meId=null,canEdit=false,orders=[],RAW=[],SD={},shots=[],notifs=[],NM={},pendingOpen=null,lb=null,lastKey="",unsubs=[],roles={},sigs={},names={},view="home",cur=null,dk=null,dtab="act",ret="home",flt="",opn=null,sq=0,landed=false,RO=false;
+const myD=()=>roles[meId]||[],can=k=>canEdit||myD().includes(k),canNew=()=>canEdit||myD().includes("PLANNING");
+const SR=[["QFM","Quality F/M"],["SFM","Sewing F/M"],["GM","G/M"],["ACC","Accounts"],["TECH","Technical"]],mySig=()=>sigs[meId]||[];
+const sigRole=(c,pv)=>{const l=(c.lb||"").toUpperCase(),t=pv&&pv.t==="n"?pv.ti:"";return /ACC/.test(l)?"ACC":/SEWING F\/M/.test(l)?"SFM":/G\/M/.test(l)?"GM":/QU F\/M|QUALITY/.test(l)?"QFM":/TECHNICAL/.test(t)?"TECH":/QUALITY/.test(t)?"QFM":"DEPT"};
+const canSign=(k,r)=>canEdit||(r==="DEPT"?can(k):mySig().includes(r));
+let ip=null;const IOS=/iphone|ipad/i.test(navigator.userAgent)&&!navigator.standalone;
+addEventListener("beforeinstallprompt",e=>{e.preventDefault();ip=e;try{if(gate)showInstall()}catch(x){}});
+addEventListener("appinstalled",()=>{try{if(gate)showInstall(true)}catch(x){}});
+const instBit=()=>(ip?' \u2022 <a href="#" onclick="ip.prompt();return false">Install app</a>':IOS?' \u2022 <span>Share \u2192 Add to Home Screen</span>':'')+' \u2022 <a href="#" onclick="togTheme();return false">Theme</a>';
+function togTheme(){const t=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=t;try{localStorage.setItem("th",t)}catch(e){}}
+try{document.documentElement.dataset.theme=localStorage.getItem("th")||"light"}catch(e){document.documentElement.dataset.theme="light"}
+if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+const hasAlerts=()=>canEdit||myD().length>0,seenTs=()=>{try{return localStorage.getItem("ns_"+meId)||""}catch(e){return ""}},markSeen=()=>{try{localStorage.setItem("ns_"+meId,new Date().toISOString())}catch(e){}},unreadN=()=>notifs.filter(n=>(n.at||"")>seenTs()).length;
+function badge(){try{const n=unreadN();if(navigator.setAppBadge)n?navigator.setAppBadge(n):navigator.clearAppBadge()}catch(e){}}
+function beep(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.08;o.start();setTimeout(()=>{o.stop();a.close()},180)}catch(e){}}
+function osNotify(n){try{if(Notification.permission!=="granted")return;const t=tr("New order for "+sn(n.dept)),o={body:tr(n.text),icon:"icons/icon-192.png",tag:n.id};if(navigator.serviceWorker&&navigator.serviceWorker.ready)navigator.serviceWorker.ready.then(r=>r.showNotification(t,o));else new Notification(t,o)}catch(e){}}
+function alertNew(n){toast("\ud83d\udd14 "+n.text);beep();osNotify(n)}
+const askNotif=()=>Notification.requestPermission().then(()=>render());
+const canViewS=(o,k)=>canView(k)||!!(o.stages[k]||{}).done;
+const canView=k=>canEdit||myD().includes(k)||mySig().length>0,vis=o=>canEdit||mySig().length>0||o.order.some(k=>myD().includes(k)),isAcc=()=>canEdit||myD().includes("ACCOUNT");
+const pendIn=(o,k)=>{const s=o.stages[k]||{};return !(s.done||k===cs(o))?0:SCH[k].filter((c,i,A)=>{if(c.t!=="s")return false;const r=sigRole(c,A[i-1]);if(r==="DEPT"||((o["sg_"+r]||{})[k]||{})[c.id])return false;return canSign(k,r)}).length};
+const pend=o=>o.order.reduce((a,k)=>a+pendIn(o,k),0),pendK=o=>o.order.find(k=>pendIn(o,k));
+const $=s=>document.querySelector(s),E=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today=()=>new Date().toISOString().slice(0,10),fmt=s=>s?new Date(s).toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"}):"";
+const sn=k=>(ST.find(s=>s[0]===k)||[k,k])[1],N=v=>+v||0,qa=c=>Array.isArray(c.q)?c.q:Object.values(c.q||{});
+const tot=o=>(o.colors||[]).reduce((a,c)=>a+qa(c).reduce((x,y)=>x+N(y),0),0);
+const cs=o=>o.order.find(k=>!(o.stages[k]||{}).done)||null;
+const prog=o=>Math.round(100*o.order.filter(k=>(o.stages[k]||{}).done).length/o.order.length);
+const late=o=>{const k=cs(o),p=k&&((o.stages[k].d||{}).plan||o.stages[k].plan);return !!(p&&p<today())};
+function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",2400)}
+function go(v){if(v==="users")loadUsers().then(render);if(view==="alerts"&&v!=="alerts")markSeen();view=v;opn=null;render();scrollTo(0,0)}
+function openOrder(id,k){if(view==="alerts")markSeen();ret=view;cur=id;view="order";opn=k||null;render();scrollTo(0,0)}
+function openDept(k){if(!canView(k))return;dk=k;dtab="act";go("dept")}
+/* ---- form renderer ---- */
+const I=(c,v,x="")=>`<input class="${c}" value="${esc(v)}" ${RO?"disabled":""} ${x}>`;
+function linked(o,k,id){if(!LINK.includes(id)||!o.order)return "";for(let j=o.order.indexOf(k)-1;j>=0;j--){const x=o.order[j],v=((o.stages[x]||{}).d||{})[id];if(v&&canViewS(o,x))return v}return ""}
+function fld(o,k,p,d,f){let[a,ty]=f.split("|"),[id,lb]=a.split(":");const M=id.startsWith("m."),n=M?id.slice(2):id,dis=RO||(M&&k!=="PLANNING");if(ty==="n")ty="number";
+  return `<label>${lb}<input id="${p}${M?"m_":"f_"}${n}" type="${ty||"text"}" value="${esc(M?o[n]:(d[id]||(RO?"":linked(o,k,id))))}" ${dis?"disabled":""}></label>`}
+function mxH(o,k,p,sec,d){
+  const ed=!RO&&k==="PLANNING",sz=o.sz||["S","M","L","XL","","","",""],rt=o.rt||["1","1","1","1","","","",""];
+  let cl=o.colors||[];if(ed&&!cl.length)cl=[{},{}];if(!cl.length)return '<div class="mut">No colors defined in Planning yet.</div>';
+  const v=d[sec.id]||[],r8=[0,1,2,3,4,5,6,7];
+  const rows=cl.map((c,i)=>ed?`<tr class="mr"><td>${I("c1",c.c1||c.name)}</td><td>${I("c2",c.c2)}</td><td>${I("ct",c.t,'type="number" onchange="dist(this)"')}</td>${r8.map(j=>`<td>${I("q",qa(c)[j],'type="number"')}</td>`).join("")}</tr>`
+   :`<tr class="mr"><td>${esc(c.c1||c.name)}</td><td>${esc(c.c2)}</td><td class="ct"></td>${r8.map(j=>`<td>${I("q",(v[i]||[])[j],'type="number"')}</td>`).join("")}</tr>`).join("");
+  return `<div class="sc"><table class="mx" data-s="${p}${sec.id}" oninput="if(event.target.classList.contains('q'))rc(this)"><tr><th>Color 1</th><th>Color 2</th><th>QTY</th>${sz.map(z=>`<th>${ed?I("sz",z):esc(z)}</th>`).join("")}</tr>
+  <tr><td colspan="3"><b>RATIO</b></td>${rt.map(r=>`<td>${ed?I("rt",r,'type="number"'):esc(r)}</td>`).join("")}</tr>${rows}<tr class="mt"><td colspan="2">TOTAL</td><td class="cT"></td>${r8.map(()=>'<td class="cq"></td>').join("")}</tr></table></div>`+(ed?`<button class="b2" onclick="addRow(this)">+ Add color</button>`:"")+(!RO&&!ed?`<button class="b2" onclick="fillPlan('${p}${sec.id}')">Fill from plan</button>`:"");
+}
+function tbH(o,k,p,sec,d){
+  const cols=sec.c.map(c=>{let[a,ty]=c.split("|"),[id,lb]=a.split(":");return{id,lb,n:ty==="n"}});
+  let rows=d[sec.id];if(!rows||!rows.length)rows=sec.pre?sec.pre.map(x=>({[cols[0].id]:x})):[{},{},{}];
+  const R=r=>`<tr class="tr">${cols.map(c=>`<td>${I("tc",r[c.id],`data-c="${c.id}" ${c.n?'type="number"':""}`)}</td>`).join("")}</tr>`;
+  return `<div class="sc"><table class="tb" data-s="${p}${sec.id}" oninput="ft(this)"><thead><tr>${cols.map(c=>`<th>${c.lb}</th>`).join("")}</tr></thead><tbody>${rows.map(R).join("")}</tbody><tfoot><tr>${cols.map((c,i)=>c.n?`<td class="ft" data-c="${c.id}"></td>`:`<td>${i?"":"TOTAL"}</td>`).join("")}</tr></tfoot></table></div>`+(RO?"":`<button class="b2" onclick="addRow(this)">+ Add row</button>`);
+}
+function form(o,k,p,ro){
+  RO=ro;const s=o.stages[k]||{},d=s.d||{};
+  return SCH[k].map((c,i,A)=>{
+    if(c.t==="h")return `<div class="g">${c.f.map(f=>fld(o,k,p,d,f)).join("")}</div>`;
+    if(c.t==="k")return (c.ti?`<h4>${c.ti}</h4>`:"")+`<div class="g">${c.f.map(f=>fld(o,k,p,d,f)).join("")}</div>`;
+    if(c.t==="m")return `<h4>${c.ti}</h4>`+mxH(o,k,p,c,d);
+    if(c.t==="t")return `<h4>${c.ti}</h4>`+tbH(o,k,p,c,d);
+    if(c.t==="n")return `<h4>${c.ti}</h4><textarea id="${p}n_${c.id}" rows="3" ${ro?"disabled":""}>${esc(d[c.id])}</textarea>`;
+    const r=sigRole(c,A[i-1]),g=r==="DEPT"?d["sig_"+c.id]:((o["sg_"+r]||{})[k]||{})[c.id],rl=r==="DEPT"?sn(k)+" staff":(SR.find(x=>x[0]===r)||[])[1],live=o.id&&(s.done||k===cs(o));return `<div class="sig"><b>${c.lb||"Signature"}</b><span class="mut">(${rl})</span>${g?`<span>✍ ${esc(g.by)||"-"} • ${fmt(g.at)}</span>${canEdit&&o.id?`<button class="b2" style="margin:0" onclick="unsign('${o.id}','${k}','${c.id}')">Clear</button>`:""}`:live&&canSign(k,r)?`<button class="b2" style="margin:0" onclick="sign('${o.id}','${k}','${p}','${c.id}')">Sign</button>`:'<span class="mut">not signed</span>'}</div>`;
+  }).join("");
+}
+function post(){document.querySelectorAll("table.mx").forEach(rc);document.querySelectorAll("table.tb").forEach(ft)}
+function addRow(b){const t=b.previousElementSibling.querySelector("table"),r=t.querySelector(t.classList.contains("mx")?"tr.mr:last-of-type":"tbody tr:last-child");const n=(t.classList.contains("mx")?[...t.querySelectorAll("tr.mr")].pop():r).cloneNode(true);n.querySelectorAll("input").forEach(i=>i.value="");if(t.classList.contains("mx"))t.querySelector("tr.mt").before(n);else t.querySelector("tbody").appendChild(n)}
+function dist(el){const t=el.closest("table"),r=el.closest("tr"),w=[...t.querySelectorAll(".rt")].map(i=>N(i.value)),S=w.reduce((a,b)=>a+b,0),T=N(el.value);if(!S)return;const a=w.map(x=>Math.floor(T*x/S));let rem=T-a.reduce((x,y)=>x+y,0);for(let i=0;rem>0&&i<a.length;i++)if(w[i]){a[i]++;rem--}r.querySelectorAll(".q").forEach((e,i)=>e.value=a[i]||"");rc(t)}
+function rc(t){const cs=new Array(8).fill(0);let T=0;t.querySelectorAll("tr.mr").forEach(r=>{let s=0;r.querySelectorAll(".q").forEach((e,i)=>{const v=N(e.value);s+=v;cs[i]+=v});const c=r.querySelector(".ct");if(c){if(c.tagName==="INPUT"){if(s)c.value=s}else c.textContent=s||""}T+=s});const f=t.querySelector("tr.mt");if(f){f.querySelectorAll(".cq").forEach((e,i)=>e.textContent=cs[i]||"");f.querySelector(".cT").textContent=T||""}}
+function ft(t){t.querySelectorAll("td.ft").forEach(td=>{td.textContent=[...t.querySelectorAll(`tbody input[data-c="${td.dataset.c}"]`)].reduce((a,i)=>a+N(i.value),0)||""})}
+function fillPlan(sid){const t=document.querySelector(`[data-s="${sid}"]`),mm=sid.match(/^d(.+?)_/),o=orders.find(x=>x.id===(mm?mm[1]:cur))||{};const cl=o.colors||[];t.querySelectorAll("tr.mr").forEach((r,i)=>r.querySelectorAll(".q").forEach((e,j)=>e.value=qa(cl[i]||{})[j]||""));rc(t)}
+function collect(o,k,p){
+  const d={...((o.stages[k]||{}).d||{})},m={};const g=id=>{const e=E(id);return e?e.value:""};
+  SCH[k].forEach(c=>{
+    if(c.t==="h"||c.t==="k")c.f.forEach(f=>{const id=f.split("|")[0].split(":")[0];if(id.startsWith("m.")){if(k==="PLANNING")m[id.slice(2)]=g(p+"m_"+id.slice(2))}else d[id]=g(p+"f_"+id)});
+    else if(c.t==="n")d[c.id]=g(p+"n_"+c.id);
+    else if(c.t==="m"){const t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!t)return;
+      const rows=[...t.querySelectorAll("tr.mr")];
+      if(k==="PLANNING"){m.sz=[...t.querySelectorAll(".sz")].map(i=>i.value);m.rt=[...t.querySelectorAll(".rt")].map(i=>i.value);
+        m.colors=rows.map(r=>({c1:r.querySelector(".c1").value.trim(),c2:r.querySelector(".c2").value.trim(),t:r.querySelector(".ct").value,q:[...r.querySelectorAll(".q")].map(i=>i.value)})).filter(c=>c.c1||c.c2||c.t)}
+      else d[c.id]=rows.map(r=>[...r.querySelectorAll(".q")].map(i=>i.value))}
+    else if(c.t==="t"){const t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!t)return;
+      d[c.id]=[...t.querySelectorAll("tbody tr")].map(r=>{const x={};r.querySelectorAll("input").forEach(i=>x[i.dataset.c]=i.value);return x}).filter(x=>Object.values(x).some(v=>v))}
+  });
+  return{d,m};
+}
+/* ---- views ---- */
+function nav(){const t=[["home","Orders"],["depts","Departments"]].concat(hasAlerts()?[["alerts","Alerts"+(unreadN()?" ("+unreadN()+")":"")]]:[]).concat(isAcc()?[["shots","Screenshots"+(shots.filter(x=>!x.seen).length?" ("+shots.filter(x=>!x.seen).length+")":"")]]:[]).concat(canEdit?[["users","Users"]]:[]);
+  return `<div class="nav">${t.map(x=>`<button class="${view===x[0]||(x[0]==="depts"&&view==="dept")?"on":""}" onclick="go('${x[0]}')">${x[1]}</button>`).join("")}${canNew()?'<button class="b1" onclick="go(\'new\')">+ New order</button>':''}</div>`}
+function render(){
+  $("#act").innerHTML=nav()+'<div class="mut" style="margin-top:4px">'+esc(me.name)+instBit()+' \u2022 <a href="#" onclick="fbOut();return false">Sign out</a></div>';
+  if(!db){$("#app").innerHTML='<div class="card">Open this page from an account that has access so data can be saved and shared.</div>';return}
+  const o=orders.find(x=>x.id===cur);
+  $("#app").innerHTML=(view==="alerts"&&hasAlerts()?alertsV():view==="shots"&&isAcc()?shotsV():view==="users"&&canEdit?usersV():view==="new"&&canNew()?newV():view==="order"&&o?orderV(o):view==="depts"?deptsV():view==="dept"?deptV(dk):homeV())+(lb?`<div class="lb" onclick="lb=null;render()"><img src="${lb}"></div>`:"");
+  post();
+}
+function oCard(o){const k=cs(o);return `<div class="card click" onclick="openOrder('${o.id}'${flt==="sign"&&pendK(o)?`,'${pendK(o)}'`:""})"><div class="row"><b>${esc(o.item||o.po)}</b><span class="tag ${k?(late(o)?"late":"cur"):"dn"}">${k?sn(k)+(late(o)?" • late":""):"Done ✓"}</span></div>
+  <div class="mut">PO: ${esc(o.po)} • CO: ${esc(o.co)} • ${tot(o)} pcs</div><div class="bar"><i style="width:${prog(o)}%"></i></div><div class="mut">${prog(o)}% complete</div></div>`}
+function homeV(){
+  const act=orders.filter(o=>cs(o)),lt=orders.filter(late).length,mine=o=>myD().includes(cs(o));
+  const cnt={};act.forEach(o=>cnt[cs(o)]=(cnt[cs(o)]||0)+1);
+  const chips=`<button class="chip ${flt?"":"on"}" onclick="flt='';render()">All</button>`+(myD().length?`<button class="chip ${flt==="mine"?"on":""}" onclick="flt='mine';render()">My depts (${act.filter(mine).length})</button>`:"")+(mySig().length?`<button class="chip ${flt==="sign"?"on":""}" onclick="flt='sign';render()">To sign (${orders.filter(o=>pend(o)>0).length})</button>`:"")+ST.filter(s=>cnt[s[0]]).map(s=>`<button class="chip ${flt===s[0]?"on":""}" onclick="flt='${s[0]}';render()">${s[1]} (${cnt[s[0]]})</button>`).join("");
+  return `<div class="stats"><div class="stat"><b>${orders.length}</b><span>Total</span></div><div class="stat"><b>${act.length}</b><span>In progress</span></div><div class="stat"><b style="color:var(--bad)">${lt}</b><span>Late</span></div><div class="stat"><b>${orders.length-act.length}</b><span>Completed</span></div></div><div class="chips">${chips}</div>`+searchV()+'<div id="ol">'+listHtml()+'</div>';
+}
+let Q={t:"",by:"all",st:"",dp:"",se:"",ca:"",ge:"",ty:"",f:"",to:"",on:false};
+const uniq=f=>[...new Set(orders.map(o=>o[f]).filter(Boolean))].sort(),nF=()=>["st","dp","se","ca","ge","ty","f","to"].filter(k=>Q[k]).length+(Q.by!=="all"?1:0);
+function qmatch(o){
+  const t=Q.t.trim().toLowerCase();
+  if(t){const col=(o.colors||[]).map(c=>(c.c1||c.name||"")+" "+(c.c2||"")).join(" "),M={po:o.po,co:o.co,item:o.item,code:o.code,pattern:o.pattern,color:col};
+    const hay=Q.by==="all"?[o.po,o.co,o.item,o.code,o.pattern,o.season,o.cat,o.gender,o.type,col].join(" "):M[Q.by];
+    if(!String(hay||"").toLowerCase().includes(t))return false}
+  if(Q.st==="prog"&&!cs(o))return false;if(Q.st==="late"&&!late(o))return false;if(Q.st==="done"&&cs(o))return false;
+  if(Q.dp&&cs(o)!==Q.dp)return false;
+  for(const[k,f]of[["se","season"],["ca","cat"],["ge","gender"],["ty","type"]])if(Q[k]&&o[f]!==Q[k])return false;
+  if(Q.f&&(o.date||"")<Q.f)return false;if(Q.to&&(o.date||"")>Q.to)return false;return true}
+const curList=()=>orders.filter(o=>!flt||(flt==="sign"?pend(o)>0:flt==="mine"?myD().includes(cs(o)):cs(o)===flt)).filter(qmatch);
+function listHtml(){const L=curList();if(!orders.length)return '<div class="card mut">No orders yet. Tap "+ New order" to start.</div>';return `<div class="mut" style="margin:2px 2px 8px">${L.length} of ${orders.length} orders</div>`+(L.length?L.map(oCard).join(""):'<div class="card mut">No orders match your search.</div>')}
+const showList=()=>{const e=E("ol");if(e)e.innerHTML=listHtml()};
+const clearQ=()=>{Q={t:"",by:"all",st:"",dp:"",se:"",ca:"",ge:"",ty:"",f:"",to:"",on:true};render()};
+const sel=(k,l,opts,all)=>`<label>${l}<select onchange="Q.${k}=this.value;render()">${all===false?"":'<option value="">All</option>'}${opts.map(o=>`<option value="${esc(o[0])}" ${Q[k]===o[0]?"selected":""}>${esc(o[1])}</option>`).join("")}</select></label>`;
+function searchV(){return `<div class="card" style="padding:10px"><div class="row" style="gap:6px"><input id="qt" type="search" placeholder="🔍 Search PO, CO, item, code, color..." value="${esc(Q.t)}" oninput="Q.t=this.value;showList()" style="margin:0"><button class="b2" style="margin:0;white-space:nowrap" onclick="Q.on=!Q.on;render()">Filters${nF()?" ("+nF()+")":""}</button></div>`+(Q.on?`<div class="g" style="margin-top:10px">${sel("by","Search in",[["all","All fields"],["po","PO/NO"],["co","CO/NO"],["item","Item name"],["code","Item code"],["pattern","Pattern"],["color","Color"]],false)}${sel("st","Status",[["prog","In progress"],["late","Late"],["done","Completed"]])}${sel("dp","Current department",ST.map(x=>[x[0],x[1]]))}${sel("se","Season",uniq("season").map(x=>[x,x]))}${sel("ca","Category",uniq("cat").map(x=>[x,x]))}${sel("ge","Gender",uniq("gender").map(x=>[x,x]))}${sel("ty","Item type",uniq("type").map(x=>[x,x]))}<label>Order date from<input type="date" value="${Q.f}" onchange="Q.f=this.value;render()"></label><label>Order date to<input type="date" value="${Q.to}" onchange="Q.to=this.value;render()"></label></div><button class="b2" onclick="clearQ()">Clear filters</button>`:"")+`</div>`}
+function alertsV(){
+  const ts=seenTs(),perm="Notification" in window?Notification.permission:"unsupported";
+  return (perm==="default"?'<div class="card"><b>Get alerts on this device</b><div class="mut">Allow notifications to be alerted when an order reaches your department, even while the app is in the background.</div><button class="b1 b2" onclick="askNotif()">Enable notifications</button></div>':perm==="denied"?'<div class="mut" style="margin-bottom:8px">Notifications are blocked in your browser settings.</div>':"")
+  +(notifs.length?notifs.map(n=>`<div class="card click ${(n.at||"")>ts?"shot new":""}" onclick="openOrder('${n.oid}')"><div class="row"><b>${esc(n.text)}</b>${(n.at||"")>ts?'<span class="tag cur">New</span>':""}</div><div class="mut">From ${sn(n.from)} \u2022 ${esc(n.by)} \u2022 ${fmt(n.at)}</div></div>`).join(""):'<div class="card mut">No alerts yet. You will see a message here whenever an order reaches your department.</div>')}
+function dur(a,b){if(!a||!b)return "";const m=Math.max(0,Math.round((new Date(b)-new Date(a))/60000));if(m<60)return m+"m";const h=Math.floor(m/60);return h<24?h+"h "+(m%60)+"m":Math.floor(h/24)+"d "+(h%24)+"h"}
+function timelineH(o){let prev=o.created;const c0=cs(o),last=o.stages[o.order[o.order.length-1]]||{};
+  return `<div class="card"><h3>Progress timeline</h3>${o.order.map(k=>{const s=o.stages[k]||{},x=`<div class="row" style="padding:4px 0;align-items:flex-start"><span>${s.done?"\u2705":k===c0?"\ud83d\udd35":"\u23f3"} <b>${sn(k)}</b></span><span class="mut" style="text-align:end">${s.done?`${esc(s.by)||"-"} \u2022 ${fmt(s.at)}<br>took ${dur(prev,s.at)}`:k===c0?"in progress"+(s.plan?" \u2022 planned "+esc(s.plan):""):"waiting"}</span></div>`;if(s.done)prev=s.at;return x}).join("")}<div class="mut" style="margin-top:6px">${c0?`Currently at <b>${sn(c0)}</b>`:`Completed ${fmt(last.at)} \u2022 total ${dur(o.created,last.at)}`}</div></div>`}
+function copyFrom(oid,k,p){
+  const o=orders.find(x=>x.id===oid),src=E("cf_"+p).value,sd=((o.stages[src]||{}).d)||{};let n=0;
+  const put=(id,v)=>{const e=E(id);if(e&&!e.disabled&&v!==undefined&&v!==null&&v!==""){e.value=v;n++}},ids=c=>c.c.map(x=>x.split(":")[0]).join();
+  SCH[k].forEach(c=>{
+    if(c.t==="h"||c.t==="k")c.f.forEach(f=>{const id=f.split("|")[0].split(":")[0];if(!id.startsWith("m.")&&!/^(plan|act|rd|dd|di|do|ti|to)$/.test(id))put(p+"f_"+id,sd[id])});
+    else if(c.t==="n")put(p+"n_"+c.id,sd[c.id]);
+    else if(c.t==="t"){const o2=SCH[src].find(x=>x.t==="t"&&x.id===c.id),rows=sd[c.id]||[],t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!o2||ids(c)!==ids(o2)||!t||!rows.length)return;const tb=t.querySelector("tbody");while(tb.children.length<rows.length){const r=tb.lastElementChild.cloneNode(true);r.querySelectorAll("input").forEach(i=>i.value="");tb.appendChild(r)}[...tb.children].forEach((r,i)=>r.querySelectorAll("input").forEach(inp=>{const v=(rows[i]||{})[inp.dataset.c];if(v!==undefined&&v!==""){inp.value=v;n++}}));ft(t)}
+    else if(c.t==="m"&&k!=="PLANNING"){const rows=sd[c.id],t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!rows||!t||!SCH[src].some(x=>x.t==="m"&&x.id===c.id))return;t.querySelectorAll("tr.mr").forEach((r,i)=>r.querySelectorAll(".q").forEach((e,j)=>{const v=(rows[i]||[])[j];if(v!==undefined&&v!==""){e.value=v;n++}}));rc(t)}
+  });
+  toast(n?"Copied "+n+" values from "+sn(src)+". Review and save.":"Nothing to copy from "+sn(src))}
+const fitImg=cv=>{let c=cv;for(let a=0;a<5;a++){for(let q=.8;q>=.4;q-=.1){const u=c.toDataURL("image/jpeg",q);if(u.length<900000)return u}const n=document.createElement("canvas");n.width=Math.round(c.width*.75);n.height=Math.round(c.height*.75);n.getContext("2d").drawImage(c,0,0,n.width,n.height);c=n}return null};
+async function sendTab(oid,k,p){const o=orders.find(x=>x.id===oid),el=E("cap_"+p);if(!el)return;if(!window.html2canvas)return toast("Screenshot tool not loaded - check the internet");
+  toast("Capturing...");try{const cv=await html2canvas(el,{scale:1,backgroundColor:getComputedStyle(document.body).backgroundColor,onclone:d=>{d.querySelectorAll(".sc").forEach(x=>x.style.overflow="visible");d.querySelectorAll("table").forEach(t=>t.style.minWidth="0")}});
+    const img=fitImg(cv);if(!img)return toast("Tab is too large to send");
+    await db.collection("shots").add({oid,po:o.po||"",item:o.item||"",from:k,by:me.name||"",byId:meId,at:new Date().toISOString(),note:"Tab screenshot: "+sn(k),kind:"tab",img,seen:false});toast("Sent to Accounts \u2713")}catch(e){toast("Could not send: "+(e.message||e.code))}}
+function dInfo(k){const r={act:[],done:[],next:[]};orders.forEach(o=>{if(!o.order.includes(k))return;const s=o.stages[k]||{};(s.done?r.done:k===cs(o)?r.act:r.next).push(o)});return r}
+function deptsV(){return `<div class="mut" style="margin-bottom:8px">Tap a department to open its screen.</div><div class="dg">${ST.filter(s=>canView(s[0])).map(s=>{const r=dInfo(s[0]),l=r.act.filter(late).length;
+  return `<div class="card click" onclick="openDept('${s[0]}')"><b>${s[1]}</b><b class="n">${r.act.length}</b><span class="mut">in progress${l?` • <span style="color:var(--bad)">${l} late</span>`:""}<br>${r.done.length} done • ${r.next.length} upcoming</span></div>`}).join("")}</div>`}
+const capWrap=(o,k,p,ro)=>`<div id="cap_${p}"><h3>${sn(k)} \u2022 PO ${esc(o.po)} \u2022 ${esc(o.item)}</h3>${form(o,k,p,ro)}</div>`;
+const capBtn=(o,k,p)=>CAPD.includes(k)?`<div class="shotbox"><b>\ud83d\udcf8 Send this tab to Accounts as a screenshot</b><div class="mut">Takes a picture of the whole tab and sends it to the Accounts department.</div><button class="b2" onclick="sendTab('${o.id}','${k}','${p}')">Send tab screenshot</button></div>`:"";
+function copyBar(o,k,p){const src=o.order.slice(0,o.order.indexOf(k)).filter(x=>canViewS(o,x)&&Object.keys((o.stages[x]||{}).d||{}).length);if(!src.length)return "";return `<div class="shotbox" style="margin:10px 0"><b>\u29c9 Copy from another department</b><div class="mut">Copies matching fields, notes and tables. Review, then save.</div><div class="row" style="margin-top:6px"><select id="cf_${p}" style="margin:0">${src.map(x=>`<option value="${x}">${sn(x)}</option>`).join("")}</select><button class="b2" style="margin:0" onclick="copyFrom('${o.id}','${k}','${p}')">Copy</button></div></div>`}
+const btns=(o,p,k)=>{k=k||cs(o);return copyBar(o,k,p)+`<div class="row" style="margin-top:10px"><button onclick="saveStage(false,'${o.id}','${p}',null,'${k}')">Save draft</button>${k===cs(o)?`<button class="ok" onclick="saveStage(true,'${o.id}','${p}',null,'${k}')">Approve &amp; send to next \u2713</button>`:""}</div>`+capBtn(o,k,p)};
+function dCard(o,k,t){
+  const s=o.stages[k]||{};
+  if(t==="act"&&can(k))return `<div class="card"><div class="row"><b>${esc(o.item||o.po)}</b><span class="tag ${late(o)?"late":"cur"}">${late(o)?"Late":"In progress"}</span></div><div class="mut">PO: ${esc(o.po)} • ${tot(o)} pcs</div><div class="mut click" style="margin:4px 0 8px;color:var(--pri)" onclick="openOrder('${o.id}')">View order →</div>${capWrap(o,k,"d"+o.id+"_",false)}${btns(o,"d"+o.id+"_")}${shotBox(o)}</div>`;
+  return `<div class="card click" onclick="openOrder('${o.id}','${k}')"><div class="row"><b>${esc(o.item||o.po)}</b><span class="tag ${t==="done"?"dn":"cur"}">${t==="done"?"Done":t==="act"?"In progress":"Upcoming"}</span></div><div class="mut">PO: ${esc(o.po)} • ${tot(o)} pcs</div><div class="mut">${t==="done"?`Approved by ${esc(s.by)||"-"} • ${fmt(s.at)}`:t==="next"?"Currently at: "+sn(cs(o))+(Object.keys(s.d||{}).length?" \u2022 \ud83d\udcdd pre-filled":""):"View only"}</div></div>`}
+function deptV(k){
+  const r=dInfo(k),L=r[dtab],T={act:"In progress",done:"Completed",next:"Upcoming"};
+  return `<div class="card"><h3>${sn(k)}</h3><div class="stats" style="margin:0"><div class="stat"><b>${r.act.length}</b><span>In progress</span></div><div class="stat"><b style="color:var(--bad)">${r.act.filter(late).length}</b><span>Late</span></div><div class="stat"><b>${r.done.length}</b><span>Completed</span></div><div class="stat"><b>${r.next.length}</b><span>Upcoming</span></div></div></div>
+  <div class="chips">${Object.keys(T).map(t=>`<button class="chip ${dtab===t?"on":""}" onclick="dtab='${t}';render()">${T[t]} (${r[t].length})</button>`).join("")}</div>`+(L.length?L.map(o=>dCard(o,k,dtab)).join(""):'<div class="card mut">Nothing here.</div>');
+}
+function newV(){
+  const o={stages:{PLANNING:{}}};
+  return `<div class="card"><h3>PLANNING</h3>${form(o,"PLANNING","n_",false)}</div>
+  <div class="card"><h3>Departments this order will go through (in order)</h3><div class="chk">${ST.slice(1).map(s=>`<label><input type="checkbox" value="${s[0]}" ${OPT.includes(s[0])?"":"checked"}>${s[1]}</label>`).join("")}</div></div>
+  <div class="row"><button class="w" onclick="saveOrder(false)">Save as draft</button><button class="b1 w" onclick="saveOrder(true)">Create &amp; send to next ✓</button></div>`;
+}
+async function saveOrder(send){
+  if(!canNew())return toast("You do not have permission");
+  const o={stages:{PLANNING:{}}},{d,m}=collect(o,"PLANNING","n_");
+  if(!m.po&&!m.item)return toast("Enter a PO number or item name");
+  const order=["PLANNING",...[...document.querySelectorAll(".chk input:checked")].map(i=>i.value)],stages={};order.forEach(k=>stages[k]={done:false});
+  stages.PLANNING={done:!!send,plan:d.plan||"",...(send?{by:me.name||"",at:new Date().toISOString()}:{})};
+  try{const ref=db.collection("orders").doc(),b=db.batch();b.set(ref,{...m,order,st:stages,created:new Date().toISOString(),by:me.name||""});b.set(db.doc("stages/"+ref.id+"_PLANNING"),{oid:ref.id,dept:"PLANNING",d,done:!!send});if(send&&order[1])b.set(db.collection("notifs").doc(),{dept:order[1],from:"PLANNING",oid:ref.id,po:m.po||"",item:m.item||"",by:me.name||"",byId:meId,at:new Date().toISOString(),text:"Order "+(m.po||m.item)+(m.item?" ("+m.item+")":"")+" is ready for "+sn(order[1])});await b.commit();toast("Saved ✓");if(canEdit)pendingOpen=ref.id;go("home")}catch(e){toast("Could not save: "+(e.message||e.code))}
+}
+function orderV(o){
+  const k0=cs(o),op=opn||k0,lastDone=[...o.order].reverse().find(k=>(o.stages[k]||{}).done);
+  const sts=o.order.map(k=>{
+    const s=o.stages[k]||{},isOpen=k===op,cur_=k===k0;let body="";
+    if(!canViewS(o,k))return `<div class="st ${s.done?"d":""} wait"><div class="row"><b>${s.done?"✅":cur_?"🔵":"⏳"} ${sn(k)}</b><span class="mut">🔒 ${s.done?"Done":cur_?"Current":"Waiting"}</span></div></div>`;
+    if(isOpen&&s.done)body=capWrap(o,k,"o_",true)+(can(k)?capBtn(o,k,"o_"):"")+`<div class="mut">Approved by ${esc(s.by)||"-"} • ${fmt(s.at)}</div>`+(canEdit&&k===lastDone?`<button class="b2" onclick="reopen('${k}')">Reopen department</button>`:"");
+    else if(isOpen&&cur_&&can(k))body=capWrap(o,k,"o_",false)+btns(o,"o_")+shotBox(o);
+    else if(isOpen&&cur_)body=form(o,k,"o_",true)+'<div class="mut">🔒 This department is not assigned to you. View only.</div>';
+    else if(isOpen&&canEdit)body='<div class="mut" style="margin-bottom:6px">\ud83d\udcdd Pre-fill: this department has not started. Data you save here is kept as a draft for them.</div>'+capWrap(o,k,"o_",false)+btns(o,"o_",k);else if(isOpen&&can(k))body='<div class="mut" style="margin-bottom:6px">Not your turn yet. The data below was pre-filled for you.</div>'+form(o,k,"o_",true);else if(isOpen)body='<div class="mut">Not this department\u2019s turn yet.</div>';
+    return `<div class="st ${s.done?"d":cur_?"c":""} ${!s.done&&!cur_?"wait":""}"><div class="row click" onclick="opn='${k}';render()"><b>${s.done?"✅":cur_?"🔵":"⏳"} ${sn(k)}</b><span class="mut">${s.done?"Done":cur_?"Current":"Waiting"}</span></div>${body}</div>`}).join("");
+  return `<button onclick="go(ret)" style="margin-bottom:8px">← Back</button><div class="card"><div class="row"><h3 style="margin:0">${esc(o.item||o.po)}</h3><span class="tag ${k0?"cur":"dn"}">${k0?sn(k0):"Done ✓"}</span></div><div class="mut">PO: ${esc(o.po)} • CO: ${esc(o.co)} • ${tot(o)} pcs</div><div class="bar"><i style="width:${prog(o)}%"></i></div><div class="mut">${prog(o)}% complete</div></div>${timelineH(o)}<div class="card"><h3>Order stages</h3>${sts}</div>`;
+}
+const roleOf=(k,id)=>{const A=SCH[k],i=A.findIndex(c=>c.t==="s"&&c.id===id);return sigRole(A[i],A[i-1])};
+async function sign(oid,k,p,id){const o=orders.find(x=>x.id===oid),r=roleOf(k,id);if(r==="DEPT"&&k===cs(o)&&can(k))return saveStage(false,oid,p,id);return sigWrite(oid,k,id,{by:me.name||"",at:new Date().toISOString()},r)}
+async function sigWrite(oid,k,id,v,r){try{if(r==="DEPT"){await db.doc("stages/"+oid+"_"+k).set({oid,dept:k,d:{["sig_"+id]:v||firebase.firestore.FieldValue.delete()}},{merge:true})}else await db.doc("orders/"+oid).update({["sg_"+r+"."+k+"."+id]:v||firebase.firestore.FieldValue.delete()});toast(v?"Signed \u2713":"Cleared")}catch(e){toast("Could not save: "+(e.message||e.code))}}
+const unsign=(o,k,id)=>sigWrite(o,k,id,null,roleOf(k,id));
+async function saveStage(ok,oid,p,sigId,kk){
+  oid=oid||cur;const o=orders.find(x=>x.id===oid),k=kk||cs(o);if(ok&&k!==cs(o))return toast("Only the current department can be approved");
+  if(!can(k))return toast("This department is not assigned to you");
+  const{d,m}=collect(o,k,p),ns=JSON.parse(JSON.stringify(o.stages));
+  if(sigId)d["sig_"+sigId]={by:me.name||"",at:new Date().toISOString()};
+  const up={...m,["st."+k+".plan"]:d.plan||""};if(ok){up["st."+k+".done"]=true;up["st."+k+".by"]=me.name||"";up["st."+k+".at"]=new Date().toISOString()}
+  try{const b=db.batch();b.set(db.doc("stages/"+oid+"_"+k),{oid,dept:k,d,done:ok?true:!!(o.stages[k]||{}).done});b.update(db.doc("orders/"+oid),up);if(ok){const nx=o.order[o.order.indexOf(k)+1];if(nx)b.set(db.collection("notifs").doc(),{dept:nx,from:k,oid,po:o.po||"",item:o.item||"",by:me.name||"",byId:meId,at:new Date().toISOString(),text:"Order "+(o.po||o.item)+(o.item?" ("+o.item+")":"")+" is ready for "+sn(nx)})}await b.commit();if(ok)opn=null;toast(ok?"Approved ✓":sigId?"Signed ✓":"Saved ✓")}catch(e){toast("Could not save: "+(e.message||e.code))}
+}
+async function reopen(k){try{const b=db.batch();b.update(db.doc("orders/"+cur),{["st."+k+".done"]:false});b.set(db.doc("stages/"+cur+"_"+k),{done:false},{merge:true});await b.commit();opn=null}catch(e){toast("Could not reopen")}}
+async function loadNames(){if(!U)return;const ids=Object.keys(roles).filter(i=>!names[i]);if(!ids.length)return;try{const p=await U.profiles(ids);ids.forEach(i=>names[i]=(p[i]||{}).name||"")}catch(e){}}
+function usersV(){const ids=Object.keys(roles);
+  return `<div class="card"><h3>Add user</h3><div class="g"><label>Full name<input id="nu_n"></label><label>Mobile number<input id="nu_p" type="tel" inputmode="tel" placeholder="01xxxxxxxxx"></label></div><button class="b1 b2" onclick="addUser()">Add &amp; create activation code</button><div class="mut" style="margin-top:6px">The user opens the app, taps "Activate your account", and enters their mobile number, this code, and a password of their own choice.</div></div>
+  <div class="card"><h3>Users &amp; permissions</h3>${ids.length?ids.map(id=>`<div class="st"><div class="row"><b>${esc(names[id]||"User")} \u2022 ${esc(id)}</b><span class="tag ${actv[id]?"dn":"cur"}">${actv[id]?"Active":"Not activated"}</span></div>${invs[id]?`<div class="mut">Activation code: <b>${esc(invs[id].code)}</b> \u2022 <a href="${waLink(id)}" target="_blank" rel="noopener">Send via WhatsApp</a> \u2022 <a href="#" onclick="newCode('${esc(id)}');return false">New code</a></div>`:""}<div class="chk" style="margin-top:6px">${ST.map(s=>`<label><input type="checkbox" ${roles[id].includes(s[0])?"checked":""} onchange="tgl('${esc(id)}','${s[0]}',this.checked)">${s[1]}</label>`).join("")}</div><div class="mut" style="margin-top:6px">Can sign as:</div><div class="chk">${SR.map(s=>`<label><input type="checkbox" ${(sigs[id]||[]).includes(s[0])?"checked":""} onchange="tgs('${esc(id)}','${s[0]}',this.checked)">${s[1]}</label>`).join("")}</div><button class="b2" onclick="rmU('${esc(id)}')">Remove</button></div>`).join(""):'<div class="mut">No users yet.</div>'}<button class="b1 w" onclick="saveRoles()">Save permissions</button></div>
+  <div class="mut">Users edit, sign and approve only in their own departments. Planning = can create orders. Forgot password? Delete the user from Firebase Authentication, tap New code, and send the code again.</div>`}
+const waLink=id=>"https://wa.me/"+intl(id)+"?text="+encodeURIComponent("Work Orders app:\n1) Open this link on your phone (Chrome on Android, Safari on iPhone): "+location.href.split(/[?#]/)[0]+"\n2) Install the app (Install app / Add to Home Screen) and open it from your home screen icon.\n3) Tap \"Activate your account\".\nMobile: "+id+"\nActivation code: "+((invs[id]||{}).code||"")+"\nChoose your own password.");
+const newCodeVal=()=>String(Math.floor(100000+Math.random()*900000));
+async function addUser(){const n=E("nu_n").value.trim(),ph=normPhone(E("nu_p").value);if(!n||!ph)return toast("Enter a name and a valid mobile number");
+  if(roles[ph]!==undefined)return toast("This number is already added");
+  const code=newCodeVal();try{await db.doc("invites/"+ph).set({name:n,code,at:new Date().toISOString()});roles[ph]=[];names[ph]=n;invs[ph]={name:n,code};await db.doc("roles/map").set({assign:roles,sigs});toast("User added \u2713");render()}catch(e){toast("Could not add: "+(e.message||e.code))}}
+async function newCode(id){const code=newCodeVal();try{await db.doc("invites/"+id).set({name:names[id]||"",code,at:new Date().toISOString()});invs[id]={name:names[id]||"",code};render()}catch(e){toast("Could not create code")}}
+async function loadUsers(){if(!U)return;const ids=Object.keys(roles);invs={};actv={};const p=await U.profiles(ids);ids.forEach(i=>names[i]=(p[i]||{}).name||names[i]||"")}
+const rmU=id=>{delete roles[id];delete sigs[id];db.doc("invites/"+id).delete().catch(()=>{});render()},tgs=(id,r,on)=>{const a=sigs[id]||[];sigs[id]=on?[...new Set([...a,r])]:a.filter(x=>x!==r)},tgl=(id,k,on)=>{const a=roles[id]||[];roles[id]=on?[...new Set([...a,k])]:a.filter(x=>x!==k)};
+async function saveRoles(){try{await db.doc("roles/map").set({assign:roles,sigs});toast("Permissions saved ✓")}catch(e){toast("Could not save: "+(e.message||e.code))}}
+/* ---- data: orders + per-department stage docs + screenshots ---- */
+function rb(){orders=RAW.filter(o=>o.order&&o.st).map(o=>{const stages={};o.order.forEach(k=>{const t=o.st[k]||{};stages[k]={done:!!t.done,by:t.by,at:t.at,plan:t.plan,d:(SD[o.id+"_"+k]||{}).d||{}}});return{...o,stages}}).filter(vis).sort((a,b)=>(b.created||"").localeCompare(a.created||""))}
+function paint(){rb();badge();if(pendingOpen&&orders.some(x=>x.id===pendingOpen)){cur=pendingOpen;ret="home";view="order";opn=null;pendingOpen=null}const ae=document.activeElement;if(ae&&/INPUT|TEXTAREA/.test(ae.tagName)&&(view!=="home"||ae.id==="qt"))return;if(ae&&ae.tagName==="SELECT")return;render()}
+function startData(){
+  const key=canEdit+"|"+myD().join()+"|"+mySig().join();if(key===lastKey)return;lastKey=key;unsubs.forEach(f=>f());unsubs=[];RAW=[];SD={};shots=[];
+  const er=e=>toast("Connection error: "+e.code);
+  NM={};notifs=[];if(!seenTs()&&meId)markSeen();
+  const nl=q=>{let first=true;return q.onSnapshot(s=>{s.docChanges().forEach(c=>{const d={id:c.doc.id,...c.doc.data()};if(c.type==="removed")delete NM[d.id];else{NM[d.id]=d;if(!first&&c.type==="added"&&d.byId!==meId)alertNew(d)}});first=false;notifs=Object.values(NM).sort((a,b)=>(b.at||"").localeCompare(a.at||"")).slice(0,50);paint()},er)};
+  if(canEdit)unsubs.push(nl(db.collection("notifs")));else myD().forEach(k=>unsubs.push(nl(db.collection("notifs").where("dept","==",k))));
+  unsubs.push(db.collection("orders").onSnapshot(s=>{RAW=s.docs.map(x=>({id:x.id,...x.data()}));paint()},er));
+  const sdl=(q,dn)=>q.onSnapshot(s=>{s.docChanges().forEach(c=>{if(c.type==="removed"){if(!(dn&&myD().includes(c.doc.id.split("_").pop())))delete SD[c.doc.id]}else SD[c.doc.id]=c.doc.data()});paint()},er);
+  if(canEdit||mySig().length)unsubs.push(sdl(db.collection("stages")));else myD().forEach(k=>unsubs.push(sdl(db.collection("stages").where("dept","==",k))));
+  if(!(canEdit||mySig().length))unsubs.push(sdl(db.collection("stages").where("done","==",true),true));
+  if(isAcc())unsubs.push(db.collection("shots").onSnapshot(s=>{shots=s.docs.map(x=>({id:x.id,...x.data()})).sort((a,b)=>(b.at||"").localeCompare(a.at||""));paint()},er));
+}
+/* ---- screenshots to Accounts (stored compressed inside Firestore, no paid Storage needed) ---- */
+const shotBox=o=>`<div class="shotbox"><b>📎 Send screenshot to Accounts</b><div class="g" style="margin-top:6px"><label>Image<input type="file" accept="image/*" id="sf_${o.id}"></label><label>Note (optional)<input id="sn_${o.id}"></label></div><button class="b2" onclick="sendShot('${o.id}')">Send to Accounts</button></div>`;
+const shrink=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*sc;c.height=im.height*sc;c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.72))};im.onerror=rej;im.src=r.result};r.onerror=rej;r.readAsDataURL(f)});
+async function sendShot(oid){const f=E("sf_"+oid).files[0];if(!f)return toast("Choose a screenshot first");const o=orders.find(x=>x.id===oid);
+  try{const img=await shrink(f);if(img.length>900000)return toast("Image is too large");await db.collection("shots").add({oid,po:o.po||"",item:o.item||"",from:cs(o)||"",by:me.name||"",byId:meId,at:new Date().toISOString(),note:E("sn_"+oid).value,img,seen:false});toast("Sent to Accounts \u2713");E("sf_"+oid).value="";E("sn_"+oid).value=""}catch(e){toast("Could not send: "+(e.message||e.code))}}
+function shotsV(){return '<div class="mut" style="margin-bottom:8px">Screenshots sent to Accounts by the departments.</div>'+(shots.length?shots.map(x=>`<div class="card shot ${x.seen?"":"new"}"><div class="row"><b>${sn(x.from)} \u2022 ${esc(x.po||x.item)}</b><span class="tag ${x.seen?"dn":"cur"}">${x.seen?"Seen":"New"}</span></div><div class="mut">${esc(x.by)} \u2022 ${fmt(x.at)}${x.note?"<br>"+esc(x.note):""}</div><img class="th" src="${x.img}" onclick="lb=this.src;render()"><div class="row" style="justify-content:flex-start;margin-top:8px"><button class="b2" onclick="openOrder('${x.oid}')">Open order</button>${x.seen?"":`<button class="b2 ok" onclick="seen('${x.id}')">Mark as seen</button>`}${canEdit?`<button class="b2" onclick="delShot('${x.id}')">Delete</button>`:""}</div></div>`).join(""):'<div class="card mut">No screenshots yet.</div>')}
+const seen=id=>db.doc("shots/"+id).update({seen:true}),delShot=id=>db.doc("shots/"+id).delete();
+/* ---- Firebase: auth + Firestore ---- */
+/* ---- language: English / Arabic (RTL) ---- */
+let LANG="en";try{LANG=localStorage.getItem("lang")||"en"}catch(e){}
+const AR={"Orders": "الأوردرات", "Departments": "الأقسام", "Alerts": "التنبيهات", "Screenshots": "الصور", "Users": "المستخدمون", "+ New order": "+ أوردر جديد", "Theme": "المظهر", "Sign out": "تسجيل الخروج", "Sign in": "تسجيل الدخول", "Loading...": "جارٍ التحميل...", "All": "الكل", "Total": "الإجمالي", "TOTAL": "الإجمالي", "In progress": "قيد التنفيذ", "Late": "متأخر", "Completed": "مكتمل", "Upcoming": "قادم", "Waiting": "في الانتظار", "Current": "الحالي", "Done": "تم", "Done ✓": "تم ✓", "late": "متأخر", "in progress": "قيد التنفيذ", "waiting": "في الانتظار", "My depts": "أقسامي", "To sign": "للتوقيع", "Filters": "الفلاتر", "Status": "الحالة", "Search in": "بحث في", "All fields": "كل الحقول", "Current department": "القسم الحالي", "Season": "الموسم", "Category": "الفئة", "Gender": "النوع", "Item type": "نوع الصنف", "Item name": "اسم الموديل", "Item code": "كود الصنف", "Pattern": "الباترون", "Order date from": "تاريخ الأمر من", "Order date to": "تاريخ الأمر إلى", "Clear filters": "مسح الفلاتر", "No orders yet. Tap \"+ New order\" to start.": "لا توجد أوردرات بعد. اضغط \"+ أوردر جديد\" للبدء.", "No orders match your search.": "لا توجد أوردرات مطابقة للبحث.", "Tap a department to open its screen.": "اضغط على قسم لفتح شاشته.", "Nothing here.": "لا يوجد شيء هنا.", "View only": "عرض فقط", "View order →": "عرض الأوردر ←", "← Back": "→ رجوع", "Open order": "فتح الأوردر", "Order stages": "مراحل الأوردر", "Progress timeline": "الجدول الزمني للتقدّم", "Currently at": "الحالي عند", "📝 pre-filled": "📝 مُجهّز مسبقًا", "Open this page from an account that has access so data can be saved and shared.": "افتح هذه الصفحة بحساب له صلاحية حتى تُحفظ البيانات وتُشارَك.", "Search by name": "ابحث بالاسم", "🔍 Search PO, CO, item, code, color...": "🔍 ابحث برقم PO أو CO أو الموديل أو الكود أو اللون...", "Color": "اللون", "Planning": "التخطيط", "Fabric Planning": "تخطيط الخامات", "Fabric Store": "مخزن الخامات", "Fabric Cutting": "قص الخامات", "Marker": "الماركر", "Cutting": "القص", "Accessories": "الإكسسوارات", "Sorting & Bundling": "الفرز والتجميع", "DTF": "DTF", "Printing": "الطباعة", "Embroidery": "التطريز", "Washing": "الغسيل", "Sewing": "الخياطة", "Packing": "التعبئة", "Quality": "الجودة", "Grade B": "الدرجة الثانية", "Accounts": "الحسابات", "PLANNING": "التخطيط", "Save draft": "حفظ كمسودة", "Save as draft": "حفظ كمسودة", "Approve & send to next ✓": "اعتماد وإرسال للقسم التالي ✓", "Create & send to next ✓": "إنشاء وإرسال للقسم التالي ✓", "Reopen department": "إعادة فتح القسم", "+ Add color": "+ إضافة لون", "+ Add row": "+ إضافة صف", "Fill from plan": "تعبئة من الخطة", "No colors defined in Planning yet.": "لم تُحدَّد ألوان في التخطيط بعد.", "Copy": "نسخ", "⧉ Copy from another department": "⧉ نسخ من قسم آخر", "Copies matching fields, notes and tables. Review, then save.": "ينسخ الحقول والملاحظات والجداول المتشابهة. راجعها ثم احفظ.", "📸 Send this tab to Accounts as a screenshot": "📸 إرسال هذا التاب للحسابات كصورة", "Takes a picture of the whole tab and sends it to the Accounts department.": "يلتقط صورة للتاب كله ويرسلها إلى قسم الحسابات.", "Send tab screenshot": "إرسال صورة التاب", "📎 Send screenshot to Accounts": "📎 إرسال صورة للحسابات", "Image": "الصورة", "Note (optional)": "ملاحظة (اختياري)", "Send to Accounts": "إرسال للحسابات", "Departments this order will go through (in order)": "الأقسام التي سيمر بها الأوردر (بالترتيب)", "Sign": "توقيع", "Signature": "التوقيع", "not signed": "لم يُوقَّع", "Clear": "مسح", "ACC signature": "توقيع الحسابات", "Sewing F/M signature": "توقيع مشرف الخياطة", "G/M signature": "توقيع المدير العام", "QU F/M signature": "توقيع مشرف الجودة", "Quality signature": "توقيع الجودة", "Account signature": "توقيع الحسابات", "Quality F/M": "مشرف الجودة", "Sewing F/M": "مشرف الخياطة", "G/M": "المدير العام", "Technical": "الفني", "🔒 This department is not assigned to you. View only.": "🔒 هذا القسم غير مخصص لك. للعرض فقط.", "Not this department’s turn yet.": "لم يحن دور هذا القسم بعد.", "Not your turn yet. The data below was pre-filled for you.": "لم يحن دورك بعد. البيانات أدناه جُهّزت لك مسبقًا.", "📝 Pre-fill: this department has not started. Data you save here is kept as a draft for them.": "📝 تجهيز مسبق: هذا القسم لم يبدأ بعد. ما تحفظه هنا يبقى كمسودة له.", "Get alerts on this device": "تفعيل التنبيهات على هذا الجهاز", "Allow notifications to be alerted when an order reaches your department, even while the app is in the background.": "اسمح بالإشعارات ليصلك تنبيه عند وصول أوردر إلى قسمك حتى لو كان التطبيق في الخلفية.", "Enable notifications": "تفعيل الإشعارات", "Notifications are blocked in your browser settings.": "الإشعارات محظورة من إعدادات المتصفح.", "No alerts yet. You will see a message here whenever an order reaches your department.": "لا توجد تنبيهات بعد. ستظهر لك رسالة هنا كلما وصل أوردر إلى قسمك.", "New": "جديد", "Screenshots sent to Accounts by the departments.": "الصور التي أرسلتها الأقسام إلى الحسابات.", "No screenshots yet.": "لا توجد صور بعد.", "Mark as seen": "تحديد كمقروء", "Seen": "تمت المشاهدة", "Delete": "حذف", "Add user": "إضافة مستخدم", "Full name": "الاسم الكامل", "Mobile number": "رقم الموبايل", "Add & create activation code": "إضافة وإنشاء كود تفعيل", "The user opens the app, taps \"Activate your account\", and enters their mobile number, this code, and a password of their own choice.": "يفتح المستخدم التطبيق ويضغط \"تفعيل حسابك\" ويدخل رقم موبايله وهذا الكود وكلمة مرور من اختياره.", "Users & permissions": "المستخدمون والصلاحيات", "No users yet.": "لا يوجد مستخدمون بعد.", "Activation code:": "كود التفعيل:", "Send via WhatsApp": "إرسال عبر واتساب", "New code": "كود جديد", "Active": "مفعّل", "Not activated": "غير مفعّل", "Can sign as:": "يمكنه التوقيع بصفة:", "Remove": "إزالة", "Save permissions": "حفظ الصلاحيات", "User": "مستخدم", "Users edit, sign and approve only in their own departments. Planning = can create orders. Forgot password? Delete the user from Firebase Authentication, tap New code, and send the code again.": "يعدّل المستخدمون ويوقّعون ويعتمدون في أقسامهم فقط. التخطيط = يمكنه إنشاء الأوردرات. نسيت كلمة المرور؟ احذف المستخدم من Firebase Authentication ثم اضغط \"كود جديد\" وأرسل الكود مرة أخرى.", "Activate your account": "تفعيل حسابك", "Use the mobile number and activation code your manager gave you, then choose your own password.": "استخدم رقم الموبايل وكود التفعيل اللذين أعطاهما لك المدير، ثم اختر كلمة مرور خاصة بك.", "Activation code": "كود التفعيل", "Password": "كلمة المرور", "Confirm password": "تأكيد كلمة المرور", "Activate & sign in": "تفعيل وتسجيل الدخول", "Already activated? Sign in": "فعّلت حسابك؟ سجّل الدخول", "First time? Activate your account": "أول مرة؟ فعّل حسابك", "Enter a valid mobile number": "أدخل رقم موبايل صحيحًا", "Password must be at least 6 characters": "يجب ألا تقل كلمة المرور عن 6 أحرف", "Enter your full name": "أدخل اسمك الكامل", "Enter the activation code": "أدخل كود التفعيل", "Passwords do not match": "كلمتا المرور غير متطابقتين", "Invalid activation code for this number. Ask your manager.": "كود التفعيل غير صحيح لهذا الرقم. اسأل المدير.", "Wrong mobile number or password": "رقم الموبايل أو كلمة المرور غير صحيحة", "Too many attempts. Try again later.": "محاولات كثيرة. حاول لاحقًا.", "This number is already activated with a different password. Ask your manager for a new activation code.": "هذا الرقم مفعّل بكلمة مرور أخرى. اطلب من المدير كود تفعيل جديدًا.", "This number is not activated yet. Tap \"First time? Activate your account\" and enter the activation code you received.": "هذا الرقم غير مفعّل بعد. اضغط \"أول مرة؟ فعّل حسابك\" وأدخل كود التفعيل الذي استلمته.", "No permissions yet": "لا توجد صلاحيات بعد", "Your account is active but the manager has not given you access. Ask the manager to add your number from the Users screen, then reload this page.": "حسابك مفعّل لكن المدير لم يمنحك صلاحية الوصول بعد. اطلب منه إضافة رقمك من شاشة المستخدمين ثم أعد تحميل الصفحة.", "Saved ✓": "تم الحفظ ✓", "Approved ✓": "تم الاعتماد ✓", "Signed ✓": "تم التوقيع ✓", "Cleared": "تم المسح", "Permissions saved ✓": "تم حفظ الصلاحيات ✓", "User added ✓": "تمت إضافة المستخدم ✓", "Sent to Accounts ✓": "تم الإرسال إلى الحسابات ✓", "Capturing...": "جارٍ التقاط الصورة...", "Choose a screenshot first": "اختر صورة أولًا", "Image is too large": "الصورة كبيرة جدًا", "Tab is too large to send": "التاب كبير جدًا للإرسال", "Screenshot tool not loaded - check the internet": "أداة التصوير لم تُحمَّل - تحقق من الإنترنت", "Only the current department can be approved": "يمكن اعتماد القسم الحالي فقط", "This department is not assigned to you": "هذا القسم غير مخصص لك", "You do not have permission": "ليست لديك صلاحية", "Enter a PO number or item name": "اكتب رقم PO أو اسم الموديل", "Enter a name and a valid mobile number": "أدخل الاسم ورقم موبايل صحيحًا", "This number is already added": "هذا الرقم مضاف بالفعل", "Could not create code": "تعذّر إنشاء الكود", "Could not reopen": "تعذّر إعادة الفتح", "Color 1": "اللون 1", "Color 2": "اللون 2", "QTY": "الكمية", "RATIO": "النسبة", "PO/NO": "رقم أمر الشراء PO", "CO/NO": "رقم أمر العميل CO", "ITEM NAME": "اسم الموديل", "ORDER DATE": "تاريخ الأمر", "DATE": "التاريخ", "LINE NO": "رقم الخط", "PATTERN": "الباترون", "FITTING": "القصّة", "ITEM CODE": "كود الصنف", "GENDER": "النوع", "ITEM TYPE": "نوع الصنف", "SIZE": "المقاس", "CATEGORY": "الفئة", "SEASON": "الموسم", "PLANNING DATE": "تاريخ التخطيط", "ACTUAL DATE": "التاريخ الفعلي", "RECEIVE DATE": "تاريخ الاستلام", "DELIVERY DATE": "تاريخ التسليم", "FABRIC": "الخامة", "COLOR": "اللون", "LOT/NO": "رقم اللوط", "WEIGHT": "الوزن", "QUANTITY": "الكمية", "NOTES": "ملاحظات", "DISPATCH WT": "وزن الصرف", "DISPATCH QTY": "كمية الصرف", "DISPATCH S/NO": "رقم الصرف", "DISPATCH 2 WT": "وزن الصرف 2", "DISPATCH 2 QTY": "كمية الصرف 2", "DISPATCH 2 S/NO": "رقم الصرف 2", "RETURN WT": "وزن المرتجع", "RETURN QTY": "كمية المرتجع", "RETURN S/NO": "رقم المرتجع", "PATTERN CODE": "كود الباترون", "PCS": "عدد القطع", "FABRIC WIDTH": "عرض القماش", "MARKER REPEATS": "تكرار الماركر", "CUTTING POINT": "نقطة القص", "CUTTING LINE": "خط القص", "WIDTH 3": "عرض 3", "MARKER WIDTH": "عرض الماركر", "MARKER LENGTH": "طول الماركر", "FABRIC LAY": "فرد القماش", "MARKER WASTE": "هالك الماركر", "CODE": "الكود", "SEWING LINE": "خط الخياطة", "CONTROL LINE": "خط المراقبة", "TOTAL FIRST GRADE": "إجمالي الدرجة الأولى", "TOTAL SECOND GRADE": "إجمالي الدرجة الثانية", "SHORTAGE": "العجز", "DEFECT TYPE": "نوع العيب", "REPLACEMENT QTY": "كمية الاستبدال", "DEFECT WEIGHT": "وزن العيب", "PRINT POINT": "نقطة الطباعة", "METERS": "الأمتار", "DATE IN": "تاريخ الدخول", "DATE OUT": "تاريخ الخروج", "CLOCK IN": "ساعة الدخول", "CLOCK OUT": "ساعة الخروج", "METERS QTY": "كمية الأمتار", "MACHINE NO": "رقم الماكينة", "PROCESSING TIME": "زمن التشغيل", "PARTS": "الأجزاء", "FABRIC COLOR": "لون الخامة", "PRINT COLOR 1": "لون الطباعة 1", "PRINT COLOR 2": "لون الطباعة 2", "PRINT COLOR 3": "لون الطباعة 3", "INVOICE": "الفاتورة", "PACKING QTY": "كمية التعبئة", "EMPLOYEE": "الموظف", "PENALTY": "الجزاء", "STAGE": "المرحلة", "ACTION": "الإجراء", "SIGNATURE": "التوقيع", "ROOT CAUSES": "الأسباب الجذرية", "GROUP": "المجموعة", "SUPERVISOR SIGNATURE": "توقيع المشرف", "DEDUCTION": "الخصم", "EMPLOYEE SIGNATURE": "توقيع الموظف", "PRODUCT QUALITY SCORE": "درجة جودة المنتج", "STYLE NO": "رقم الستايل", "SEWING COST": "تكلفة الخياطة", "PRINTED DTF METER": "أمتار DTF المطبوعة", "PRINT COST": "تكلفة الطباعة", "DETAILS": "التفاصيل", "WHOLESALE PRICE": "سعر الجملة", "FIT TYPE": "نوع القصّة", "RETAIL PRICE": "سعر التجزئة", "MAIN LINE": "الخط الرئيسي", "GRADE": "الدرجة", "PLANNING INFORMATION": "بيانات التخطيط", "NOTES TECHNICAL": "ملاحظات فنية", "NOTES PLANNING": "ملاحظات التخطيط", "QUALITY & SHADE INSPECTION REPORT": "تقرير فحص الجودة والدرجات اللونية", "FABRIC INFORMATION": "بيانات الخامات", "MARKER INFORMATION": "بيانات الماركر", "CUTTING INFORMATION": "بيانات القص", "COLOR / FABRIC WIDTH & QTY ROLLS": "اللون / عرض القماش وكمية الرولات", "ACCESSORIES INFORMATION": "بيانات الإكسسوارات", "CONTROL INFORMATION": "بيانات المراقبة", "DEFECTS": "العيوب", "QUALITY REPORT": "تقرير الجودة", "PRINT INFORMATION": "بيانات الطباعة", "EMBRO INFORMATION": "بيانات التطريز", "WASHING INFORMATION": "بيانات الغسيل", "SEWING INFORMATION": "بيانات الخياطة", "PLANNING NOTES": "ملاحظات التخطيط", "PACKING INFORMATION": "بيانات التعبئة", "SECOND GRADE PENALTY": "جزاءات الدرجة الثانية", "SEWING QUALITY": "جودة الخياطة", "PACKING QUALITY": "جودة التعبئة", "GRADE B REPORT": "تقرير الدرجة الثانية", "ACTION REPORT": "تقرير الإجراءات", "FIRST GRADE": "الدرجة الأولى", "ITEM": "الصنف"};
+const D=x=>AR[x]||x,L=(en,ar)=>LANG==="ar"?ar:en,dur2=x=>x.replace(/(\d+)d/,"$1 يوم").replace(/(\d+)h/,"$1 ساعة").replace(/(\d+)m/,"$1 دقيقة");
+const ARP=[[/^(.+?) \((\d+)\)$/,(m,a,n)=>{const r=tr1(a);return r!==a?r+" ("+n+")":m}],[/^(\d+)% complete$/,(m,a)=>a+"% مكتمل"],[/^(\d+) done$/,(m,a)=>a+" تم"],[/^(\d+) upcoming$/,(m,a)=>a+" قادم"],[/^(\d+) late$/,(m,a)=>a+" متأخر"],[/^(\d+) pcs$/,(m,a)=>a+" قطعة"],[/^(\d+) of (\d+) orders$/,(m,a,b)=>a+" من "+b+" أوردر"],
+[/^Approved by (.*)$/,(m,a)=>"اعتمد: "+a],[/^took (.*)$/,(m,a)=>"استغرق "+dur2(a)],[/^total (.*)$/,(m,a)=>"الإجمالي "+dur2(a)],[/^Completed (.*)$/,(m,a)=>"اكتمل "+a],[/^planned (.*)$/,(m,a)=>"المخطط "+a],
+[/^Currently at: (.*)$/,(m,a)=>"الحالي عند: "+D(a)],[/^From (.*)$/,(m,a)=>"من "+D(a)],[/^Order (.*) is ready for (.*)$/,(m,a,b)=>"الأوردر "+a+" جاهز لقسم "+D(b)],[/^New order for (.*)$/,(m,a)=>"أوردر جديد لقسم "+D(a)],
+[/^Copied (\d+) values from (.*)\. Review and save\.$/,(m,n,a)=>"تم نسخ "+n+" قيمة من "+D(a)+". راجعها ثم احفظ."],[/^Nothing to copy from (.*)$/,(m,a)=>"لا يوجد ما يُنسخ من "+D(a)],
+[/^Could not (save|send|add): (.*)$/,(m,w,a)=>({save:"تعذّر الحفظ: ",send:"تعذّر الإرسال: ",add:"تعذّرت الإضافة: "})[w]+a],[/^Connection error: (.*)$/,(m,a)=>"خطأ في الاتصال: "+a],[/^Tab screenshot: (.*)$/,(m,a)=>"صورة التاب: "+D(a)],
+[/^\((.*) staff\)$/,(m,a)=>"(موظفو "+D(a)+")"],[/^\((.*)\)$/,(m,a)=>D(a)!==a?"("+D(a)+")":m],[/^(\d+)% complete$/,(m,a)=>a+"% مكتمل"],
+[/^([\u2300-\u23FF\u2600-\u27BF\u29C9\u2B00-\u2BFF\uFE0F\u{1F300}-\u{1FAFF}]+) (.+)$/u,(m,e,r)=>{const t=tr1(r);return t!==r?e+" "+t:m}]];
+function tr1(t){let r=AR[t];if(r!==undefined)return r;for(const[re,f]of ARP){const m=t.match(re);if(m){const o=f(...m);if(o!==t)return o}}return t}
+function tr(s){if(LANG!=="ar"||!s)return s;const t=s.trim();if(!t)return s;let r=tr1(t);if(r===t&&t.endsWith(" \u2022")){const h=t.slice(0,-2),q=tr1(h);if(q!==h)r=q+" \u2022"}if(r===t&&t.includes(" \u2022 ")){const a=t.split(" \u2022 "),b=a.map(tr1);if(b.join()!==a.join())r=b.join(" \u2022 ")}return r===t?s:s.replace(t,r)}
+function trNode(n){const p=n.parentNode&&n.parentNode.nodeName;if(p==="SCRIPT"||p==="STYLE"||p==="TEXTAREA")return;const v=n.nodeValue,r=tr(v);if(r!==v)n.nodeValue=r}
+function trDOM(root){if(LANG!=="ar")return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())trNode(n);(root.querySelectorAll?root.querySelectorAll("[placeholder]"):[]).forEach(e=>{const v=e.getAttribute("placeholder"),r=tr(v);if(r!==v)e.setAttribute("placeholder",r)})}
+new MutationObserver(ms=>{if(LANG!=="ar")return;ms.forEach(m=>m.addedNodes.forEach(a=>{if(a.nodeType===3)trNode(a);else if(a.nodeType===1)trDOM(a)}))}).observe(document.body,{childList:true,subtree:true});
+function applyLang(){const ar=LANG==="ar";document.documentElement.lang=ar?"ar":"en";document.documentElement.dir=ar?"rtl":"ltr";$("#lgb").textContent=ar?"English":"العربية";$("#h1t").textContent=ar?"🏭 نظام أوامر التشغيل":"🏭 Work Order System"}
+function setLang(l){LANG=l;try{localStorage.setItem("lang",l)}catch(e){}applyLang();if(typeof gate!=="undefined"&&gate)showInstall();else if(!meId)showLogin();else if(!(canEdit||roles[meId]!==undefined||sigs[meId]!==undefined))pendingV();else render();trDOM(document.body)}
+applyLang();
+/* ---- install gate: on phones the app must be installed (icon + full screen) ---- */
+const UA=navigator.userAgent,IOSD=/iphone|ipad|ipod/i.test(UA)||(navigator.maxTouchPoints>1&&/Macintosh/.test(UA)),INAPP=/FBAN|FBAV|Instagram|Line\/|MicroMessenger|; wv\)/i.test(UA);
+const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||matchMedia("(display-mode: fullscreen)").matches||navigator.standalone===true;
+const webBypass=()=>{try{if(new URLSearchParams(location.search).has("web"))sessionStorage.setItem("web","1");return sessionStorage.getItem("web")==="1"}catch(e){return false}};
+const gate=!window.__nogate&&(IOSD||/android/i.test(UA))&&!isStandalone()&&!webBypass();
+function showInstall(done){
+  $("#act").innerHTML="";const ol=a=>`<ol style="padding-inline-start:20px;line-height:1.9;font-size:14px;text-align:start">${a.map(x=>"<li>"+x+"</li>").join("")}</ol>`;
+  $("#app").innerHTML=`<div class="card" style="max-width:400px;margin:24px auto;text-align:center"><img src="icons/icon-192.png" width="84" height="84" alt="" style="border-radius:20px"><h3 style="margin-top:10px">${L("Install Work Orders","ثبّت تطبيق أوامر التشغيل")}</h3><div class="mut" style="margin-bottom:12px">${L("To use the system, install it on your phone. It gets its own icon on your home screen and opens full screen like any other app.","لاستخدام النظام، ثبّته على هاتفك. ستجد له أيقونة على الشاشة الرئيسية، ويفتح بملء الشاشة مثل أي تطبيق.")}</div>`
+   +(done?`<div class="tag dn" style="margin-bottom:10px">${L("Installed","تم التثبيت")} \u2713</div><div class="mut">${L("Now open <b>Work Orders</b> from your home screen.","الآن افتح التطبيق من أيقونته على الشاشة الرئيسية.")}</div>`
+    :IOSD?ol(L(['Tap the <b>Share</b> button <span style="font-size:18px">\u2b06\ufe0f</span> at the bottom of Safari','Scroll down and tap <b>Add to Home Screen</b>','Tap <b>Add</b>','Open <b>Work Orders</b> from your home screen'],['اضغط زر <b>المشاركة</b> <span style="font-size:18px">\u2b06\ufe0f</span> أسفل متصفح Safari','مرّر للأسفل واضغط <b>إضافة إلى الشاشة الرئيسية</b> (Add to Home Screen)','اضغط <b>إضافة</b>','افتح <b>Work Orders</b> من الشاشة الرئيسية']))
+    :(ip?`<button class="b1 w" onclick="ip.prompt()">${L("Install app","تثبيت التطبيق")}</button>`:ol(L(['Tap the <b>\u22ee</b> menu in Chrome (top right)','Tap <b>Install app</b> or <b>Add to Home screen</b>','Tap <b>Install</b>','Open <b>Work Orders</b> from your home screen'],['اضغط قائمة <b>\u22ee</b> في Chrome (أعلى الشاشة)','اضغط <b>تثبيت التطبيق</b> أو <b>إضافة إلى الشاشة الرئيسية</b>','اضغط <b>تثبيت</b>','افتح <b>Work Orders</b> من الشاشة الرئيسية']))))
+   +(INAPP?`<div class="mut" style="color:var(--bad);margin-top:10px">${L("You opened this link inside another app (such as WhatsApp). Open it in Chrome or Safari first.","فتحتَ الرابط من داخل تطبيق آخر (مثل واتساب). افتحه أولًا في Chrome أو Safari.")}</div>`:"")+`</div>`}
+if(!window.FB_CONFIG||/^PASTE/.test(window.FB_CONFIG.apiKey||"")){$("#app").innerHTML='<div class="card"><h3>Setup needed</h3><div class="mut">Open <b>config.js</b> and paste your Firebase settings (see START-HERE.html, step 5), then upload it again.</div></div>';throw new Error("config.js is not set")}
+firebase.initializeApp(window.FB_CONFIG);const auth=firebase.auth();db=firebase.firestore();
+let authMode="in",unsubO=null,unsubR=null,started=false,invs={},actv={},activating=false,loginMsg="";
+const fbOut=()=>auth.signOut();
+const normPhone=s=>{let d=String(s||"").replace(/\D/g,"");if(d.startsWith("0020"))d="0"+d.slice(4);else if(d.startsWith("20")&&d.length===12)d="0"+d.slice(2);else if(d.startsWith("00"))d=d.slice(2);return d.length>=10&&d.length<=15?d:""};
+const toEmail=p=>p+"@wo.app",intl=p=>p.startsWith("0")?"2"+p:p;
+const friendly=x=>({"auth/wrong-password":"Wrong mobile number or password","auth/invalid-credential":"Wrong mobile number or password","auth/user-not-found":"Wrong mobile number or password","auth/invalid-login-credentials":"Wrong mobile number or password","auth/email-already-in-use":"This number is already activated with a different password. Ask your manager for a new activation code.","auth/weak-password":"Password must be at least 6 characters","auth/too-many-requests":"Too many attempts. Try again later."}[x.code]||x.message);
+function showLogin(m){const msg=m||loginMsg;loginMsg="";$("#act").innerHTML="";const up=authMode==="up";
+  $("#app").innerHTML=`<div class="card" style="max-width:380px;margin:30px auto"><h3>${up?"Activate your account":"Sign in"}</h3>${up?'<div class="mut" style="margin-bottom:8px">Use the mobile number and activation code your manager gave you, then choose your own password.</div><label>Full name<input id="lg_n" autocomplete="name"></label>':""}<label style="margin-top:6px">Mobile number<input id="lg_e" type="tel" inputmode="tel" autocomplete="username" placeholder="01xxxxxxxxx"></label>${up?'<label style="margin-top:6px">Activation code<input id="lg_c" inputmode="numeric" autocomplete="one-time-code"></label>':""}<label style="margin-top:6px">Password<input id="lg_p" type="password" autocomplete="${up?"new-password":"current-password"}"></label>${up?'<label style="margin-top:6px">Confirm password<input id="lg_p2" type="password" autocomplete="new-password"></label>':""}<div class="mut" style="color:var(--bad);margin:6px 0">${esc(msg)}</div><button class="b1 w" onclick="doAuth()">${up?"Activate &amp; sign in":"Sign in"}</button><div class="mut click" style="margin-top:10px;text-align:center" onclick="authMode=authMode==='in'?'up':'in';showLogin()">${up?"Already activated? Sign in":"First time? Activate your account"}</div></div>`}
+async function doAuth(){
+  const ph=normPhone(E("lg_e").value),pw=E("lg_p").value;
+  if(!ph)return showLogin("Enter a valid mobile number");if(pw.length<6)return showLogin("Password must be at least 6 characters");
+  if(authMode==="in"){try{await auth.signInWithEmailAndPassword(toEmail(ph),pw)}catch(x){showLogin(friendly(x))}return}
+  const n=E("lg_n").value.trim(),c=E("lg_c").value.trim(),p2=E("lg_p2").value;
+  if(!n)return showLogin("Enter your full name");if(!c)return showLogin("Enter the activation code");if(pw!==p2)return showLogin("Passwords do not match");
+  activating=true;let cred;
+  try{try{cred=await auth.createUserWithEmailAndPassword(toEmail(ph),pw)}catch(e){if(e.code==="auth/email-already-in-use")cred=await auth.signInWithEmailAndPassword(toEmail(ph),pw);else throw e}
+    try{await db.doc("users/"+ph).set({name:n,phone:ph,code:c})}catch(e){try{await cred.user.delete()}catch(x){await auth.signOut()}activating=false;return showLogin("Invalid activation code for this number. Ask your manager.")}
+    activating=false;boot(auth.currentUser)}
+  catch(x){activating=false;showLogin(friendly(x))}
+}
+function pendingV(){$("#act").innerHTML='<div class="mut">'+esc(me.name)+' \u2022 <a href="#" onclick="fbOut();return false">Sign out</a></div>';$("#app").innerHTML='<div class="card"><h3>No permissions yet</h3><div class="mut">Your account is active but the manager has not given you access. Ask the manager to add your number from the Users screen, then reload this page.</div></div>'}
+async function boot(u){
+  if(unsubO){unsubO();unsubO=null}if(unsubR){unsubR();unsubR=null}unsubs.forEach(f=>f());unsubs=[];lastKey="";started=false;
+  if(!u){me={name:""};meId=null;canEdit=false;return showLogin()}
+  const ph=(u.email||"").split("@")[0];let ud=null;try{ud=await db.doc("users/"+ph).get()}catch(e){}
+  if(!ud||!ud.exists){loginMsg="This number is not activated yet. Tap \"First time? Activate your account\" and enter the activation code you received.";await auth.signOut();return}
+  meId=ph;me={id:ph,name:ud.data().name||ph};
+  try{canEdit=(await db.doc("admins/"+ph).get()).exists}catch(e){canEdit=false}
+  U={profiles:async ids=>{const r={};await Promise.all(ids.map(async i=>{const d=await db.doc("users/"+i).get();actv[i]=d.exists;let nm=d.exists?d.data().name:"";try{const v=await db.doc("invites/"+i).get();if(v.exists){invs[i]=v.data();nm=nm||v.data().name}}catch(e){}r[i]={name:nm}}));return r}};
+  unsubR=db.doc("roles/map").onSnapshot(d=>{
+    if(view==="users")return;
+    const dd=d.exists?d.data()||{}:{};roles=dd.assign||{};sigs=dd.sigs||{};
+    if(!(canEdit||roles[meId]!==undefined||sigs[meId]!==undefined))return pendingV();
+    if(!landed&&!canEdit&&myD().length){landed=true;flt="mine";view=myD().length===1?"dept":"depts";dk=myD()[0];dtab="act"}else if(!landed&&!canEdit&&mySig().length){landed=true;flt="sign"}
+    startData();render();
+  },e=>toast("Connection error: "+e.code));
+}
+if(gate)showInstall();else auth.onAuthStateChanged(u=>{if(!activating)boot(u)});
+</script></body></html>
