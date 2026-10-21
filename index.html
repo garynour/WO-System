@@ -121,6 +121,7 @@ const $=s=>document.querySelector(s),E=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const today=()=>new Date().toISOString().slice(0,10),fmt=s=>s?new Date(s).toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"}):"";
 const sn=k=>(ST.find(s=>s[0]===k)||[k,k])[1],N=v=>+v||0,qa=c=>Array.isArray(c.q)?c.q:Object.values(c.q||{});
+const rq=r=>Array.isArray(r)?r:((r||{}).q||[]);
 const tot=o=>(o.colors||[]).reduce((a,c)=>a+qa(c).reduce((x,y)=>x+N(y),0),0);
 const cs=o=>o.order.find(k=>!(o.stages[k]||{}).done)||null;
 const prog=o=>Math.round(100*o.order.filter(k=>(o.stages[k]||{}).done).length/o.order.length);
@@ -139,7 +140,7 @@ function mxH(o,k,p,sec,d){
   let cl=o.colors||[];if(ed&&!cl.length)cl=[{},{}];if(!cl.length)return '<div class="mut">No colors defined in Planning yet.</div>';
   const v=d[sec.id]||[],r8=[0,1,2,3,4,5,6,7];
   const rows=cl.map((c,i)=>ed?`<tr class="mr"><td>${I("c1",c.c1||c.name)}</td><td>${I("c2",c.c2)}</td><td>${I("ct",c.t,'type="number" onchange="dist(this)"')}</td>${r8.map(j=>`<td>${I("q",qa(c)[j],'type="number"')}</td>`).join("")}</tr>`
-   :`<tr class="mr"><td>${esc(c.c1||c.name)}</td><td>${esc(c.c2)}</td><td class="ct"></td>${r8.map(j=>`<td>${I("q",(v[i]||[])[j],'type="number"')}</td>`).join("")}</tr>`).join("");
+   :`<tr class="mr"><td>${esc(c.c1||c.name)}</td><td>${esc(c.c2)}</td><td class="ct"></td>${r8.map(j=>`<td>${I("q",rq(v[i])[j],'type="number"')}</td>`).join("")}</tr>`).join("");
   return `<div class="sc"><table class="mx" data-s="${p}${sec.id}" oninput="if(event.target.classList.contains('q'))rc(this)"><tr><th>Color 1</th><th>Color 2</th><th>QTY</th>${sz.map(z=>`<th>${ed?I("sz",z):esc(z)}</th>`).join("")}</tr>
   <tr><td colspan="3"><b>RATIO</b></td>${rt.map(r=>`<td>${ed?I("rt",r,'type="number"'):esc(r)}</td>`).join("")}</tr>${rows}<tr class="mt"><td colspan="2">TOTAL</td><td class="cT"></td>${r8.map(()=>'<td class="cq"></td>').join("")}</tr></table></div>`+(ed?`<button class="b2" onclick="addRow(this)">+ Add color</button>`:"")+(!RO&&!ed?`<button class="b2" onclick="fillPlan('${p}${sec.id}')">Fill from plan</button>`:"");
 }
@@ -175,7 +176,7 @@ function collect(o,k,p){
       const rows=[...t.querySelectorAll("tr.mr")];
       if(k==="PLANNING"){m.sz=[...t.querySelectorAll(".sz")].map(i=>i.value);m.rt=[...t.querySelectorAll(".rt")].map(i=>i.value);
         m.colors=rows.map(r=>({c1:r.querySelector(".c1").value.trim(),c2:r.querySelector(".c2").value.trim(),t:r.querySelector(".ct").value,q:[...r.querySelectorAll(".q")].map(i=>i.value)})).filter(c=>c.c1||c.c2||c.t)}
-      else d[c.id]=rows.map(r=>[...r.querySelectorAll(".q")].map(i=>i.value))}
+      else d[c.id]=rows.map(r=>({q:[...r.querySelectorAll(".q")].map(i=>i.value)}))}
     else if(c.t==="t"){const t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!t)return;
       d[c.id]=[...t.querySelectorAll("tbody tr")].map(r=>{const x={};r.querySelectorAll("input").forEach(i=>x[i.dataset.c]=i.value);return x}).filter(x=>Object.values(x).some(v=>v))}
   });
@@ -230,7 +231,7 @@ function copyFrom(oid,k,p){
     if(c.t==="h"||c.t==="k")c.f.forEach(f=>{const id=f.split("|")[0].split(":")[0];if(!id.startsWith("m.")&&!/^(plan|act|rd|dd|di|do|ti|to)$/.test(id))put(p+"f_"+id,sd[id])});
     else if(c.t==="n")put(p+"n_"+c.id,sd[c.id]);
     else if(c.t==="t"){const o2=SCH[src].find(x=>x.t==="t"&&x.id===c.id),rows=sd[c.id]||[],t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!o2||ids(c)!==ids(o2)||!t||!rows.length)return;const tb=t.querySelector("tbody");while(tb.children.length<rows.length){const r=tb.lastElementChild.cloneNode(true);r.querySelectorAll("input").forEach(i=>i.value="");tb.appendChild(r)}[...tb.children].forEach((r,i)=>r.querySelectorAll("input").forEach(inp=>{const v=(rows[i]||{})[inp.dataset.c];if(v!==undefined&&v!==""){inp.value=v;n++}}));ft(t)}
-    else if(c.t==="m"&&k!=="PLANNING"){const rows=sd[c.id],t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!rows||!t||!SCH[src].some(x=>x.t==="m"&&x.id===c.id))return;t.querySelectorAll("tr.mr").forEach((r,i)=>r.querySelectorAll(".q").forEach((e,j)=>{const v=(rows[i]||[])[j];if(v!==undefined&&v!==""){e.value=v;n++}}));rc(t)}
+    else if(c.t==="m"&&k!=="PLANNING"){const rows=sd[c.id],t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!rows||!t||!SCH[src].some(x=>x.t==="m"&&x.id===c.id))return;t.querySelectorAll("tr.mr").forEach((r,i)=>r.querySelectorAll(".q").forEach((e,j)=>{const v=rq(rows[i])[j];if(v!==undefined&&v!==""){e.value=v;n++}}));rc(t)}
   });
   toast(n?"Copied "+n+" values from "+sn(src)+". Review and save.":"Nothing to copy from "+sn(src))}
 const fitImg=cv=>{let c=cv;for(let a=0;a<5;a++){for(let q=.8;q>=.4;q-=.1){const u=c.toDataURL("image/jpeg",q);if(u.length<900000)return u}const n=document.createElement("canvas");n.width=Math.round(c.width*.75);n.height=Math.round(c.height*.75);n.getContext("2d").drawImage(c,0,0,n.width,n.height);c=n}return null};
