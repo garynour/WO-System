@@ -155,8 +155,8 @@ main{padding-bottom:118px}#toast{bottom:calc(114px + env(safe-area-inset-bottom,
 .phall-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd)}
 .phall-nm{font-size:16px;font-weight:800;color:var(--tx)}
 .phall-pct{font-size:24px;font-weight:900;letter-spacing:-.02em}
-:root{--p-ok:#1f8f5f;--p-amb:#d97706;--p-bad:#d6534b;--p-mut:#647580;--p-bon:#2b7a69}
-:root[data-theme="dark"]{--p-ok:#34d399;--p-amb:#fbbf24;--p-bad:#f87171;--p-mut:#9fb3bf;--p-bon:#5eead4}
+:root{--p-ok:#0ea30e;--p-ok-b:#12b812;--p-amb:#df8600;--p-amb-b:#ea920c;--p-bad:#e55b5b;--p-bad-b:#ef6d6d;--p-mut:#647580;--p-bon:#2b7a69}
+:root[data-theme="dark"]{--p-ok:#16c716;--p-ok-b:#16c716;--p-amb:#f29d18;--p-amb-b:#f29d18;--p-bad:#f27272;--p-bad-b:#f27272;--p-mut:#9fb3bf;--p-bon:#5eead4}
 .ptiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media(min-width:720px){.ptiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .ptile{background:linear-gradient(145deg,#f3f8fb 0%,#e7f0f6 100%);border:1px solid #cfe0ea;border-radius:18px;padding:16px;color:#1f3644;cursor:pointer;transition:transform .14s,border-color .14s,background .14s,box-shadow .14s;box-shadow:0 3px 12px rgba(47,86,104,.08)}
@@ -166,7 +166,7 @@ main{padding-bottom:118px}#toast{bottom:calc(114px + env(safe-area-inset-bottom,
 .ptile .pic{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:10px;background:rgba(47,86,104,.1);color:#2f5668;flex-shrink:0}
 .ptile .pnm{font-size:15px;font-weight:700;color:#1f3644;margin-bottom:4px}
 .ptile .ppct{font-size:34px;font-weight:800;line-height:1.08;letter-spacing:-.02em;margin-bottom:10px}
-.ptile .pbar{height:7px;border-radius:999px;background:#d3e2ec;overflow:hidden;margin-bottom:10px}
+.ptile .pbar{height:8px;border-radius:999px;background:#bfd3e2;overflow:hidden;margin-bottom:10px}
 .ptile .pbar i{display:block;height:100%;border-radius:999px}
 .ptile .ppts{font-size:12px;color:#556b78;line-height:1.35;font-weight:500}
 :root[data-theme="dark"] .ptile{background:linear-gradient(145deg,#243440 0%,#1e2c36 100%);border-color:#354b5c;color:#eaf2f6;box-shadow:0 4px 14px rgba(0,0,0,.24)}
@@ -174,7 +174,7 @@ main{padding-bottom:118px}#toast{bottom:calc(114px + env(safe-area-inset-bottom,
 :root[data-theme="dark"] .ptile .ptop,:root[data-theme="dark"] .ptile .ppts{color:#a3bac7}
 :root[data-theme="dark"] .ptile .ptop b,:root[data-theme="dark"] .ptile .pnm{color:#eaf2f6}
 :root[data-theme="dark"] .ptile .pic{background:rgba(159,214,229,.14);color:#9fd6e5}
-:root[data-theme="dark"] .ptile .pbar{background:rgba(255,255,255,.11)}
+:root[data-theme="dark"] .ptile .pbar{background:rgba(255,255,255,.14)}
 .ptabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 12px}
 .ptabs button{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer}
 .ptabs button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
@@ -183,6 +183,9 @@ main{padding-bottom:118px}#toast{bottom:calc(114px + env(safe-area-inset-bottom,
 .pkpi{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
 .pkpi .kl{font-size:11px;color:var(--mut)}
 .pkpi .kv{font-size:20px;font-weight:800;margin-top:2px}
+.pkpi .pbar{height:8px;border-radius:999px;background:#bfd3e2;overflow:hidden;margin-top:8px}
+.pkpi .pbar i{display:block;height:100%;border-radius:999px}
+:root[data-theme="dark"] .pkpi .pbar{background:rgba(255,255,255,.14)}
 .pmbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .pmnav{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:4px 8px}
 .pmnav input[type=month]{border:0;background:transparent;color:var(--tx);font-weight:700;font-size:13px;padding:4px;width:auto}
@@ -323,7 +326,7 @@ alerts:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=
 prod:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5h16"/><rect x="5.5" y="12.5" width="3" height="7" rx="0.8"/><rect x="10.5" y="9" width="3" height="10.5" rx="0.8"/><rect x="15.5" y="5" width="3" height="14.5" rx="0.8"/><path d="M5.5 9.5l5-3 4.5 1.5 3.5-4"/><path d="M16 4h2.5v2.5"/></svg>',
 menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h14"/></svg>',
 plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'};
-function prodDepts(){if(canEdit||isOwner||myD().includes("PLANNING")||mySig().some(s=>s==="GM"||s==="QFM"))return["SEWING","CUTTING","PRINTING"];return["SEWING","CUTTING","PRINTING"].filter(d=>d==="SEWING"?(myD().includes("SEWING")||myD().includes("PACKING")||mySig().includes("SFM")):myD().includes(d))}
+function prodDepts(){if(canEdit||isOwner||myD().includes("PLANNING")||mySig().some(s=>s==="GM"||s==="QFM"))return["SEWING","CUTTING","PRINTING"];return["SEWING","CUTTING","PRINTING"].filter(d=>d==="SEWING"?(myD().includes("SEWING")||myD().includes("PACKING")||mySig().includes("SFM")):d==="PRINTING"?(myD().includes("PRINTING")||myD().includes("DTF")):myD().includes(d))}
 const canViewProd=()=>prodDepts().length>0,canEditTgt=()=>Boolean(canEdit||isOwner||myD().includes("PLANNING"));
 function nav(){
   syncTopBell();
@@ -597,13 +600,34 @@ function ordFinalClosedAt(o){
   (o.order||[]).forEach(k=>{const s=(o.stages||{})[k]||{};const ts=s.closed_at||s.at||"";if(ts&&ts>latest)latest=ts});
   return latest||(((o.stages||{}).SEWING||{}).closed_at)||(((o.stages||{}).SEWING||{}).at)||"";
 }
-function extractClosed(o,dept,useQ){
-  if(!(o.order||[]).includes(dept))return null;
-  if(dept==="SEWING"&&!isOrdDone(o))return null;
-  const st=(o.stages||{})[dept];if(!st||!st.done||st.reopened)return null;
+function prnStgQty(d,o){
+  const pr=mxSum(d.pr),gb=pNum(d.g1b),g1=pNum(d.g1),ci=mxSum(d.ci),raw=pr>0?pr:gb>0?gb:g1>0?g1:ci;
+  if(raw>0)return raw;
+  if(pNum(d.pp)>0){const srG1=pNum((((o.stages||{}).SORTING||{}).d||{}).g1);return srG1>0?srG1:tot(o)}
+  return 0;
+}
+function extractClosedList(o,dept,useQ){
+  const qRaw=(((o.stages||{}).QUALITY||{}).d||{}).sc??((((o.stages||{}).GRADEB||{}).d||{}).sc);
+  if(dept==="PRINTING"){
+    const cands=[];
+    ["PRINTING","DTF"].forEach(sk=>{
+      if(!(o.order||[]).includes(sk))return;
+      const st=(o.stages||{})[sk];if(!st||!st.done||st.reopened)return;
+      const d=st.d||{},sigA=d.sig_a&&typeof d.sig_a==="object"?d.sig_a.at:"",rawAt=st.closed_at||st.at||sigA||d.act||d.dd||"";
+      const cDate=cairoDateOf(rawAt),cMonth=cairoMonthOf(rawAt);if(!cMonth)return;
+      const lineNo=normLn(d.ln,"PRINTING"),pt=pNum(d.pp),qty=prnStgQty(d,o),qf=useQ?parseQS(qRaw??d.qs):1,totPts=Math.round(pt*qty*qf);
+      cands.push({orderId:o.id,po:o.po||"",co:o.co||"",item:o.item||"",department:"PRINTING",sourceStage:sk,lineNo,qty,pointValue:pt,qScoreFactor:qf,totalPoints:totPts,closedAt:String(rawAt),closedDate:cDate,closedMonth:cMonth});
+    });
+    if(cands.length<=1)return cands;
+    const withPts=cands.filter(c=>c.pointValue>0);
+    return withPts.length>0?withPts:[cands[0]];
+  }
+  if(!(o.order||[]).includes(dept))return[];
+  if(dept==="SEWING"&&!isOrdDone(o))return[];
+  const st=(o.stages||{})[dept];if(!st||!st.done||st.reopened)return[];
   const d=st.d||{},sigA=d.sig_a&&typeof d.sig_a==="object"?d.sig_a.at:"";
   const rawAt=dept==="SEWING"?(ordFinalClosedAt(o)||st.closed_at||st.at||sigA||d.act||d.dd||""):(st.closed_at||st.at||sigA||d.act||d.dd||"");
-  const cDate=cairoDateOf(rawAt),cMonth=cairoMonthOf(rawAt);if(!cMonth)return null;
+  const cDate=cairoDateOf(rawAt),cMonth=cairoMonthOf(rawAt);if(!cMonth)return[];
   let lineNo="UNASSIGNED",pt=0,qty=0;
   if(dept==="SEWING"){
     const pk=((o.stages||{}).PACKING||{}).d||{},sr=((o.stages||{}).SORTING||{}).d||{};
@@ -612,14 +636,11 @@ function extractClosed(o,dept,useQ){
     qty=pg1>0?pg1:pf1>0?pf1:sg1>0?sg1:ssi;
   }else if(dept==="CUTTING"){
     lineNo=normLn(d.cl||d.ln,"CUTTING");pt=pNum(d.cp);const ci=mxSum(d.ci);qty=ci>0?ci:pNum(d.tt);
-  }else if(dept==="PRINTING"){
-    lineNo=normLn(d.ln,"PRINTING");pt=pNum(d.pp);const pr=mxSum(d.pr),gb=pNum(d.g1b),g1=pNum(d.g1),ci=mxSum(d.ci);
-    qty=pr>0?pr:gb>0?gb:g1>0?g1:ci;
   }
-  const qRaw=(((o.stages||{}).QUALITY||{}).d||{}).sc??((((o.stages||{}).GRADEB||{}).d||{}).sc);
   const qf=useQ?parseQS(qRaw??d.qs):1,totPts=Math.round(pt*qty*qf);
-  return{orderId:o.id,po:o.po||"",co:o.co||"",item:o.item||"",department:dept,lineNo,qty,pointValue:pt,qScoreFactor:qf,totalPoints:totPts,closedAt:String(rawAt),closedDate:cDate,closedMonth:cMonth};
+  return[{orderId:o.id,po:o.po||"",co:o.co||"",item:o.item||"",department:dept,sourceStage:dept,lineNo,qty,pointValue:pt,qScoreFactor:qf,totalPoints:totPts,closedAt:String(rawAt),closedDate:cDate,closedMonth:cMonth}];
 }
+function extractClosed(o,dept,useQ){const ls=extractClosedList(o,dept,useQ);return ls.length?ls[0]:null}
 function buildHalls(dept,lines,expHalls){
   if(dept!=="SEWING")return[];
   const hm=new Map();
@@ -652,7 +673,7 @@ function liveMonthProd(ym){
       if(!lMap.has(ln))lMap.set(ln,{hall:hl,target:0,models:[],bonuses:[]});
       const rec=lMap.get(ln);rec.target=Math.max(0,pNum(t.target_points));if(hl)rec.hall=hl;
     });
-    ALL_ORD.forEach(o=>{const m=extractClosed(o,dept,!!PCFG.useQScore);if(!m||m.closedMonth!==ym)return;if(!lMap.has(m.lineNo)){const hl=defHallFor(dept,m.lineNo);if(hl&&hl!=="UNASSIGNED")expHalls.add(hl);lMap.set(m.lineNo,{hall:hl,target:0,models:[],bonuses:[]})}lMap.get(m.lineNo).models.push(m)});
+    ALL_ORD.forEach(o=>{extractClosedList(o,dept,!!PCFG.useQScore).forEach(m=>{if(!m||m.closedMonth!==ym)return;if(!lMap.has(m.lineNo)){const hl=defHallFor(dept,m.lineNo);if(hl&&hl!=="UNASSIGNED")expHalls.add(hl);lMap.set(m.lineNo,{hall:hl,target:0,models:[],bonuses:[]})}lMap.get(m.lineNo).models.push(m)})});
     BONS.filter(b=>b.month===ym&&b.department===dept).forEach(b=>{
       const ln=normLn(b.line_no,dept),hl=normHall(b.hall)||defHallFor(dept,ln);
       if(hl&&hl!=="UNASSIGNED")expHalls.add(hl);
@@ -680,7 +701,7 @@ function snapToProd(snap){
     const lines=(snap.lines||[]).filter(l=>l.department===dept).map(l=>{
       const ln=normLn(l.line_no,dept),hl=normHall(l.hall)||defHallFor(dept,ln);
       const pts=pNum(l.points),tgt=pNum(l.target),bPts=pNum(l.bonus_points);
-      return{department:dept,lineNo:ln,hall:hl||undefined,month:snap.month,points:pts,bonusPoints:bPts,bonuses:l.bonuses||[],target:tgt,achievementPct:l.achievement_pct==null?(tgt>0?Math.round((pts/tgt)*100):null):l.achievement_pct,modelsCount:l.models_count||(l.closed_models||[]).length,closedModels:(l.closed_models||[]).map(m=>({orderId:m.orderId||m.oid,po:m.po||"",co:m.co||"",item:m.item||"",department:dept,lineNo:normLn(m.lineNo||m.line_no||ln,dept),qty:pNum(m.qty),pointValue:pNum(m.pointValue??m.point),totalPoints:pNum(m.totalPoints??m.points),closedAt:m.closedAt||m.closed_at||"",closedDate:m.closedDate||m.closed_date||""}))};
+      return{department:dept,lineNo:ln,hall:hl||undefined,month:snap.month,points:pts,bonusPoints:bPts,bonuses:l.bonuses||[],target:tgt,achievementPct:l.achievement_pct==null?(tgt>0?Math.round((pts/tgt)*100):null):l.achievement_pct,modelsCount:l.models_count||(l.closed_models||[]).length,closedModels:(l.closed_models||[]).map(m=>({orderId:m.orderId||m.oid,po:m.po||"",co:m.co||"",item:m.item||"",department:dept,sourceStage:m.sourceStage||m.source_stage||dept,lineNo:normLn(m.lineNo||m.line_no||ln,dept),qty:pNum(m.qty),pointValue:pNum(m.pointValue??m.point),totalPoints:pNum(m.totalPoints??m.points),closedAt:m.closedAt||m.closed_at||"",closedDate:m.closedDate||m.closed_date||""}))};
     }).sort((a,b)=>a.lineNo==="UNASSIGNED"?1:b.lineNo==="UNASSIGNED"?-1:a.lineNo.localeCompare(b.lineNo,undefined,{numeric:true}));
     const halls=buildHalls(dept,lines,[]);
     const sumTgt=lines.reduce((s,l)=>s+l.target,0),dTgt=ovrs[dept]!=null?pNum(ovrs[dept]):sumTgt;
@@ -709,7 +730,7 @@ async function prodAutoRollover(){
   if(cairoRolloverReady()){
     const cand=new Set([shiftYM(curM,-1)]);
     TGTS.forEach(t=>{if(t.month&&t.month<curM)cand.add(t.month)});
-    ALL_ORD.forEach(o=>["SEWING","CUTTING","PRINTING"].forEach(d=>{const m=extractClosed(o,d,!!PCFG.useQScore);if(m&&m.closedMonth<curM)cand.add(m.closedMonth)}));
+    ALL_ORD.forEach(o=>["SEWING","CUTTING","PRINTING"].forEach(d=>{extractClosedList(o,d,!!PCFG.useQScore).forEach(m=>{if(m&&m.closedMonth<curM)cand.add(m.closedMonth)})}));
     for(const m of [...cand].sort()){
       if(m<curM&&!SNAPS[m]){
         const prevM=shiftYM(curM,-1),snap=buildSnapDoc(m,me.name||"auto-rollover");
@@ -733,6 +754,7 @@ async function prodAutoRollover(){
 let pMonth="",pTab="dash",pDept=null,pLine=null,pCmpA="",pCmpB="",pH={m:"",d:"ALL",ln:"",po:"",f:"",t:""},pPrnHtml="";
 let pEdDeptTgt=false,pEdLineTgt=false,pAddHallOpen=false,pAddLineOpen=false,pAddBonOpen=false,pEdPtOid=null;
 function pClr(pct){if(pct==null)return"var(--p-mut)";if(pct>=(PCFG.greenThreshold||90))return"var(--p-ok)";if(pct>=(PCFG.amberThreshold||75))return"var(--p-amb)";return"var(--p-bad)"}
+function pBarClr(pct){if(pct==null)return"var(--p-mut)";if(pct>=(PCFG.greenThreshold||90))return"var(--p-ok-b)";if(pct>=(PCFG.amberThreshold||75))return"var(--p-amb-b)";return"var(--p-bad-b)"}
 const P_ICO={SEWING:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L7 21l-4-1 1-4L17 3z"/><path d="M14 6l4 4"/><path d="M3 14c4-2 6 2 10 0"/></svg>',CUTTING:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg>',PRINTING:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg>'};
 async function ensureDeptDefaultTgts(ym,dept){
   const hasAny=TGTS.some(t=>t.month===ym&&t.department===dept&&t.line_no!==DEPT_TGT_KEY&&!String(t.line_no||"").startsWith(HALL_PREF));
@@ -797,13 +819,13 @@ async function delBonus(id){
   if(!canEditTgt())return;
   try{await db.doc("line_bonuses/"+id).delete();toast("Bonus deleted ✓")}catch(e){toast("Could not delete: "+(e.message||e.code))}
 }
-async function saveClosedModelPt(oid,dept){
+async function saveClosedModelPt(oid,stageKey){
   if(!canEditTgt())return toast("You do not have permission");
   const ym=pMonth||cairoCurMonth();if(ym<cairoCurMonth()&&SNAPS[ym])return toast("Archived months are locked read-only.");
-  const el=E("mpt_"+oid);if(!el)return;
-  const nPt=Math.max(0,pNum(el.value)),fld=dept==="SEWING"?"sp":dept==="CUTTING"?"cp":"pp";
+  const el=E("mpt_"+oid+"_"+stageKey)||E("mpt_"+oid);if(!el)return;
+  const nPt=Math.max(0,pNum(el.value)),fld=stageKey==="SEWING"?"sp":stageKey==="CUTTING"?"cp":"pp";
   try{
-    await db.doc("stages/"+oid+"_"+dept).set({oid,dept,done:true,d:{[fld]:String(nPt)}},{merge:true});
+    await db.doc("stages/"+oid+"_"+stageKey).set({oid,dept:stageKey,done:true,d:{[fld]:String(nPt)}},{merge:true});
     pEdPtOid=null;toast("Point updated ✓");render();
   }catch(e){toast("Could not save: "+(e.message||e.code))}
 }
@@ -815,14 +837,14 @@ function buildProdRepHtml(ym){const mp=getMonthProd(ym),al=prodDepts();let rows=
 function dlProdXls(){const ym=pMonth||cairoCurMonth(),h=buildProdRepHtml(ym),b=new Blob(["\ufeff"+h],{type:"application/vnd.ms-excel;charset=utf-8"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="WOS-Productivity-"+ym+".xls";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500)}
 function openProdPrint(){pPrnHtml=buildProdRepHtml(pMonth||cairoCurMonth());render()}
 function queryProdHist(){
-  const al=prodDepts(),curM=cairoCurMonth(),months=pH.m?[pH.m]:[...new Set([curM,...Object.keys(SNAPS),...ALL_ORD.flatMap(o=>al.map(d=>(extractClosed(o,d,!!PCFG.useQScore)||{}).closedMonth).filter(Boolean))])].sort((a,b)=>b.localeCompare(a));
+  const al=prodDepts(),curM=cairoCurMonth(),months=pH.m?[pH.m]:[...new Set([curM,...Object.keys(SNAPS),...ALL_ORD.flatMap(o=>al.flatMap(d=>extractClosedList(o,d,!!PCFG.useQScore).map(x=>x.closedMonth)).filter(Boolean))])].sort((a,b)=>b.localeCompare(a));
   const out=[];
   months.forEach(ym=>{const mp=getMonthProd(ym);al.forEach(d=>{if(pH.d!=="ALL"&&pH.d!==d)return;(mp[d].lines||[]).forEach(l=>(l.closedModels||[]).forEach(m=>{if(pH.ln&&!m.lineNo.toLowerCase().includes(pH.ln.trim().toLowerCase()))return;if(pH.po&&!(m.po+" "+m.co+" "+m.item).toLowerCase().includes(pH.po.trim().toLowerCase()))return;if(pH.f&&m.closedDate<pH.f)return;if(pH.t&&m.closedDate>pH.t)return;out.push(m)}))})});
   return out.sort((a,b)=>b.closedAt.localeCompare(a.closedAt));
 }
 function renderLineTile(l){
-  const lc=pClr(l.achievementPct),lw=l.achievementPct==null?0:Math.max(0,Math.min(100,l.achievementPct)),lbl=l.lineNo==="UNASSIGNED"?"Unassigned":l.lineNo;
-  return `<div class="ptile" onclick="pLine='${esc(l.lineNo)}';pEdLineTgt=false;pAddBonOpen=false;pEdPtOid=null;render()"><div class="ptop"><b>${esc(lbl)}</b><span>${l.modelsCount} models</span></div><div class="ppct" style="color:${lc}">${l.achievementPct==null?"No target":Math.round(l.achievementPct)+"%"}</div><div class="pbar"><i style="width:${lw}%;background:${lc}"></i></div><div class="ppts">${fmtNum(l.points)} / ${fmtNum(l.target)} pts${l.bonusPoints?`<br><span style="color:var(--p-bon);font-weight:700">+ Bonus: ${fmtNum(l.bonusPoints)} pts</span>`:""}</div></div>`;
+  const lc=pClr(l.achievementPct),lbc=pBarClr(l.achievementPct),lw=l.achievementPct==null?0:Math.max(0,Math.min(100,l.achievementPct)),lbl=l.lineNo==="UNASSIGNED"?"Unassigned":l.lineNo;
+  return `<div class="ptile" onclick="pLine='${esc(l.lineNo)}';pEdLineTgt=false;pAddBonOpen=false;pEdPtOid=null;render()"><div class="ptop"><b>${esc(lbl)}</b><span>${l.modelsCount} models</span></div><div class="ppct" style="color:${lc}">${l.achievementPct==null?"No target":Math.round(l.achievementPct)+"%"}</div><div class="pbar"><i style="width:${lw}%;background:${lbc}"></i></div><div class="ppts">${fmtNum(l.points)} / ${fmtNum(l.target)} pts${l.bonusPoints?`<br><span style="color:var(--p-bon);font-weight:700">+ Bonus: ${fmtNum(l.bonusPoints)} pts</span>`:""}</div></div>`;
 }
 function prodV(){
   const curM=cairoCurMonth();if(!pMonth)pMonth=curM;if(!pCmpA)pCmpA=curM;if(!pCmpB)pCmpB=shiftYM(curM,-1);
@@ -833,24 +855,24 @@ function prodV(){
   let body="";
   if(pTab==="dash"){
     if(!pDept){
-      body=`<div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between"><b>Production dashboard</b><span class="mut">${esc(fmtYM(pMonth))}</span></div><div class="ptiles">${al.map(d=>{const s=mp[d],c=pClr(s.achievementPct),w=s.achievementPct==null?0:Math.max(0,Math.min(100,s.achievementPct));return `<div class="ptile" onclick="pDept='${d}';pLine=null;pEdDeptTgt=false;pAddHallOpen=false;pAddLineOpen=false;render()"><div class="ptop"><span class="pic">${P_ICO[d]}</span><span>${s.linesCount} lines</span></div><div class="pnm">${sn(d)}</div><div class="ppct" style="color:${c}">${s.achievementPct==null?"—":Math.round(s.achievementPct)+"%"}</div><div class="pbar"><i style="width:${w}%;background:${c}"></i></div><div class="ppts">${fmtNum(s.points)} / ${fmtNum(s.target)}<br>pts</div></div>`}).join("")}</div><div class="mut" style="margin-top:10px">Tap a department to see its lines</div>`;
+      body=`<div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between"><b>Production dashboard</b><span class="mut">${esc(fmtYM(pMonth))}</span></div><div class="ptiles">${al.map(d=>{const s=mp[d],c=pClr(s.achievementPct),bc=pBarClr(s.achievementPct),w=s.achievementPct==null?0:Math.max(0,Math.min(100,s.achievementPct));return `<div class="ptile" onclick="pDept='${d}';pLine=null;pEdDeptTgt=false;pAddHallOpen=false;pAddLineOpen=false;render()"><div class="ptop"><span class="pic">${P_ICO[d]}</span><span>${s.linesCount} lines</span></div><div class="pnm">${sn(d)}</div><div class="ppct" style="color:${c}">${s.achievementPct==null?"—":Math.round(s.achievementPct)+"%"}</div><div class="pbar"><i style="width:${w}%;background:${bc}"></i></div><div class="ppts">${fmtNum(s.points)} / ${fmtNum(s.target)}<br>pts</div></div>`}).join("")}</div><div class="mut" style="margin-top:10px">Tap a department to see its lines</div>`;
     }else if(!pLine){
-      const s=mp[pDept],c=pClr(s.achievementPct),halls=s.halls||[];
+      const s=mp[pDept],c=pClr(s.achievementPct),bc=pBarClr(s.achievementPct),dw=s.achievementPct==null?0:Math.max(0,Math.min(100,s.achievementPct)),halls=s.halls||[];
       const mngBar=canMng?`<div class="row noprint" style="justify-content:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:10px"><button class="b2" style="margin:0" onclick="pEdDeptTgt=!pEdDeptTgt;render()">Edit department target</button>${pDept==="SEWING"?`<button class="b2" style="margin:0" onclick="pAddHallOpen=!pAddHallOpen;render()">+ Add hall</button>`:""}<button class="b2" style="margin:0" onclick="pAddLineOpen=!pAddLineOpen;render()">+ Add line</button></div>`:"";
       const deptTgtBox=canMng&&pEdDeptTgt?`<div class="card noprint"><div class="row" style="flex-wrap:wrap;gap:8px"><label style="flex:1;min-width:180px">Target points (${sn(pDept)})<input id="dt_v" type="number" inputmode="numeric" value="${esc(s.target)}"></label><div style="display:flex;gap:6px;align-self:flex-end"><button class="b1 b2" style="margin:0" onclick="saveDeptTgtOvr('${pDept}',E('dt_v').value)">Save target</button>${s.hasCustomDeptTarget?`<button class="b2" style="margin:0" onclick="resetDeptTgtOvr('${pDept}')">Reset to lines sum</button>`:""}<button class="b2" style="margin:0" onclick="pEdDeptTgt=false;render()">Cancel</button></div></div></div>`:"";
       const addHallBox=canMng&&pDept==="SEWING"&&pAddHallOpen?`<div class="card noprint"><div class="row" style="flex-wrap:wrap;gap:8px"><label style="flex:1;min-width:180px">Hall name<input id="nh_nm" placeholder="Hall 4"></label><div style="display:flex;gap:6px;align-self:flex-end"><button class="b1 b2" style="margin:0" onclick="addSewHall()">Add hall</button><button class="b2" style="margin:0" onclick="pAddHallOpen=false;render()">Cancel</button></div></div></div>`:"";
       const hallOpts=["Hall 1","Hall 2","Hall 3",...halls.map(h=>h.hall).filter(h=>h&&h!=="UNASSIGNED")].filter((v,i,a)=>a.indexOf(v)===i);
       const addLineBox=canMng&&pAddLineOpen?`<div class="card noprint"><div class="g"><label>Line<input id="nl_nm" placeholder="${pDept==="SEWING"?"Swing 7":pDept==="CUTTING"?"Cutting 3":"Print 4"}"></label>${pDept==="SEWING"?`<label>Hall (for Sewing)<select id="nl_hl">${hallOpts.map(h=>`<option value="${esc(h)}">${esc(h)}</option>`).join("")}</select></label>`:""}<label>Target points<input id="nl_tg" type="number" inputmode="numeric" placeholder="500000"></label></div><div class="row" style="justify-content:flex-start;gap:6px;margin-top:8px"><button class="b1 b2" style="margin:0" onclick="saveLineTgt('${pDept}',E('nl_nm').value,E('nl_tg').value,${pDept==="SEWING"?"E('nl_hl').value":"''"})">Save target</button><button class="b2" style="margin:0" onclick="pAddLineOpen=false;render()">Cancel</button></div></div>`:"";
       const linesSection=pDept==="SEWING"?(halls.length?halls.map(hl=>{const hc=pClr(hl.achievementPct),hLbl=hl.hall==="UNASSIGNED"?"Without hall":hl.hall;return `<div class="phall"><div class="phall-hd"><span class="phall-nm">${esc(hLbl)}</span><span class="phall-pct" style="color:${hc}">${hl.achievementPct==null?"—":Math.round(hl.achievementPct)+"%"}</span></div>${hl.lines.length?`<div class="ptiles">${hl.lines.map(renderLineTile).join("")}</div>`:'<div class="mut">No lines in this hall yet.</div>'}</div>`}).join(""):'<div class="card mut">No lines or closed models in this month yet.</div>'):(s.lines.length?`<div class="ptiles">${s.lines.map(renderLineTile).join("")}</div>`:'<div class="card mut">No lines or closed models in this month yet.</div>');
-      body=`<div class="row noprint" style="justify-content:flex-start;gap:8px;margin-bottom:10px"><button class="b2" style="margin:0" onclick="pDept=null;pLine=null;render()">← Back</button><span class="mut"><span class="click" onclick="pDept=null;render()">Production dashboard</span> / <b>${sn(pDept)}</b></span></div><div class="pkpis"><div class="pkpi"><div class="kl">Achievement</div><div class="kv" style="color:${c}">${s.achievementPct==null?"No target":s.achievementPct+"%"}</div></div><div class="pkpi"><div class="kl">Total points</div><div class="kv">${fmtNum(s.points)}</div></div><div class="pkpi"><div class="kl">Target</div><div class="kv">${fmtNum(s.target)}</div></div><div class="pkpi"><div class="kl">Closed models</div><div class="kv">${fmtNum(s.modelsCount)}</div></div></div>${mngBar}${deptTgtBox}${addHallBox}${addLineBox}${linesSection}`;
+      body=`<div class="row noprint" style="justify-content:flex-start;gap:8px;margin-bottom:10px"><button class="b2" style="margin:0" onclick="pDept=null;pLine=null;render()">← Back</button><span class="mut"><span class="click" onclick="pDept=null;render()">Production dashboard</span> / <b>${sn(pDept)}</b></span></div><div class="pkpis"><div class="pkpi"><div class="kl">Achievement</div><div class="kv" style="color:${c}">${s.achievementPct==null?"No target":s.achievementPct+"%"}</div><div class="pbar"><i style="width:${dw}%;background:${bc}"></i></div></div><div class="pkpi"><div class="kl">Total points</div><div class="kv">${fmtNum(s.points)}</div></div><div class="pkpi"><div class="kl">Target</div><div class="kv">${fmtNum(s.target)}</div></div><div class="pkpi"><div class="kl">Closed models</div><div class="kv">${fmtNum(s.modelsCount)}</div></div></div>${mngBar}${deptTgtBox}${addHallBox}${addLineBox}${linesSection}`;
     }else{
-      const s=mp[pDept],l=(s.lines||[]).find(x=>x.lineNo===pLine)||{lineNo:pLine,hall:defHallFor(pDept,pLine),points:0,bonusPoints:0,bonuses:[],target:0,achievementPct:null,modelsCount:0,closedModels:[]},lc=pClr(l.achievementPct),lLbl=l.lineNo==="UNASSIGNED"?"Unassigned":l.lineNo;
+      const s=mp[pDept],l=(s.lines||[]).find(x=>x.lineNo===pLine)||{lineNo:pLine,hall:defHallFor(pDept,pLine),points:0,bonusPoints:0,bonuses:[],target:0,achievementPct:null,modelsCount:0,closedModels:[]},lc=pClr(l.achievementPct),lbc=pBarClr(l.achievementPct),lw=l.achievementPct==null?0:Math.max(0,Math.min(100,l.achievementPct)),lLbl=l.lineNo==="UNASSIGNED"?"Unassigned":l.lineNo;
       const lineActBar=canMng?`<div class="row noprint" style="justify-content:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:10px">${l.lineNo!=="UNASSIGNED"?`<button class="b2" style="margin:0" onclick="pEdLineTgt=!pEdLineTgt;render()">Edit target</button>`:""}<button class="b1 b2" style="margin:0" onclick="pAddBonOpen=!pAddBonOpen;render()">+ Add bonus points</button></div>`:"";
       const edLineBox=canMng&&pEdLineTgt&&l.lineNo!=="UNASSIGNED"?`<div class="card noprint"><div class="g"><label>Target points (${esc(lLbl)})<input id="lt_v" type="number" inputmode="numeric" value="${esc(l.target)}"></label>${pDept==="SEWING"?`<label>Hall (for Sewing)<input id="lt_h" value="${esc(l.hall||defHallFor("SEWING",l.lineNo)||"Hall 1")}"></label>`:""}</div><div class="row" style="justify-content:flex-start;gap:6px;margin-top:8px"><button class="b1 b2" style="margin:0" onclick="saveLineTgt('${pDept}','${esc(l.lineNo)}',E('lt_v').value,${pDept==="SEWING"?"E('lt_h').value":"''"})">Save target</button><button class="b2" style="margin:0" onclick="pEdLineTgt=false;render()">Cancel</button></div></div>`:"";
       const addBonBox=canMng&&pAddBonOpen?`<div class="card noprint"><div class="g"><label>Bonus points<input id="bn_pts" type="number" inputmode="numeric" placeholder="25000"></label><label>Bonus reason / note (optional)<input id="bn_nt" placeholder="Monthly incentive..."></label></div><div class="row" style="justify-content:flex-start;gap:6px;margin-top:8px"><button class="b1 b2" style="margin:0" onclick="saveBonus('${pDept}','${esc(l.lineNo)}','${esc(l.hall||"")}')">Add bonus</button><button class="b2" style="margin:0" onclick="pAddBonOpen=false;render()">Cancel</button></div></div>`:"";
       const bonCards=(l.bonuses||[]).length?l.bonuses.map(bn=>`<div class="card" style="border:1px solid rgba(56,189,248,.35)"><div class="row"><b>★ Bonus points${bn.note?" • "+esc(bn.note):""}</b><div style="display:flex;gap:6px;align-items:center"><span class="tag cur">+${fmtNum(bn.points)} pts</span>${canMng&&bn.id?`<button class="b2" style="margin:0;color:#d9534f;padding:4px 8px" onclick="delBonus('${esc(bn.id)}')">Delete</button>`:""}</div></div><div class="mut">${esc(bn.created_by||"")} • ${esc((bn.created_at||"").slice(0,10))}</div></div>`).join(""):"";
-      const modCards=l.closedModels.length?l.closedModels.map(m=>`<div class="card"><div class="row"><div class="click" style="flex:1;min-width:0" onclick="openOrder('${esc(m.orderId)}','${pDept}')"><b>PO ${esc(m.po||"—")} • ${esc(m.item||"—")}</b><div class="mut">CO: ${esc(m.co||"—")} • Qty: ${fmtNum(m.qty)} × ${fmtNum(m.pointValue)} pt • Closed: ${esc(m.closedDate)}</div></div><div style="display:flex;gap:6px;align-items:center"><span class="tag dn">${fmtNum(m.totalPoints)} pts</span>${canMng?`<button class="b2" style="margin:0;padding:4px 9px;font-size:12px" onclick="pEdPtOid=pEdPtOid==='${esc(m.orderId)}'?'':'${esc(m.orderId)}';render()">Edit point</button>`:""}</div></div>${canMng&&pEdPtOid===m.orderId?`<div class="row noprint" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);justify-content:flex-start;gap:8px;flex-wrap:wrap"><label style="min-width:140px;margin:0">Point<input id="mpt_${esc(m.orderId)}" type="number" step="any" value="${esc(m.pointValue)}"></label><button class="b1 b2" style="margin:0;align-self:flex-end" onclick="saveClosedModelPt('${esc(m.orderId)}','${pDept}')">Save</button><button class="b2" style="margin:0;align-self:flex-end" onclick="pEdPtOid=null;render()">Cancel</button></div>`:""}</div>`).join(""):'<div class="card mut">No closed models for this line in the selected month.</div>';
-      body=`<div class="row noprint" style="justify-content:flex-start;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="b2" style="margin:0" onclick="pLine=null;render()">← Back</button><span class="mut"><span class="click" onclick="pDept=null;pLine=null;render()">Production dashboard</span> / <span class="click" onclick="pLine=null;render()">${sn(pDept)}</span>${l.hall&&l.hall!=="UNASSIGNED"?` / <span>${esc(l.hall)}</span>`:""} / <b>${esc(lLbl)}</b></span></div><div class="pkpis"><div class="pkpi"><div class="kl">Achievement</div><div class="kv" style="color:${lc}">${l.achievementPct==null?"No target":l.achievementPct+"%"}</div></div><div class="pkpi"><div class="kl">Total points</div><div class="kv">${fmtNum(l.points)}</div></div><div class="pkpi"><div class="kl">Target</div><div class="kv">${fmtNum(l.target)}</div></div><div class="pkpi"><div class="kl">Closed models</div><div class="kv">${fmtNum(l.modelsCount)}</div></div></div>${lineActBar}${edLineBox}${addBonBox}${bonCards}${modCards}`;
+      const modCards=l.closedModels.length?l.closedModels.map(m=>{const sk=m.sourceStage||pDept,mk=m.orderId+"_"+sk;return `<div class="card"><div class="row"><div class="click" style="flex:1;min-width:0" onclick="openOrder('${esc(m.orderId)}','${esc(sk)}')"><b>PO ${esc(m.po||"—")} • ${esc(m.item||"—")}${sk==="DTF"?' <span class="tag cur" style="font-size:10.5px;padding:1px 6px">DTF</span>':""}</b><div class="mut">CO: ${esc(m.co||"—")} • Qty: ${fmtNum(m.qty)} × ${fmtNum(m.pointValue)} pt • Closed: ${esc(m.closedDate)}</div></div><div style="display:flex;gap:6px;align-items:center"><span class="tag dn">${fmtNum(m.totalPoints)} pts</span>${canMng?`<button class="b2" style="margin:0;padding:4px 9px;font-size:12px" onclick="pEdPtOid=pEdPtOid==='${esc(mk)}'?'':'${esc(mk)}';render()">Edit point</button>`:""}</div></div>${canMng&&pEdPtOid===mk?`<div class="row noprint" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);justify-content:flex-start;gap:8px;flex-wrap:wrap"><label style="min-width:140px;margin:0">Point<input id="mpt_${esc(mk)}" type="number" step="any" value="${esc(m.pointValue)}"></label><button class="b1 b2" style="margin:0;align-self:flex-end" onclick="saveClosedModelPt('${esc(m.orderId)}','${esc(sk)}')">Save</button><button class="b2" style="margin:0;align-self:flex-end" onclick="pEdPtOid=null;render()">Cancel</button></div>`:""}</div>`}).join(""):'<div class="card mut">No closed models for this line in the selected month.</div>';
+      body=`<div class="row noprint" style="justify-content:flex-start;gap:8px;margin-bottom:10px;flex-wrap:wrap"><button class="b2" style="margin:0" onclick="pLine=null;render()">← Back</button><span class="mut"><span class="click" onclick="pDept=null;pLine=null;render()">Production dashboard</span> / <span class="click" onclick="pLine=null;render()">${sn(pDept)}</span>${l.hall&&l.hall!=="UNASSIGNED"?` / <span>${esc(l.hall)}</span>`:""} / <b>${esc(lLbl)}</b></span></div><div class="pkpis"><div class="pkpi"><div class="kl">Achievement</div><div class="kv" style="color:${lc}">${l.achievementPct==null?"No target":l.achievementPct+"%"}</div><div class="pbar"><i style="width:${lw}%;background:${lbc}"></i></div></div><div class="pkpi"><div class="kl">Total points</div><div class="kv">${fmtNum(l.points)}</div></div><div class="pkpi"><div class="kl">Target</div><div class="kv">${fmtNum(l.target)}</div></div><div class="pkpi"><div class="kl">Closed models</div><div class="kv">${fmtNum(l.modelsCount)}</div></div></div>${lineActBar}${edLineBox}${addBonBox}${bonCards}${modCards}`;
     }
     if(isArch&&(canEdit||isOwner)){
       const aud=(SNAPS[pMonth]&&SNAPS[pMonth].audit_log)||[];
@@ -858,7 +880,7 @@ function prodV(){
     }
   }else if(pTab==="hist"){
     const res=queryProdHist(),tPts=res.reduce((s,m)=>s+m.totalPoints,0),tQty=res.reduce((s,m)=>s+m.qty,0);
-    body=`<div class="card noprint"><div class="g"><label>Month<input type="month" value="${esc(pH.m)}" onchange="pH.m=this.value;render()"></label><label>Department<select onchange="pH.d=this.value;render()"><option value="ALL" ${pH.d==="ALL"?"selected":""}>All</option>${al.map(d=>`<option value="${d}" ${pH.d===d?"selected":""}>${sn(d)}</option>`).join("")}</select></label><label>Line<input value="${esc(pH.ln)}" placeholder="Swing 1 / Cutting 1..." oninput="pH.ln=this.value;render()"></label><label>PO / Item<input value="${esc(pH.po)}" placeholder="PO..." oninput="pH.po=this.value;render()"></label><label>From date<input type="date" value="${esc(pH.f)}" onchange="pH.f=this.value;render()"></label><label>To date<input type="date" value="${esc(pH.t)}" onchange="pH.t=this.value;render()"></label></div><button class="b2" style="margin-top:8px" onclick="pH={m:'',d:'ALL',ln:'',po:'',f:'',t:''};render()">Clear filters</button></div><div class="pkpis"><div class="pkpi"><div class="kl">Closed models</div><div class="kv">${fmtNum(res.length)}</div></div><div class="pkpi"><div class="kl">Quantity</div><div class="kv">${fmtNum(tQty)}</div></div><div class="pkpi"><div class="kl">Total points</div><div class="kv">${fmtNum(tPts)}</div></div></div>${res.length?res.map(m=>`<div class="card click" onclick="openOrder('${esc(m.orderId)}','${m.department}')"><div class="row"><b>PO ${esc(m.po||"—")} • ${esc(m.item||"—")}</b><span class="tag dn">${fmtNum(m.totalPoints)} pts</span></div><div class="mut">${sn(m.department)} • ${esc(m.lineNo)} • Qty: ${fmtNum(m.qty)} × ${fmtNum(m.pointValue)} pt • Closed: ${esc(m.closedDate)}</div></div>`).join(""):'<div class="card mut">No closed models match your search.</div>'}`;
+    body=`<div class="card noprint"><div class="g"><label>Month<input type="month" value="${esc(pH.m)}" onchange="pH.m=this.value;render()"></label><label>Department<select onchange="pH.d=this.value;render()"><option value="ALL" ${pH.d==="ALL"?"selected":""}>All</option>${al.map(d=>`<option value="${d}" ${pH.d===d?"selected":""}>${sn(d)}</option>`).join("")}</select></label><label>Line<input value="${esc(pH.ln)}" placeholder="Swing 1 / Cutting 1..." oninput="pH.ln=this.value;render()"></label><label>PO / Item<input value="${esc(pH.po)}" placeholder="PO..." oninput="pH.po=this.value;render()"></label><label>From date<input type="date" value="${esc(pH.f)}" onchange="pH.f=this.value;render()"></label><label>To date<input type="date" value="${esc(pH.t)}" onchange="pH.t=this.value;render()"></label></div><button class="b2" style="margin-top:8px" onclick="pH={m:'',d:'ALL',ln:'',po:'',f:'',t:''};render()">Clear filters</button></div><div class="pkpis"><div class="pkpi"><div class="kl">Closed models</div><div class="kv">${fmtNum(res.length)}</div></div><div class="pkpi"><div class="kl">Quantity</div><div class="kv">${fmtNum(tQty)}</div></div><div class="pkpi"><div class="kl">Total points</div><div class="kv">${fmtNum(tPts)}</div></div></div>${res.length?res.map(m=>{const sk=m.sourceStage||m.department;return `<div class="card click" onclick="openOrder('${esc(m.orderId)}','${esc(sk)}')"><div class="row"><b>PO ${esc(m.po||"—")} • ${esc(m.item||"—")}</b><span class="tag dn">${fmtNum(m.totalPoints)} pts</span></div><div class="mut">${sn(m.department)}${sk==="DTF"?" (DTF)":""} • ${esc(m.lineNo)} • Qty: ${fmtNum(m.qty)} × ${fmtNum(m.pointValue)} pt • Closed: ${esc(m.closedDate)}</div></div>`}).join(""):'<div class="card mut">No closed models match your search.</div>'}`;
   }else if(pTab==="cmp"){
     const mA=getMonthProd(pCmpA),mB=getMonthProd(pCmpB);
     body=`<div class="card noprint"><div class="g"><label>Month A<input type="month" value="${esc(pCmpA)}" onchange="pCmpA=this.value||'${curM}';render()"></label><label>Month B<input type="month" value="${esc(pCmpB)}" onchange="pCmpB=this.value||'${shiftYM(curM,-1)}';render()"></label></div></div>${al.map(d=>{const a=mA[d],b=mB[d],dl=(a.achievementPct!=null&&b.achievementPct!=null)?Math.round((a.achievementPct-b.achievementPct)*10)/10:null;return `<div class="card"><div class="row"><b>${sn(d)}</b><span class="tag ${dl!=null&&dl>=0?"dn":"late"}">${dl==null?"—":(dl>=0?"+":"")+dl+"%"}</span></div><div class="g" style="margin-top:8px"><div><div class="mut">${esc(fmtYM(pCmpA))}</div><b style="font-size:20px;color:${pClr(a.achievementPct)}">${a.achievementPct==null?"—":a.achievementPct+"%"}</b><div class="mut">${fmtNum(a.points)} / ${fmtNum(a.target)} pts</div></div><div><div class="mut">${esc(fmtYM(pCmpB))}</div><b style="font-size:20px;color:${pClr(b.achievementPct)}">${b.achievementPct==null?"—":b.achievementPct+"%"}</b><div class="mut">${fmtNum(b.points)} / ${fmtNum(b.target)} pts</div></div></div></div>`}).join("")}`;
@@ -881,7 +903,7 @@ function startData(){
   pGot={o:false,s:false,t:false,m:false,b:false};pSyncedFor="";
   unsubs.push(db.collection("orders").onSnapshot(s=>{RAW=s.docs.map(x=>({id:x.id,...x.data()}));pGot.o=true;paint();prodAutoRollover()},er));
   const sdl=(q,dn)=>q.onSnapshot(s=>{s.docChanges().forEach(c=>{if(c.type==="removed"){if(!(dn&&myD().includes(c.doc.id.split("_").pop())))delete SD[c.doc.id]}else SD[c.doc.id]=c.doc.data()});pGot.s=true;paint();prodAutoRollover()},er);
-  if(canPreFill()||mySig().length)unsubs.push(sdl(db.collection("stages")));else{const dq=new Set(myD());if(dq.has("SEWING"))dq.add("PACKING");dq.forEach(k=>unsubs.push(sdl(db.collection("stages").where("dept","==",k))))}
+  if(canPreFill()||mySig().length)unsubs.push(sdl(db.collection("stages")));else{const dq=new Set(myD());if(dq.has("SEWING"))dq.add("PACKING");if(dq.has("PRINTING")||dq.has("DTF")){dq.add("PRINTING");dq.add("DTF");dq.add("SORTING")}dq.forEach(k=>unsubs.push(sdl(db.collection("stages").where("dept","==",k))))}
   if(!(canPreFill()||mySig().length))unsubs.push(sdl(db.collection("stages").where("done","==",true),true));
   unsubs.push(db.collection("line_targets").onSnapshot(s=>{TGTS=s.docs.map(x=>({id:x.id,...x.data()}));pGot.t=true;paint();prodAutoRollover()},()=>{pGot.t=true;prodAutoRollover()}));
   unsubs.push(db.collection("line_bonuses").onSnapshot(s=>{BONS=s.docs.map(x=>({id:x.id,...x.data()}));pGot.b=true;paint()},()=>{pGot.b=true}));
