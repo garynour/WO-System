@@ -1,13 +1,13 @@
 {
-  "name": "Factory Work Orders",
-  "short_name": "Work Orders",
-  "description": "Garment factory work order tracking",
+  "name": "WOS — Work Order System",
+  "short_name": "WOS",
+  "description": "Garment factory work order & productivity system",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f6f8f7",
-  "theme_color": "#dbeaf3",
+  "background_color": "#f2f2f2",
+  "theme_color": "#1d3743",
   "icons": [
     {
       "src": "icons/icon-192.png",
