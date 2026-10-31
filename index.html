@@ -335,16 +335,53 @@ const WOSGrid=(()=>{
   const parseRef=t=>{const m=/^(\$?)([A-Za-z]+)(\$?)(\d+)$/.exec(String(t||"").trim());if(!m)return null;const r=+m[4]-1,c=letCol(m[2]);return r<0||c<0?null:{r,c,ar:m[1]==="$",ac:m[2]&&m[3]==="$",acCol:m[1]==="$",arRow:m[3]==="$"}};
   const fmtRef=(r,c,ar,ac)=>`${ac?"$":""}${colLet(c)}${ar?"$":""}${r+1}`;
   const isFml=v=>typeof v==="string"&&v.trim().startsWith("=")&&v.trim().length>1;
+  function normFml(raw){
+    if(typeof raw!=="string")return"";
+    const cl=raw.replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g,""),trm=cl.trim();
+    if(!trm.startsWith("=")||trm.length<=1)return cl;
+    let body=trm.slice(1).replace(/_xl(?:fn|ws)\./gi,""),out="",i=0;
+    while(i<body.length){
+      const ch=body[i];
+      if(ch==='"'){out+=ch;i++;while(i<body.length){out+=body[i];if(body[i]==='"'){if(body[i+1]==='"'){out+=body[i+1];i+=2;continue}i++;break}i++}continue}
+      if(ch==="'"){let j=i+1;while(j<body.length){if(body[j]==="'"){if(body[j+1]==="'"){j+=2;continue}j++;break}j++}if(body[j]==="!"&&/^(\$?[A-Za-z]{1,3}\$?\d+|R[\[\-0-9])/i.test(body.slice(j+1))){i=j+1;continue}}
+      const sm=/^([A-Za-z0-9_\u0600-\u06FF.]+)!(\$?[A-Za-z]{1,3}\$?\d+|R[\[\-0-9])/i.exec(body.slice(i));
+      if(sm){const pv=i>0?body[i-1]:"";if(!/[A-Za-z0-9_$\u0600-\u06FF]/.test(pv)){i+=sm[1].length+1;continue}}
+      out+=ch;i++;
+    }
+    return"="+out;
+  }
+  function r1c1ToA1(fml,br,bc){
+    const cl=normFml(fml);if(!isFml(cl))return cl;
+    if(!/R(?:\[-?\d+\]|\d+)?C(?:\[-?\d+\]|\d+)/i.test(cl))return cl;
+    let out="",i=0;
+    while(i<cl.length){
+      const ch=cl[i];
+      if(ch==='"'){out+=ch;i++;while(i<cl.length){out+=cl[i];if(cl[i]==='"'){if(cl[i+1]==='"'){out+=cl[i+1];i+=2;continue}i++;break}i++}continue}
+      const m=/^R(\[-?\d+\]|\d+)?C(\[-?\d+\]|\d+)?(?!\s*\()/i.exec(cl.slice(i));
+      if(m&&(m[1]!==undefined||m[2]!==undefined)){
+        const pv=i>0?cl[i-1]:"";
+        if(!/[A-Za-z0-9_$]/.test(pv)){
+          const rp=m[1],cp=m[2];let rr=br,cc=bc,ar=false,ac=false;
+          if(rp){if(rp.startsWith("["))rr=br+parseInt(rp.slice(1,-1),10);else{rr=parseInt(rp,10)-1;ar=true}}
+          if(cp){if(cp.startsWith("["))cc=bc+parseInt(cp.slice(1,-1),10);else{cc=parseInt(cp,10)-1;ac=true}}
+          out+=(rr<0||cc<0)?"#REF!":fmtRef(rr,cc,ar,ac);i+=m[0].length;continue;
+        }
+      }
+      out+=ch;i++;
+    }
+    return out;
+  }
   const toNum=v=>{if(typeof v==="number")return isFinite(v)?v:0;if(typeof v==="boolean")return v?1:0;const s=asciiDig(String(v??"")).replace(/,/g,"").trim();if(!s)return 0;const n=Number(s);return isFinite(n)?n:NaN};
   const strictNum=v=>{const s=asciiDig(String(v??"")).replace(/,/g,"").trim();if(!s)return null;const n=Number(s);return isFinite(n)?n:null};
   const fmtNumCell=n=>{if(!isFinite(n))return"#VALUE!";const r=Math.round(n*1e6)/1e6;return String(r)};
   function mapRefs(fml,fn){
-    let out="",i=0,inStr=false;
-    while(i<fml.length){
-      const ch=fml[i];
-      if(ch==='"'){out+=ch;i++;while(i<fml.length){out+=fml[i];if(fml[i]==='"'){if(fml[i+1]==='"'){out+=fml[i+1];i+=2;continue}i++;break}i++}continue}
-      const sub=fml.slice(i),rm=/^(\$?[A-Za-z]{1,3}\$?\d+)(?!\s*\()/.exec(sub);
-      if(rm){const prev=i>0?fml[i-1]:"";if(!/[A-Za-z0-9_$]/.test(prev)){const p=parseRef(rm[1]);if(p){out+=fn(p,rm[1]);i+=rm[1].length;continue}}}
+    const cl=isFml(fml)?normFml(fml):fml;
+    let out="",i=0;
+    while(i<cl.length){
+      const ch=cl[i];
+      if(ch==='"'){out+=ch;i++;while(i<cl.length){out+=cl[i];if(cl[i]==='"'){if(cl[i+1]==='"'){out+=cl[i+1];i+=2;continue}i++;break}i++}continue}
+      const sub=cl.slice(i),rm=/^(\$?[A-Za-z]{1,3}\$?\d+)(?!\s*\()/.exec(sub);
+      if(rm){const prev=i>0?cl[i-1]:"";if(!/[A-Za-z0-9_$]/.test(prev)){const p=parseRef(rm[1]);if(p){out+=fn(p,rm[1]);i+=rm[1].length;continue}}}
       out+=ch;i++;
     }
     return out;
@@ -357,8 +394,8 @@ const WOSGrid=(()=>{
     let q=false;for(let i=0;i<p;i++)if(val[i]==='"')q=!q;if(q)return null;
     let s=p,e=p;while(s>1&&/[A-Za-z0-9$:]/.test(val[s-1]))s--;while(e<val.length&&/[A-Za-z0-9$:]/.test(val[e]))e++;
     const tok=val.slice(s,e),prev=val.slice(1,s).trimEnd(),lc=prev?prev[prev.length-1]:"=";
-    if(!tok)return"=+-*/^&=<>(,:".includes(lc)?{s,e}:null;
-    if(/^(\$?[A-Za-z]{1,3}\$?\d+)(:\$?[A-Za-z]{1,3}\$?\d+)?$/.test(tok)&&"=+-*/^&=<>(,:".includes(lc)){
+    if(!tok)return"=+-*/^&=<>(,:;".includes(lc)?{s,e}:null;
+    if(/^(\$?[A-Za-z]{1,3}\$?\d+)(:\$?[A-Za-z]{1,3}\$?\d+)?$/.test(tok)&&"=+-*/^&=<>(,:;".includes(lc)){
       const ci=tok.indexOf(":");return ci>=0&&p>s+ci?{s:s+ci+1,e}:{s,e};
     }
     return null;
@@ -371,8 +408,9 @@ const WOSGrid=(()=>{
       if(vis.has(k))return"#CYCLE!";
       const rv=String((raw[r]&&raw[r][c])??"");
       if(!isFml(rv)){memo.set(k,rv);return rv}
+      const nrv=normFml(rv);
       vis.add(k);
-      let res;try{res=evalExpr(rv.trim().slice(1),getCell)}catch(e){res=String(e&&e.message||"#ERROR!")}
+      let res;try{res=evalExpr(nrv.trim().slice(1),getCell)}catch(e){res=String(e&&e.message||"#ERROR!")}
       vis.delete(k);
       const disp=typeof res==="number"?fmtNumCell(res):typeof res==="boolean"?(res?"TRUE":"FALSE"):String(res??"");
       memo.set(k,disp);return disp;
@@ -386,9 +424,10 @@ const WOSGrid=(()=>{
       const ch=s[i];if(/\s/.test(ch)){i++;continue}
       if(ch==='"'){let v="",j=i+1;while(j<s.length){if(s[j]==='"'){if(s[j+1]==='"'){v+='"';j+=2;continue}j++;break}v+=s[j++]}tks.push({t:"s",v});i=j;continue}
       if(s.slice(i,i+2)==="<>"||s.slice(i,i+2)==="<="||s.slice(i,i+2)===">="){tks.push({t:"op",v:s.slice(i,i+2)});i+=2;continue}
+      if(ch===";"){tks.push({t:"op",v:","});i++;continue}
       if("+-*/^&=<>(),:%".includes(ch)){tks.push({t:"op",v:ch});i++;continue}
       if(/[0-9.]/.test(ch)){let j=i;while(j<s.length&&/[0-9.]/.test(s[j]))j++;tks.push({t:"n",v:parseFloat(s.slice(i,j))});i=j;continue}
-      if(s.slice(i,i+5)==="#REF!"){tks.push({t:"err",v:"#REF!"});i+=5;continue}
+      const em=/^#[A-Z0-9\/]+[!?]?/i.exec(s.slice(i));if(em){tks.push({t:"err",v:em[0].toUpperCase()});i+=em[0].length;continue}
       if(/[A-Za-z$_]/.test(ch)){let j=i;while(j<s.length&&/[A-Za-z0-9$_.]/.test(s[j]))j++;tks.push({t:"id",v:s.slice(i,j)});i=j;continue}
       throw new Error("#ERROR!");
     }
@@ -397,7 +436,7 @@ const WOSGrid=(()=>{
   function evalExpr(src,getCell){
     const tks=tokenize(src);let p=0;
     const pk=()=>tks[p],nx=()=>tks[p++];
-    const errOf=v=>typeof v==="string"&&/^#(REF!|DIV\/0!|VALUE!|NAME\?|CYCLE!|ERROR!)$/.test(v)?v:null;
+    const errOf=v=>typeof v==="string"&&/^#[A-Z0-9\/]+[!?]?$/i.test(v)?v:null;
     const flat=args=>{const o=[];args.forEach(a=>{if(Array.isArray(a))a.forEach(x=>o.push(x));else o.push(a)});return o};
     const cmp=()=>{let l=concat();while(pk()&&pk().t==="op"&&["=","<>","<","<=",">",">="].includes(pk().v)){const op=nx().v,r=concat();const e=errOf(l)||errOf(r);if(e)return e;const nl=strictNum(l),nr_=strictNum(r);let c=0;if(nl!==null&&nr_!==null)c=nl-nr_;else c=String(l??"").toLowerCase().localeCompare(String(r??"").toLowerCase());l=op==="="?c===0:op==="<>"?c!==0:op==="<"?c<0:op==="<="?c<=0:op===">"?c>0:c>=0}return l};
     const concat=()=>{let l=add();while(pk()&&pk().t==="op"&&pk().v==="&"){nx();const r=add(),e=errOf(l)||errOf(r);if(e)return e;l=String(l??"")+String(r??"")}return l};
@@ -437,12 +476,14 @@ const WOSGrid=(()=>{
     const res=cmp();if(p<tks.length)return"#ERROR!";return res;
   }
   function callFn(fn,args,flat,errOf){
-    if(fn==="IFERROR"){const v=args[0];return errOf(v)?(args[1]??""):v}
+    if(fn==="IFERROR"||fn==="IFNA"){const v=args[0];return errOf(v)?(args[1]??""):v}
     if(fn==="IF"){const c=args[0],ec=errOf(c);if(ec)return ec;const ok=typeof c==="boolean"?c:Boolean(toNum(c));return ok?(args[1]??true):(args[2]??false)}
     if(fn==="IFS"){for(let i=0;i<args.length;i+=2){const c=args[i],ec=errOf(c);if(ec)return ec;if(typeof c==="boolean"?c:Boolean(toNum(c)))return args[i+1]??""}return"#VALUE!"}
+    if(fn==="SUMPRODUCT"){const arrs=args.map(a=>Array.isArray(a)?a:[a]),ln=arrs[0]?.length||0;if(!ln)return 0;let tot_=0;for(let i=0;i<ln;i++){let pr=1;for(const ar of arrs){const v=ar[i]??0,ev=errOf(v);if(ev)return ev;pr*=strictNum(v)??0}tot_+=pr}return tot_}
     const fl=flat(args);for(const x of fl){const e=errOf(x);if(e)return e}
     const nums=fl.map(x=>typeof x==="number"?x:strictNum(x)).filter(x=>x!==null);
     if(fn==="SUM")return nums.reduce((a,b)=>a+b,0);
+    if(fn==="PRODUCT")return nums.length?nums.reduce((a,b)=>a*b,1):0;
     if(fn==="AVERAGE"||fn==="AVG")return nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:"#DIV/0!";
     if(fn==="MIN")return nums.length?Math.min(...nums):0;
     if(fn==="MAX")return nums.length?Math.max(...nums):0;
@@ -450,7 +491,9 @@ const WOSGrid=(()=>{
     if(fn==="COUNTA")return fl.filter(x=>String(x??"").trim()!=="").length;
     if(fn==="ROUND"){const a=toNum(args[0]),b=args.length>1?toNum(args[1]):0;if(isNaN(a)||isNaN(b))return"#VALUE!";const f=Math.pow(10,Math.round(b));return Math.round(a*f)/f}
     if(fn==="ROUNDUP"){const a=toNum(args[0]),b=args.length>1?toNum(args[1]):0;const f=Math.pow(10,Math.round(b));return(a>=0?Math.ceil(Math.abs(a)*f):Math.ceil(Math.abs(a)*f)*-1)*(a<0?-1:1)/f}
-    if(fn==="ROUNDDOWN"){const a=toNum(args[0]),b=args.length>1?toNum(args[1]):0;const f=Math.pow(10,Math.round(b));return Math.trunc(a*f)/f}
+    if(fn==="ROUNDDOWN"||fn==="TRUNC"){const a=toNum(args[0]),b=args.length>1?toNum(args[1]):0;const f=Math.pow(10,Math.round(b));return Math.trunc(a*f)/f}
+    if(fn==="CEILING"||fn==="CEILING.MATH"){const a=toNum(args[0]),sg=args.length>1?toNum(args[1]):1;return sg===0?0:Math.ceil(a/sg)*sg}
+    if(fn==="FLOOR"||fn==="FLOOR.MATH"){const a=toNum(args[0]),sg=args.length>1?toNum(args[1]):1;return sg===0?0:Math.floor(a/sg)*sg}
     if(fn==="INT")return Math.floor(toNum(args[0]));
     if(fn==="ABS")return Math.abs(toNum(args[0]));
     if(fn==="SQRT"){const n=toNum(args[0]);return n<0?"#VALUE!":Math.sqrt(n)}
@@ -473,43 +516,186 @@ const WOSGrid=(()=>{
     (merges||[]).forEach(m=>{if(m.rs<=1&&m.cs<=1)return;master.set(m.r+","+m.c,m);for(let r=m.r;r<m.r+m.rs;r++)for(let c=m.c;c<m.c+m.cs;c++)if(r!==m.r||c!==m.c)cov.set(r+","+c,m)});
     return{master,cov};
   }
+  function preprocessHtml(html){
+    let s=String(html||"").replace(/\bx:fmla\s*=\s*"([^"]*)"/gi,'data-wos-fmla="$1"').replace(/\bx:fmla\s*=\s*'([^']*)'/gi,"data-wos-fmla='$1'").replace(/\bx:fmla\s*=\s*([^\s>"']+)/gi,(_,v)=>`data-wos-fmla="${v.replace(/"/g,"&quot;")}"`);
+    if(!/<table[\s>]/i.test(s)&&/<tr[\s>]/i.test(s))s="<table>"+s+"</table>";
+    return s;
+  }
+  function detectExtOrigin(cells,dispVals){
+    const nr=cells.length,nc=cells[0]?.length||0;if(!nr||!nc)return{r0:0,c0:0};
+    const fcs=[];
+    for(let r=0;r<nr;r++)for(let c=0;c<nc;c++){
+      const raw=cells[r][c];if(!isFml(raw))continue;
+      const refs=[];mapRefs(raw,p=>{refs.push(p);return""});
+      if(refs.length)fcs.push({r,c,raw,disp:dispVals?.[r]?.[c]??"",refs});
+    }
+    if(!fcs.length)return{r0:0,c0:0};
+    let allFit=true,selfRef=false;
+    for(const fc of fcs)for(const rf of fc.refs){
+      if(!rf.arRow&&rf.r>=nr)allFit=false;
+      if(!rf.acCol&&rf.c>=nc)allFit=false;
+      if(rf.r===fc.r&&rf.c===fc.c)selfRef=true;
+    }
+    if(allFit&&!selfRef)return{r0:0,c0:0};
+    const cands=new Map();cands.set("0,0",{r0:0,c0:0});
+    let minRR=1e9,minRC=1e9;
+    for(const fc of fcs)for(const rf of fc.refs){
+      if(!rf.arRow){minRR=Math.min(minRR,rf.r);const or=rf.r-fc.r;if(or>=0){cands.set(or+",0",{r0:or,c0:0});if(!rf.acCol&&rf.c-fc.c>=0)cands.set(or+","+(rf.c-fc.c),{r0:or,c0:rf.c-fc.c})}}
+      if(!rf.acCol)minRC=Math.min(minRC,rf.c);
+    }
+    if(isFinite(minRR)&&minRR>0){cands.set(minRR+",0",{r0:minRR,c0:0});if(isFinite(minRC)&&minRC>0)cands.set(minRR+","+minRC,{r0:minRR,c0:minRC})}
+    let best={r0:0,c0:0},bestSc=-1e9;
+    for(const cand of cands.values()){
+      let sc=cand.r0===0&&cand.c0===0?2:0;
+      const shGrid=cells.map(row=>row.map(v=>isFml(v)?shiftFml(v,-cand.r0,-cand.c0):v));
+      const ev=evalAll(shGrid,nr,nc);
+      for(const fc of fcs){
+        for(const rf of fc.refs){
+          const lr=rf.arRow?rf.r:rf.r-cand.r0,lc=rf.acCol?rf.c:rf.c-cand.c0;
+          if(lr<0||lc<0)sc-=50;
+          else if(lr<nr&&lc<nc){sc+=10;if(lr===fc.r&&lc===fc.c)sc-=80;else if(lr===fc.r)sc+=4}
+          else sc-=8;
+        }
+        const got=ev[fc.r]?.[fc.c]??"";
+        if(got==="#REF!"||got==="#CYCLE!")sc-=60;
+        else if(fc.disp){const a=strictNum(got),b=strictNum(fc.disp);if(a!==null&&b!==null&&Math.abs(a-b)<1e-3)sc+=25;else if(String(got).trim()===String(fc.disp).trim())sc+=15}
+      }
+      if(sc>bestSc){bestSc=sc;best=cand}
+    }
+    return best;
+  }
+  function parseTsvMatrix(txt){
+    const lines=String(txt||"").replace(/\r\n/g,"\n").replace(/\r/g,"\n").split("\n");
+    if(lines.length>1&&lines[lines.length-1]==="")lines.pop();
+    return lines.map(l=>l.split("\t"));
+  }
   function parseExtClip(html,txt){
-    if(html&&/<table/i.test(html)){
+    const pHtml=html?preprocessHtml(html):"";
+    if(pHtml&&/<table/i.test(pHtml)){
       try{
-        const doc=new DOMParser().parseFromString(html,"text/html"),tb=doc.querySelector("table");
+        const doc=new DOMParser().parseFromString(pHtml,"text/html"),tb=doc.querySelector("table");
         if(tb){
           const trs=[...tb.querySelectorAll("tr")];if(trs.length){
-            const grid=[],occ=[],merges=[],styles={};
+            const grid=[],dispG=[],occ=[],merges=[],styles={};
             trs.forEach((tr,r)=>{
-              if(!grid[r])grid[r]=[];if(!occ[r])occ[r]=[];let c=0;
+              if(!grid[r])grid[r]=[];if(!dispG[r])dispG[r]=[];if(!occ[r])occ[r]=[];let c=0;
               [...tr.children].filter(x=>x.tagName==="TD"||x.tagName==="TH").forEach(td=>{
                 while(occ[r][c])c++;
                 const rs=Math.max(1,+td.getAttribute("rowspan")||1),cs=Math.max(1,+td.getAttribute("colspan")||1);
-                const fml=td.getAttribute("data-formula")||td.getAttribute("x:fmla")||"";
-                const raw=fml?(fml.startsWith("=")?fml:"="+fml):(td.textContent||"").replace(/\r?\n/g," ").trim();
+                let fml=td.getAttribute("data-wos-fmla")||td.getAttribute("data-formula")||td.getAttribute("x:fmla")||td.getAttribute("data-sheets-formula")||"";
+                if(!fml){const fe=td.querySelector("[data-wos-fmla],[data-formula],[data-sheets-formula]");if(fe)fml=fe.getAttribute("data-wos-fmla")||fe.getAttribute("data-formula")||fe.getAttribute("data-sheets-formula")||""}
+                const txtVal=(td.textContent||"").replace(/\r?\n/g," ").trim();
+                let raw=fml?(fml.trim().startsWith("=")?fml.trim():"="+fml.trim()):txtVal;
+                raw=r1c1ToA1(normFml(raw),r,c);
                 const stAttr=(td.getAttribute("style")||"").toLowerCase();
                 if(td.querySelector("b,strong")||/font-weight:\s*(bold|[6-9]00)/.test(stAttr))styles[r+","+c]={b:true};
                 if(rs>1||cs>1)merges.push({r,c,rs,cs});
                 for(let dr=0;dr<rs;dr++)for(let dc=0;dc<cs;dc++){
-                  if(!grid[r+dr])grid[r+dr]=[];if(!occ[r+dr])occ[r+dr]=[];
-                  occ[r+dr][c+dc]=true;grid[r+dr][c+dc]=(dr===0&&dc===0)?raw:"";
+                  if(!grid[r+dr])grid[r+dr]=[];if(!dispG[r+dr])dispG[r+dr]=[];if(!occ[r+dr])occ[r+dr]=[];
+                  occ[r+dr][c+dc]=true;grid[r+dr][c+dc]=(dr===0&&dc===0)?raw:"";dispG[r+dr][c+dc]=(dr===0&&dc===0)?txtVal:"";
                 }
                 c+=cs;
               });
             });
             const nc=Math.max(1,...grid.map(r=>r.length));
             const cells=grid.map(r=>{const a=[];for(let i=0;i<nc;i++)a.push(r[i]??"");return a});
-            return{mode:"copy",r0:0,c0:0,nr:cells.length,nc,cells,merges,styles,ext:true};
+            const dMat=dispG.map(r=>{const a=[];for(let i=0;i<nc;i++)a.push(r[i]??"");return a});
+            if(txt){const tm=parseTsvMatrix(txt);if(tm.length===cells.length){for(let r=0;r<cells.length;r++)for(let c=0;c<nc;c++)if(!isFml(cells[r][c])&&tm[r]&&isFml(normFml(tm[r][c]||"")))cells[r][c]=r1c1ToA1(normFml(tm[r][c]),r,c)}}
+            const orig=detectExtOrigin(cells,dMat);
+            return{mode:"copy",r0:orig.r0,c0:orig.c0,nr:cells.length,nc,cells,merges,styles,ext:true};
           }
         }
       }catch(e){}
     }
     if(txt){
-      const lines=String(txt).replace(/\r\n/g,"\n").replace(/\r/g,"\n").split("\n");
-      if(lines.length>1&&lines[lines.length-1]==="")lines.pop();
-      if(lines.length){const cells=lines.map(l=>l.split("\t")),nc=Math.max(1,...cells.map(r=>r.length));return{mode:"copy",r0:0,c0:0,nr:cells.length,nc,cells:cells.map(r=>{const a=[];for(let i=0;i<nc;i++)a.push(r[i]??"");return a}),merges:[],styles:{},ext:true}}
+      const lines=parseTsvMatrix(txt);
+      if(lines.length){
+        const nc=Math.max(1,...lines.map(r=>r.length));
+        const cells=lines.map((r,ri)=>{const a=[];for(let ci=0;ci<nc;ci++)a.push(r1c1ToA1(normFml(String(r[ci]??"").trim()),ri,ci));return a});
+        const orig=detectExtOrigin(cells);
+        return{mode:"copy",r0:orig.r0,c0:orig.c0,nr:cells.length,nc,cells,merges:[],styles:{},ext:true};
+      }
     }
     return null;
+  }
+  async function parseXlsxBuf(buf){
+    const u8=new Uint8Array(buf),dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);
+    let eocd=-1;
+    for(let i=u8.length-22;i>=Math.max(0,u8.length-65558);i--)if(dv.getUint32(i,true)===0x06054b50){eocd=i;break}
+    if(eocd<0)throw new Error("Invalid .xlsx file");
+    const cnt=dv.getUint16(eocd+10,true),cdOff=dv.getUint32(eocd+16,true);
+    const dec=new TextDecoder("utf-8"),files=new Map();
+    let ptr=cdOff;
+    for(let i=0;i<cnt&&ptr+46<=u8.length;i++){
+      if(dv.getUint32(ptr,true)!==0x02014b50)break;
+      const cm=dv.getUint16(ptr+10,true),csz=dv.getUint32(ptr+20,true),fnL=dv.getUint16(ptr+28,true),exL=dv.getUint16(ptr+30,true),cmL=dv.getUint16(ptr+32,true),lhOff=dv.getUint32(ptr+42,true);
+      const name=dec.decode(u8.subarray(ptr+46,ptr+46+fnL));
+      ptr+=46+fnL+exL+cmL;
+      if(lhOff+30>u8.length)continue;
+      const lFn=dv.getUint16(lhOff+26,true),lEx=dv.getUint16(lhOff+28,true),dStart=lhOff+30+lFn+lEx;
+      const comp=u8.subarray(dStart,dStart+csz);
+      if(cm===0)files.set(name,comp);
+      else if(cm===8&&typeof DecompressionStream!=="undefined"){
+        const ds=new DecompressionStream("deflate-raw"),w=ds.writable.getWriter();
+        w.write(comp);w.close();
+        const ab=await new Response(ds.readable).arrayBuffer();
+        files.set(name,new Uint8Array(ab));
+      }
+    }
+    const xmlOf=p=>{const b=files.get(p);return b?new DOMParser().parseFromString(dec.decode(b),"application/xml"):null};
+    const sst=[];const sstDoc=xmlOf("xl/sharedStrings.xml");
+    if(sstDoc)[...sstDoc.getElementsByTagName("si")].forEach(si=>{sst.push([...si.getElementsByTagName("t")].map(t=>t.textContent||"").join(""))});
+    const relMap=new Map(),relsDoc=xmlOf("xl/_rels/workbook.xml.rels");
+    if(relsDoc)[...relsDoc.getElementsByTagName("Relationship")].forEach(r=>{const id=r.getAttribute("Id"),tg=r.getAttribute("Target")||"";if(id)relMap.set(id,tg.startsWith("/")?tg.slice(1):tg.startsWith("xl/")?tg:"xl/"+tg.replace(/^\.\//,""))});
+    const wbDoc=xmlOf("xl/workbook.xml"),shList=[];
+    if(wbDoc){[...wbDoc.getElementsByTagName("sheet")].forEach((sh,idx)=>{const nm=sh.getAttribute("name")||("Sheet"+(idx+1)),rid=sh.getAttribute("r:id")||sh.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships","id")||"";const p=relMap.get(rid)||("xl/worksheets/sheet"+(idx+1)+".xml");if(files.has(p))shList.push({name:nm,path:p})})}
+    if(!shList.length)[...files.keys()].filter(k=>/^xl\/worksheets\/sheet\d+\.xml$/i.test(k)).sort().forEach((p,i)=>shList.push({name:"Sheet"+(i+1),path:p}));
+    const out=[];
+    for(const sh of shList){
+      const doc=xmlOf(sh.path);if(!doc)continue;
+      const cellMap=new Map(),sharedF=new Map();let maxR=-1,maxC=-1,minC=1e9;
+      [...doc.getElementsByTagName("c")].forEach(cEl=>{
+        const rf=parseRef(cEl.getAttribute("r")||"");if(!rf)return;
+        const t=cEl.getAttribute("t")||"",fEl=cEl.getElementsByTagName("f")[0],vEl=cEl.getElementsByTagName("v")[0],isEl=cEl.getElementsByTagName("is")[0];
+        let raw="";
+        if(fEl){
+          const ft=(fEl.textContent||"").trim(),ftType=fEl.getAttribute("t")||"",si=fEl.getAttribute("si");
+          if(ftType==="shared"&&si!==null){
+            if(ft){const fStr=normFml(ft.startsWith("=")?ft:"="+ft);sharedF.set(si,{r:rf.r,c:rf.c,fml:fStr});raw=fStr}
+            else if(sharedF.has(si)){const ms=sharedF.get(si);raw=shiftFml(ms.fml,rf.r-ms.r,rf.c-ms.c)}
+          }else if(ft)raw=normFml(ft.startsWith("=")?ft:"="+ft);
+        }
+        if(!raw){
+          if(t==="s"&&vEl){raw=sst[+(vEl.textContent||0)]??""}
+          else if(t==="inlineStr"&&isEl){raw=[...isEl.getElementsByTagName("t")].map(x=>x.textContent||"").join("")}
+          else if(t==="b"&&vEl){raw=vEl.textContent==="1"?"TRUE":"FALSE"}
+          else if(vEl){raw=(vEl.textContent||"").trim()}
+        }
+        if(raw!==""){cellMap.set(rf.r+","+rf.c,raw);maxR=Math.max(maxR,rf.r);maxC=Math.max(maxC,rf.c);minC=Math.min(minC,rf.c)}
+      });
+      const rawMerges=[];
+      [...doc.getElementsByTagName("mergeCell")].forEach(mc=>{
+        const pts=(mc.getAttribute("ref")||"").split(":");if(pts.length!==2)return;
+        const a=parseRef(pts[0]),b=parseRef(pts[1]);if(!a||!b)return;
+        const r1=Math.min(a.r,b.r),c1=Math.min(a.c,b.c),r2=Math.max(a.r,b.r),c2=Math.max(a.c,b.c);
+        rawMerges.push({r:r1,c:c1,rs:r2-r1+1,cs:c2-c1+1});
+        maxR=Math.max(maxR,r2);maxC=Math.max(maxC,c2);minC=Math.min(minC,c1);
+      });
+      if(maxR<0||maxC<0)continue;
+      if(!isFinite(minC))minC=0;
+      let startR=0;while(startR<maxR&&![...Array(maxC+1).keys()].some(c=>cellMap.has(startR+","+c)))startR++;
+      if(startR<maxR){
+        const r0Vals=[];for(let c=minC;c<=maxC;c++)r0Vals.push(cellMap.get(startR+","+c)||"");
+        const nonEmp=r0Vals.filter(x=>x.trim()!=="");
+        const hdrRx=/^(#|item(\s*name)?|code|qty|quantity|notes?|color(\s*[12])?|fabric|lot|weight|width|size|total|الصنف|اسم\s*الصنف|الكود|الكمية|الكميه|ملاحظات|اللون)$/i;
+        if(nonEmp.length>=2&&nonEmp.every(x=>!isFml(x)&&strictNum(x)===null)&&nonEmp.some(x=>hdrRx.test(x.trim())))startR++;
+      }
+      const nr=maxR-startR+1,nc=maxC-minC+1,cells=[];
+      for(let r=0;r<nr;r++){const row=[];for(let c=0;c<nc;c++)row.push(cellMap.get((startR+r)+","+(minC+c))||"");cells.push(row)}
+      const merges=rawMerges.filter(m=>m.r>=startR&&m.c>=minC).map(m=>({r:m.r-startR,c:m.c-minC,rs:m.rs,cs:m.cs}));
+      out.push({sheetName:sh.name,clip:{mode:"copy",r0:startR,c0:minC,nr,nc,cells,merges,styles:{},ext:true}});
+    }
+    return out;
   }
   function fillSeries(srcVals,len,stepDir){
     const n=srcVals.length;if(!n||len<=0)return[];
@@ -543,8 +729,9 @@ const WOSGrid=(()=>{
     let merges=Array.isArray(meta.merges)?JSON.parse(JSON.stringify(meta.merges)):[];
     let styles=meta.styles?JSON.parse(JSON.stringify(meta.styles)):{};
     let extraCols=Array.isArray(meta.extraCols)?JSON.parse(JSON.stringify(meta.extraCols)):[];
-    const canDup=sp.kind==="t"&&sp.sec.c.length===4&&(sp.sec.id==="ai"||(sp.dept==="ACCESSORIES"&&sp.sec.id==="pi"));
-    let dup=canDup?(meta.dupSideBySide!==undefined?!!meta.dupSideBySide:sp.sec.id==="ai"):false;
+    const defDup=sp.sec.id==="ai"||(sp.dept==="ACCESSORIES"&&sp.sec.id==="pi");
+    const canDup=sp.kind==="t"&&sp.sec.c.length===4&&defDup;
+    let dup=canDup?(meta.dupSideBySide!==undefined?!!meta.dupSideBySide:defDup):false;
     let hiddenR=[];
     let sz=(sp.o.sz||["S","M","L","XL","","","",""]).slice(0,8);while(sz.length<8)sz.push("");
     let rt=(sp.o.rt||["1","1","1","1","","","",""]).slice(0,8);while(rt.length<8)rt.push("");
@@ -672,8 +859,19 @@ const WOSGrid=(()=>{
       const subS={};Object.entries(styles).forEach(([k,st])=>{const[r,c]=k.split(",").map(Number);if(r>=b.r1&&r<=b.r2&&c>=b.c1&&c<=b.c2)subS[(r-b.r1)+","+(c-b.c1)]=st});
       WOSClip.cell={mode:isCut&&!sp.ro?"cut":"copy",srcSid:sp.sid,r0:b.r1,c0:b.c1,nr:b.r2-b.r1+1,nc:b.c2-b.c1+1,cells,merges:subM,styles:subS,srcInst:inst};
       const ev=evalAll(raw,raw.length,getCols().length);
-      const tsv=[];for(let r=b.r1;r<=b.r2;r++){const row=[];for(let c=b.c1;c<=b.c2;c++)row.push(ev[r]?.[c]??"");tsv.push(row.join("\t"))}
-      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(tsv.join("\n")).catch(()=>{});
+      const tsv=[],htr=[];
+      for(let r=b.r1;r<=b.r2;r++){
+        const row=[],td_=[];
+        for(let c=b.c1;c<=b.c2;c++){
+          const rv=raw[r]?.[c]??"",dv=ev[r]?.[c]??"";
+          row.push(dv);td_.push(`<td${isFml(rv)?` data-wos-fmla="${esc(rv)}" data-formula="${esc(rv)}" x:fmla="${esc(rv)}"`:""}>${esc(dv)}</td>`);
+        }
+        tsv.push(row.join("\t"));htr.push("<tr>"+td_.join("")+"</tr>");
+      }
+      const tsvStr=tsv.join("\n"),htmlStr='<table data-wos-grid="1">'+htr.join("")+"</table>";
+      if(navigator.clipboard&&typeof ClipboardItem!=="undefined"&&navigator.clipboard.write){
+        navigator.clipboard.write([new ClipboardItem({"text/plain":new Blob([tsvStr],{type:"text/plain"}),"text/html":new Blob([htmlStr],{type:"text/html"})})]).catch(()=>{if(navigator.clipboard.writeText)navigator.clipboard.writeText(tsvStr).catch(()=>{})});
+      }else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(tsvStr).catch(()=>{});
       toast(isCut?"Cut ✓":"Copied ✓");inst.render(true);
     };
 
@@ -714,7 +912,14 @@ const WOSGrid=(()=>{
           if(mode!=="formats"){
             let v=pCells[r][c]??"";
             if(mode==="values"&&evSrc)v=evSrc[r][c]??"";
-            else if(isFml(v)&&clip.mode!=="cut")v=shiftFml(v,rr-(clip.ext?0:clip.r0),cc-(clip.ext?0:clip.c0));
+            else if(isFml(v)&&clip.mode!=="cut"){
+              let dr=rr-((clip.r0||0)+r),dc=cc-((clip.c0||0)+c);
+              if(clip.ext&&(clip.c0||0)===0&&pNc===1&&dc>0){
+                let ov=false;mapRefs(v,p=>{if(!p.acCol&&p.c+dc>=finalCols.length&&p.c<finalCols.length)ov=true;return""});
+                if(ov)dc=0;
+              }
+              v=shiftFml(v,dr,dc);
+            }
             next[rr][cc]=v;
           }
           if(mode==="all"||mode==="formats"){if(pS[r+","+c])nextS[rr+","+cc]=Object.assign({},pS[r+","+c])}
@@ -798,7 +1003,7 @@ const WOSGrid=(()=>{
           if(sc.t==="t"&&Array.isArray(stD[sc.id])&&stD[sc.id].length){
             const cDefs=sc.c.map(c=>c.split("|")[0].split(":")[0]);
             const gm=stD["_grid_"+sc.id]||{};
-            const useDup=cDefs.length===4&&(gm.dupSideBySide!==undefined?!!gm.dupSideBySide:sc.id==="ai");
+            const useDup=cDefs.length===4&&(gm.dupSideBySide!==undefined?!!gm.dupSideBySide:(sc.id==="ai"||(dk_==="ACCESSORIES"&&sc.id==="pi")));
             const ids=useDup?[...cDefs,...cDefs.map(x=>x+"__2")]:cDefs;
             const rows=stD[sc.id].map((ro_,ri)=>ids.map((id,ci)=>(gm.formulas&&gm.formulas[ri+","+ci])||String(ro_[id]??"")));
             out.push({key:dk_+":"+sc.id,lbl:tr(sn(dk_))+" — "+tr(sc.ti),rows,merges:gm.merges||[],styles:gm.styles||{}});
@@ -900,9 +1105,28 @@ const WOSGrid=(()=>{
       }
     };
     host.onkeydown=onKey;
-    host.oncopy=e=>{if(ed)return;e.preventDefault();doCopy(false);if(WOSClip.cell&&e.clipboardData){const b=WOSClip.cell,ev=evalAll(raw,raw.length,getCols().length);const tsv=[],htr=[];for(let r=0;r<b.nr;r++){const tr_=[],td_=[];for(let c=0;c<b.nc;c++){const rv=b.cells[r][c]??"",dv=ev[b.r0+r]?.[b.c0+c]??"";tr_.push(dv);td_.push(`<td${isFml(rv)?` data-formula="${esc(rv)}" x:fmla="${esc(rv)}"`:""}>${esc(dv)}</td>`)}tsv.push(tr_.join("\t"));htr.push("<tr>"+td_.join("")+"</tr>")}e.clipboardData.setData("text/plain",tsv.join("\n"));e.clipboardData.setData("text/html","<table>"+htr.join("")+"</table>")}};
+    host.oncopy=e=>{if(ed)return;e.preventDefault();doCopy(false);if(WOSClip.cell&&e.clipboardData){const b=WOSClip.cell,ev=evalAll(raw,raw.length,getCols().length);const tsv=[],htr=[];for(let r=0;r<b.nr;r++){const tr_=[],td_=[];for(let c=0;c<b.nc;c++){const rv=b.cells[r][c]??"",dv=ev[b.r0+r]?.[b.c0+c]??"";tr_.push(dv);td_.push(`<td${isFml(rv)?` data-wos-fmla="${esc(rv)}" data-formula="${esc(rv)}" x:fmla="${esc(rv)}"`:""}>${esc(dv)}</td>`)}tsv.push(tr_.join("\t"));htr.push("<tr>"+td_.join("")+"</tr>")}e.clipboardData.setData("text/plain",tsv.join("\n"));e.clipboardData.setData("text/html",'<table data-wos-grid="1">'+htr.join("")+"</table>")}};
     host.oncut=e=>{if(ed||sp.ro)return;e.preventDefault();doCopy(true)};
-    host.onpaste=e=>{if(ed||sp.ro)return;const dt=e.clipboardData;let ext=dt?parseExtClip(dt.getData("text/html"),dt.getData("text/plain")):null;if(WOSClip.cell&&!ext){e.preventDefault();applyPaste(WOSClip.cell,"all");return}if(ext){if(WOSClip.cell){const ev=evalAll(WOSClip.cell.cells,WOSClip.cell.nr,WOSClip.cell.nc);if(ev.map(r=>r.join("\t")).join("\n")===(dt.getData("text/plain")||"").replace(/\r\n/g,"\n").trim()){e.preventDefault();applyPaste(WOSClip.cell,"all");return}}e.preventDefault();applyPaste(ext,"all")}};
+    host.onpaste=e=>{
+      if(sp.ro)return;
+      if(e.target&&e.target.classList&&e.target.classList.contains("wos-fbi"))return;
+      const dt=e.clipboardData,html=dt?dt.getData("text/html"):"",txt=dt?dt.getData("text/plain"):"";
+      if(ed){
+        const rich=(html&&/<(table|tr)\b|x:fmla|data-sheets-formula/i.test(html))||(txt&&(txt.includes("\t")||txt.includes("\n")||txt.trim().startsWith("=")));
+        if(!rich)return;
+        act={r:ed.r,c:ed.c};sels=[{r1:ed.r,c1:ed.c,r2:ed.r,c2:ed.c}];ed=null;
+      }
+      if(html&&html.includes('data-wos-grid="1"')&&WOSClip.cell){e.preventDefault();applyPaste(WOSClip.cell,"all");return}
+      const ext=parseExtClip(html,txt);
+      if(ext){
+        if(!html&&WOSClip.cell){
+          const ev=evalAll(WOSClip.cell.cells,WOSClip.cell.nr,WOSClip.cell.nc);
+          if(ev.map(r=>r.join("\t")).join("\n")===(txt||"").replace(/\r\n/g,"\n").trim()){e.preventDefault();applyPaste(WOSClip.cell,"all");return}
+        }
+        e.preventDefault();applyPaste(ext,"all");return;
+      }
+      if(WOSClip.cell){e.preventDefault();applyPaste(WOSClip.cell,"all")}
+    };
 
     const onWinMove=e=>{
       if(!drag&&!fillDrag)return;
@@ -963,7 +1187,11 @@ const WOSGrid=(()=>{
         [tr("Merge / Unmerge"),toggleMerge],[tr("Bold")+" (Ctrl+B)",()=>{const nextS=Object.assign({},styles),cb=!!(nextS[act.r+","+act.c]?.b);sels.forEach(s=>{const b=normR(s);for(let r=b.r1;r<=b.r2;r++)for(let c=b.c1;c<=b.c2;c++)nextS[r+","+c]=Object.assign({},nextS[r+","+c],{b:!cb})});commit(raw,merges,nextS)}],
         "-",
         [tr("Copy")+" (Ctrl+C)",()=>doCopy(false)],[tr("Cut")+" (Ctrl+X)",()=>doCopy(true)],
-        [tr("Paste")+" (Ctrl+V)",()=>{if(WOSClip.cell)applyPaste(WOSClip.cell,"all");else if(navigator.clipboard?.readText)navigator.clipboard.readText().then(t=>{const p=parseExtClip("",t);if(p)applyPaste(p,"all")}).catch(()=>{})}],
+        [tr("Paste")+" (Ctrl+V)",async()=>{
+          try{if(navigator.clipboard?.read){const its=await navigator.clipboard.read();for(const it of its){let h="",t="";if(it.types.includes("text/html"))h=await(await it.getType("text/html")).text();if(it.types.includes("text/plain"))t=await(await it.getType("text/plain")).text();if(h.includes('data-wos-grid="1"')&&WOSClip.cell){applyPaste(WOSClip.cell,"all");return}const p=parseExtClip(h,t);if(p){applyPaste(p,"all");return}}}}catch(e){}
+          if(WOSClip.cell){applyPaste(WOSClip.cell,"all");return}
+          if(navigator.clipboard?.readText)navigator.clipboard.readText().then(t=>{const p=parseExtClip("",t);if(p)applyPaste(p,"all")}).catch(()=>{});
+        }],
         [tr("Paste Special: Values"),()=>{if(WOSClip.cell)applyPaste(WOSClip.cell,"values")}],
         [tr("Paste Special: Formulas"),()=>{if(WOSClip.cell)applyPaste(WOSClip.cell,"formulas")}],
         [tr("Paste Special: Transpose"),()=>{if(WOSClip.cell)applyPaste(WOSClip.cell,"transpose")}],
@@ -1004,7 +1232,7 @@ const WOSGrid=(()=>{
         if(ed)finishEdit(true);
         const cols=getCols(),ev=evalAll(raw,raw.length,cols.length),formulas={};
         raw.forEach((r,ri)=>r.forEach((v,ci)=>{if(isFml(v))formulas[ri+","+ci]=v}));
-        const hasMeta=Object.keys(formulas).length>0||merges.length>0||Object.keys(styles).length>0||extraCols.length>0||(canDup&&dup!==(sp.sec.id==="ai"));
+        const hasMeta=Object.keys(formulas).length>0||merges.length>0||Object.keys(styles).length>0||extraCols.length>0||(canDup&&dup!==defDup);
         const gridMeta=hasMeta?{formulas,merges,styles,extraCols,...(canDup?{dupSideBySide:dup}:{})}:null;
         if(sp.kind==="m"){
           if(sp.dept==="PLANNING"){
@@ -1031,13 +1259,15 @@ const WOSGrid=(()=>{
 
         let h="";
         if(!sp.ro){
-          h+=`<div class="wos-gbar noprint"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">`+
+          h+=`<input type="file" class="wos-xlsx" accept=".xlsx,.xlsm,.tsv,.csv" style="display:none">`+
+            `<div class="wos-gbar noprint"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">`+
             `<button type="button" data-ga="undo" ${undoSt.length?"":"disabled"} title="${esc(tr("Undo"))}">↶</button>`+
             `<button type="button" data-ga="redo" ${redoSt.length?"":"disabled"} title="${esc(tr("Redo"))}">↷</button>`+
             `<button type="button" data-ga="bold" class="${styles[act.r+","+act.c]?.b?"on":""}"><b>B</b></button>`+
             `<button type="button" data-ga="merge">${esc(tr("Merge / Unmerge"))}</button>`+
             (canDup?`<button type="button" data-ga="dup" class="${dup?"on":""}">${esc(tr(dup?"8 cols (side-by-side)":"Duplicate columns side by side"))}</button>`:"")+
             `</div><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">`+
+            `<button type="button" data-ga="impxlsx" title="${esc(tr("Import from Excel (.xlsx) with formulas"))}">📥 ${esc(tr("Import Excel"))}</button>`+
             `<button type="button" data-ga="cptbl">⧉ ${esc(tr("Copy table"))}</button>`+
             (WOSClip.tbl?`<button type="button" data-ga="psttbl">📋 ${esc(tr("Paste table"))}</button>`:"")+
             (otherTbls.length?`<select data-ga="cpfrom"><option value="">${esc(tr("Copy from…"))}</option>${otherTbls.map((t,i)=>`<option value="${i}">${esc(t.lbl)}</option>`).join("")}</select>`:"")+
@@ -1046,6 +1276,8 @@ const WOSGrid=(()=>{
             h+=`<div class="wos-cbar noprint"><span style="font-weight:700;color:#d9534f">${esc(tr("Delete selected rows?"))} (${cbar.rows.length})</span><div style="display:flex;gap:5px"><button type="button" class="b2" style="margin:0;padding:3px 9px" data-ga="cno">${esc(tr("Cancel"))}</button><button type="button" class="b2" style="margin:0;padding:3px 9px;background:#d9534f;color:#fff;border-color:#d9534f" data-ga="cdel">${esc(tr("Confirm delete"))}</button></div></div>`;
           }else if(cbar&&cbar.type==="pasteTbl"){
             h+=`<div class="wos-cbar info noprint"><span style="font-weight:700;color:var(--pri)">${esc(tr("Target table already has data:"))}</span><div style="display:flex;gap:5px"><button type="button" class="b1 b2" style="margin:0;padding:3px 9px" data-ga="prep">${esc(tr("Replace"))}</button><button type="button" class="b2" style="margin:0;padding:3px 9px" data-ga="papp">${esc(tr("Append to end"))}</button><button type="button" class="b2" style="margin:0;padding:3px 9px" data-ga="cno">${esc(tr("Cancel"))}</button></div></div>`;
+          }else if(cbar&&cbar.type==="pickSheet"){
+            h+=`<div class="wos-cbar info noprint"><span style="font-weight:700;color:var(--pri)">${esc(tr("Choose sheet to import:"))}</span><div style="display:flex;flex-wrap:wrap;gap:5px">${cbar.sheets.map((s,i)=>`<button type="button" class="b1 b2" style="margin:0;padding:3px 9px" data-ga="sh_${i}">${esc(s.sheetName)}</button>`).join("")}<button type="button" class="b2" style="margin:0;padding:3px 9px" data-ga="cno">${esc(tr("Cancel"))}</button></div></div>`;
           }
           h+=`<div class="wos-fbar noprint"><span class="wos-ref">${actRef}</span><span class="wos-fx">fx</span><input class="wos-fbi" value="${esc(actVal)}" placeholder="${esc(tr("Formula (=SUM(A1:A5)) or value..."))}"></div>`;
         }
@@ -1121,6 +1353,31 @@ const WOSGrid=(()=>{
         }
         host.querySelectorAll("input.wos-sz").forEach(inp=>{inp.onkeydown=e=>e.stopPropagation();inp.oninput=()=>{sz[+inp.dataset.szi]=inp.value}});
         host.querySelectorAll("input.wos-rt").forEach(inp=>{inp.onkeydown=e=>e.stopPropagation();inp.oninput=()=>{rt[+inp.dataset.rti]=inp.value}});
+        const xlsxIn=host.querySelector("input.wos-xlsx");
+        const applyImpSheet=sh=>{
+          const cl=sh.clip,rows=cl.cells.map((row,r)=>row.map((v,c)=>isFml(v)?shiftFml(v,r-((cl.r0||0)+r),c-((cl.c0||0)+c)):v));
+          const tblObj={rows,merges:cl.merges||[],styles:cl.styles||{}};
+          const hasD=raw.some(r=>r.some(v=>String(v||"").trim()!==""));
+          if(hasD){cbar={type:"pasteTbl",clip:tblObj};inst.render(true)}
+          else{applyWholeTable(tblObj,"replace");toast(tr("Excel imported ✓"))}
+        };
+        if(xlsxIn){
+          xlsxIn.onchange=async()=>{
+            const f=xlsxIn.files?.[0];xlsxIn.value="";if(!f)return;
+            try{
+              if(/\.(csv|tsv|txt)$/i.test(f.name)){
+                const tx=await f.text(),sep=/\.csv$/i.test(f.name)&&!tx.includes("\t")?",":"\t";
+                const p=parseExtClip("",sep===","?tx.replace(/,/g,"\t"):tx);
+                if(p)applyImpSheet({sheetName:f.name,clip:p});
+                return;
+              }
+              const sheets=await parseXlsxBuf(await f.arrayBuffer());
+              if(!sheets.length){toast(tr("Could not read Excel file"));return}
+              if(sheets.length===1)applyImpSheet(sheets[0]);
+              else{cbar={type:"pickSheet",sheets};inst.render(true)}
+            }catch(err){toast(tr("Could not read Excel file"))}
+          };
+        }
         host.querySelectorAll("[data-ga]").forEach(el=>{
           const ga=el.dataset.ga;
           if(ga==="cpfrom"){
@@ -1134,6 +1391,8 @@ const WOSGrid=(()=>{
             else if(ga==="bold"){const nextS=Object.assign({},styles),cb=!!(nextS[act.r+","+act.c]?.b);sels.forEach(s=>{const b=normR(s);for(let r=b.r1;r<=b.r2;r++)for(let c=b.c1;c<=b.c2;c++)nextS[r+","+c]=Object.assign({},nextS[r+","+c],{b:!cb})});commit(raw,merges,nextS)}
             else if(ga==="merge")toggleMerge();
             else if(ga==="dup")toggleDup();
+            else if(ga==="impxlsx"){if(xlsxIn)xlsxIn.click()}
+            else if(ga&&ga.startsWith("sh_")&&cbar?.sheets){const sh=cbar.sheets[+ga.slice(3)];if(sh)applyImpSheet(sh)}
             else if(ga==="cptbl"){WOSClip.tbl={rows:raw.map(r=>[...r]),merges:JSON.parse(JSON.stringify(merges)),styles:JSON.parse(JSON.stringify(styles))};toast("Table copied ✓");inst.render(true)}
             else if(ga==="psttbl"&&WOSClip.tbl){const hasD=raw.some(r=>r.some(v=>String(v||"").trim()!==""));if(hasD){cbar={type:"pasteTbl",clip:WOSClip.tbl};inst.render(true)}else applyWholeTable(WOSClip.tbl,"replace")}
             else if(ga==="cno"){cbar=null;inst.render(true)}
@@ -1295,7 +1554,7 @@ function copyFrom(oid,k,p){
   SCH[k].forEach(c=>{
     if(c.t==="h"||c.t==="k")c.f.forEach(f=>{const id=f.split("|")[0].split(":")[0];if(!id.startsWith("m.")&&!/^(plan|act|rd|dd|di|do|ti|to)$/.test(id))put(p+"f_"+id,sd[id])});
     else if(c.t==="n")put(p+"n_"+c.id,sd[c.id]);
-    else if(c.t==="t"){const o2=SCH[src].find(x=>x.t==="t"&&x.id===c.id),rows=sd[c.id]||[],wg=WOSGrid.get(p+c.id);if(!o2||ids(c)!==ids(o2)||!wg||!rows.length)return;const cIds=c.c.map(x=>x.split("|")[0].split(":")[0]);const gm=sd["_grid_"+c.id]||{},useDup=cIds.length===4&&(c.id==="ai"||(k==="ACCESSORIES"&&c.id==="pi"&&gm.dupSideBySide));const allIds=useDup?[...cIds,...cIds.map(x=>x+"__2")]:cIds;wg.setFromCopy(rows.map(r=>allIds.map(id=>r[id]??"")),gm);n+=rows.length}
+    else if(c.t==="t"){const o2=SCH[src].find(x=>x.t==="t"&&x.id===c.id),rows=sd[c.id]||[],wg=WOSGrid.get(p+c.id);if(!o2||ids(c)!==ids(o2)||!wg||!rows.length)return;const cIds=c.c.map(x=>x.split("|")[0].split(":")[0]);const gm=sd["_grid_"+c.id]||{},useDup=cIds.length===4&&(gm.dupSideBySide!==undefined?!!gm.dupSideBySide:(c.id==="ai"||(k==="ACCESSORIES"&&c.id==="pi")));const allIds=useDup?[...cIds,...cIds.map(x=>x+"__2")]:cIds;wg.setFromCopy(rows.map(r=>allIds.map(id=>r[id]??"")),gm);n+=rows.length}
     else if(c.t==="m"&&k!=="PLANNING"){const rows=src==="PLANNING"?(o.colors||[]):sd[c.id],wg=WOSGrid.get(p+c.id);if(!rows||!wg||!(src==="PLANNING"||SCH[src].some(x=>x.t==="m"&&x.id===c.id)))return;wg.setFromCopy(rows.map(r=>{const q=qa(r),s=q.reduce((a,b)=>a+N(b),0);return[r.c1||r.name||"",r.c2||"",s?String(s):"",...[0,1,2,3,4,5,6,7].map(j=>String(q[j]??""))]}),sd["_grid_"+c.id]||{});n+=rows.length}
   });
   toast(n?"Copied "+n+" values from "+sn(src)+". Review and save.":"Nothing to copy from "+sn(src))}
@@ -1863,7 +2122,7 @@ function trDOM(root){if(LANG!=="ar")return;const w=document.createTreeWalker(roo
 new MutationObserver(ms=>{if(LANG!=="ar")return;ms.forEach(m=>m.addedNodes.forEach(a=>{if(a.nodeType===3)trNode(a);else if(a.nodeType===1)trDOM(a)}))}).observe(document.body,{childList:true,subtree:true});
 const toggleLangMenu=e=>{e.stopPropagation();$("#lgm").classList.toggle("open")};addEventListener("click",()=>{const m=$("#lgm");if(m)m.classList.remove("open")});
 function applyLang(){const ar=LANG==="ar";document.documentElement.lang=ar?"ar":"en";document.documentElement.dir=ar?"rtl":"ltr";$("#lgt").textContent=ar?"اللغة":"Language";$("#lgen").classList.toggle("sel",!ar);$("#lgar").classList.toggle("sel",ar);$("#lgm").classList.remove("open");$("#h1t").textContent="WOS"}
-Object.assign(AR,{"Undo":"تراجع","Redo":"إعادة","Bold":"عريض","Merge / Unmerge":"دمج / إلغاء دمج","8 cols (side-by-side)":"8 أعمدة (جنب بعض)","Duplicate columns side by side":"تكرار الأعمدة جنبًا إلى جنب","Copy table":"نسخ الجدول","Paste table":"لصق الجدول","Copy from…":"نسخ من…","Delete selected rows?":"حذف الصفوف المحددة؟","Target table already has data:":"الجدول الحالي يحتوي على بيانات:","Replace":"استبدال","Append to end":"إضافة في النهاية","Formula (=SUM(A1:A5)) or value...":"معادلة (=SUM(A1:A5)) أو قيمة...","+ Row above":"+ صف لأعلى","+ Row below":"+ صف لأسفل","Delete row":"حذف صف","Insert row above":"إدراج صف لأعلى","Insert row below":"إدراج صف لأسفل","Insert column left":"إدراج عمود قبل","Insert column right":"إدراج عمود بعد","Delete column":"حذف عمود","Cut":"قص","Paste":"لصق","Paste Special: Values":"لصق خاص: القيم فقط","Paste Special: Formulas":"لصق خاص: المعادلات فقط","Paste Special: Transpose":"لصق خاص: تبديل الصفوف والأعمدة","Clear contents":"مسح المحتوى","Copied ✓":"تم النسخ ✓","Cut ✓":"تم القص ✓","Table copied ✓":"تم نسخ الجدول ✓","Table pasted ✓":"تم لصق الجدول ✓"});
+Object.assign(AR,{"Undo":"تراجع","Redo":"إعادة","Bold":"عريض","Merge / Unmerge":"دمج / إلغاء دمج","8 cols (side-by-side)":"8 أعمدة (جنب بعض)","Duplicate columns side by side":"تكرار الأعمدة جنبًا إلى جنب","Import Excel":"استيراد Excel","Import from Excel (.xlsx) with formulas":"استيراد من ملف إكسل (.xlsx) بالمعادلات","Choose sheet to import:":"اختر الشيت المراد استيراده:","Excel imported ✓":"تم استيراد شيت Excel بالمعادلات ✓","Could not read Excel file":"تعذّر قراءة ملف الإكسل","Copy table":"نسخ الجدول","Paste table":"لصق الجدول","Copy from…":"نسخ من…","Delete selected rows?":"حذف الصفوف المحددة؟","Target table already has data:":"الجدول الحالي يحتوي على بيانات:","Replace":"استبدال","Append to end":"إضافة في النهاية","Formula (=SUM(A1:A5)) or value...":"معادلة (=SUM(A1:A5)) أو قيمة...","+ Row above":"+ صف لأعلى","+ Row below":"+ صف لأسفل","Delete row":"حذف صف","Insert row above":"إدراج صف لأعلى","Insert row below":"إدراج صف لأسفل","Insert column left":"إدراج عمود قبل","Insert column right":"إدراج عمود بعد","Delete column":"حذف عمود","Cut":"قص","Paste":"لصق","Paste Special: Values":"لصق خاص: القيم فقط","Paste Special: Formulas":"لصق خاص: المعادلات فقط","Paste Special: Transpose":"لصق خاص: تبديل الصفوف والأعمدة","Clear contents":"مسح المحتوى","Copied ✓":"تم النسخ ✓","Cut ✓":"تم القص ✓","Table copied ✓":"تم نسخ الجدول ✓","Table pasted ✓":"تم لصق الجدول ✓"});
 function setLang(l){WOSGrid.snapAll();if(view==="new")syncNewDraft();LANG=l;try{localStorage.setItem("lang",l)}catch(e){}applyLang();if(typeof gate!=="undefined"&&gate)showInstall();else if(!meId&&isClosed()&&!mgr&&!window.__nohours)showClosed();else if(!meId)showLogin();else if(!(canEdit||roles[meId]!==undefined||sigs[meId]!==undefined))pendingV();else render();trDOM(document.body)}
 applyLang();
 /* ---- working hours: closed on Friday, other days only 08:00-17:00 (Cairo time). Managers are exempt. ---- */
