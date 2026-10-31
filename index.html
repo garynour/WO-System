@@ -20,7 +20,7 @@ body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 Inter,system-u
 .top h1{font-size:18px;margin:0 0 8px;letter-spacing:.2px;color:#3b6a7a}.top .mut,.top a{color:var(--mut);font-size:12px}
 .nav{display:flex;gap:6px;overflow-x:auto}.nav button{white-space:nowrap;padding:7px 14px;border:0;border-radius:999px;background:rgba(255,255,255,.75);color:var(--tx);font-weight:500}
 .nav .on{background:#e3f1f5;color:#2f6f84;font-weight:600}.nav .b1{background:#f2b66d;color:#3b2a10;font-weight:600}
-main{max-width:860px;margin:0 auto;padding:14px}
+main{width:100%;max-width:none;margin:0;padding:14px 20px}
 .card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--bd)}
 .card.click{transition:transform .12s,box-shadow .12s}.card.click:hover{transform:translateY(-2px)}
 .card h3{margin:0 0 8px;font-size:16px}
@@ -95,12 +95,12 @@ select{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--bd);borde
 :root{--bg:#f2f2f2;--card:#fff;--tx:#1f2d36;--mut:#6b7a84;--bd:#dde2e5;--pri:#2f5668;--ok:#4a9a78;--bad:#d9645d;--sh:0 2px 10px rgba(30,50,60,.08);--blue:#2c5063;--blue2:#335b70}
 body{background:var(--bg)}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:25;padding:0;background:transparent;border-bottom:0;box-shadow:0 2px 10px rgba(15,30,42,.12)}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 14px;background:linear-gradient(180deg,#213748,#1a2c3b);color:#fff;direction:ltr}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 20px;background:linear-gradient(180deg,#213748,#1a2c3b);color:#fff;direction:ltr}
 .topbar h1{margin:0;font-size:15px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;min-width:0}
 .topbar h1 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.subtop{background:linear-gradient(100deg,#bdd2d6 0%,#d4dfee 55%,#e3e6f6 100%);padding:8px 14px;border-bottom:1px solid rgba(0,0,0,.05)}
+.subtop{background:linear-gradient(100deg,#bdd2d6 0%,#d4dfee 55%,#e3e6f6 100%);padding:8px 20px;border-bottom:1px solid rgba(0,0,0,.05)}
 :root[data-theme="dark"] .subtop{background:linear-gradient(100deg,#21343d 0%,#243547 55%,#2a3549 100%)}
-.subtop-in{max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.subtop-in{width:100%;max-width:none;margin:0;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .subtop-ttl{font-size:17px;font-weight:700;color:#334b5b;text-align:end;max-width:44%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 :root[data-theme="dark"] .subtop-ttl{color:#e8eef2}
 .topbar h1,.topbar h1 span{color:#ffffff!important}:root[data-theme="dark"] .flt-btn{color:#7dd3fc!important}
@@ -196,6 +196,54 @@ main{padding-bottom:118px}#toast{bottom:calc(114px + env(safe-area-inset-bottom,
 .pmbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .pmnav{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:4px 8px}
 .pmnav input[type=month]{border:0;background:transparent;color:var(--tx);font-weight:700;font-size:13px;padding:4px;width:auto}
+@media(max-width:700px){main{padding:14px 14px 118px}.topbar,.subtop{padding:8px 14px}}
+.olist-grid{display:grid;grid-template-columns:1fr;gap:12px}.olist-grid>.card{margin-bottom:0}
+@media(min-width:768px){.olist-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1280px){.olist-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1680px){.olist-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.dcard-full{grid-column:1/-1}
+.phalls-grid{display:grid;grid-template-columns:1fr;gap:14px}.phalls-grid>.phall{margin-bottom:0}
+@media(min-width:1024px){.phalls-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1536px){.phalls-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ord-top-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+@media(min-width:1024px){.ord-top-grid{grid-template-columns:5fr 7fr;align-items:stretch}.ord-top-grid>.card{margin-bottom:0}}
+@media(min-width:900px){.chk{grid-template-columns:repeat(auto-fill,minmax(175px,1fr))}.g{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}.dg{grid-template-columns:repeat(auto-fill,minmax(195px,1fr))}}
+.wos-grid-host{outline:none;position:relative;margin-bottom:8px;user-select:none;-webkit-user-select:none}
+.wos-gbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;background:var(--bg);border:1px solid var(--bd);border-bottom:0;border-radius:10px 10px 0 0;font-size:11.5px}
+.wos-gbar button,.wos-gbar select{padding:3px 8px;font-size:11.5px;border-radius:7px;margin:0;width:auto}
+.wos-gbar button.on{background:rgba(47,86,104,.16);border-color:var(--pri);color:var(--pri);font-weight:700}
+:root[data-theme="dark"] .wos-gbar button.on{background:rgba(125,211,252,.18);color:#bae6fd;border-color:#7dd3fc}
+.wos-fbar{display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--card);border:1px solid var(--bd);border-bottom:0;font-size:12px}
+.wos-fbar .wos-ref{min-width:52px;padding:2px 6px;border-radius:6px;background:var(--bg);border:1px solid var(--bd);text-align:center;font-family:ui-monospace,monospace;font-weight:700;font-size:11px;color:var(--pri)}
+.wos-fbar .wos-fx{font-style:italic;font-weight:700;color:var(--mut);font-family:serif;padding:0 2px}
+.wos-fbar input{flex:1;margin:0;padding:3px 7px;font-size:12px;border-radius:6px;height:26px;direction:ltr;text-align:left;font-family:ui-monospace,monospace}
+.wos-sc{overflow-x:auto;border:1px solid var(--bd);border-radius:0 0 10px 10px;direction:inherit;background:var(--card)}
+.wos-sc.ro{border-radius:10px}
+.wos-sc table{min-width:520px;width:100%;border-collapse:collapse}
+.wos-sc th.wos-cl,.wos-sc th.wos-rn,.wos-sc td.wos-rn{background:var(--bg);color:var(--mut);font-size:10.5px;font-weight:700;padding:3px 5px;min-width:28px;width:28px;cursor:pointer;user-select:none}
+.wos-sc th.wos-cl.hi,.wos-sc td.wos-rn.hi{background:rgba(47,86,104,.18);color:var(--pri)}
+:root[data-theme="dark"] .wos-sc th.wos-cl.hi,:root[data-theme="dark"] .wos-sc td.wos-rn.hi{background:rgba(125,211,252,.18);color:#bae6fd}
+.wos-sc td.wos-c{position:relative;padding:0;height:30px;min-width:72px;cursor:cell;vertical-align:middle;color:var(--tx)}
+.wos-sc td.wos-c .wos-cv{padding:4px 6px;min-height:28px;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px}
+.wos-sc td.wos-c input.wos-ed{width:100%;height:100%;min-height:28px;margin:0;padding:3px 6px;border:0;outline:none;background:var(--card);color:var(--tx);font-size:12.5px;box-shadow:inset 0 0 0 2px var(--pri)}
+.wos-sc td.wos-c.sel{background:rgba(47,86,104,.11)!important}
+:root[data-theme="dark"] .wos-sc td.wos-c.sel{background:rgba(125,211,252,.14)!important}
+.wos-sc td.wos-c.act{outline:2px solid var(--pri);outline-offset:-2px;z-index:2}
+:root[data-theme="dark"] .wos-sc td.wos-c.act{outline-color:#7dd3fc}
+.wos-sc td.wos-c.ffill{background:rgba(74,154,120,.14)!important;outline:1px dashed var(--ok);outline-offset:-1px}
+@keyframes wosAnts{0%{outline-color:var(--pri)}50%{outline-color:transparent}100%{outline-color:var(--pri)}}
+.wos-sc td.wos-c.ants{outline:2px dashed var(--pri);outline-offset:-2px;animation:wosAnts .9s infinite}
+.wos-fh{position:absolute;width:7px;height:7px;background:var(--pri);border:1px solid #fff;bottom:-3px;inset-inline-end:-3px;cursor:crosshair;z-index:4;border-radius:1px}
+:root[data-theme="dark"] .wos-fh{background:#38bdf8;border-color:#0f172a}
+.wo-dup-divider{border-inline-start:4px double #2f5668!important}
+:root[data-theme="dark"] .wo-dup-divider{border-inline-start:4px double #7dd3fc!important}
+.wos-cbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:7px 10px;background:rgba(217,100,93,.1);border:1px solid rgba(217,100,93,.4);border-bottom:0;font-size:12px}
+.wos-cbar.info{background:rgba(47,86,104,.09);border-color:rgba(47,86,104,.38)}
+.wos-bbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}
+.wos-cmenu{position:fixed;z-index:95;min-width:195px;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.22);padding:5px;font-size:12.5px}
+.wos-cmenu button{display:flex;width:100%;align-items:center;justify-content:space-between;border:0;background:none;padding:6px 10px;border-radius:8px;font-size:12.5px;text-align:start}
+.wos-cmenu button:hover{background:rgba(47,86,104,.12)}
+.wos-cmenu hr{border:0;border-top:1px solid var(--bd);margin:4px 0}
 @media print{.top,.tabbar,#toast,.noprint{display:none!important}main{padding:0!important;max-width:none!important}body{background:#fff!important;color:#000!important}}
 </style></head><body>
 <div id="splash"><i class="sb t"></i><div class="circ"><img src="icons/splash-logo.png" alt=""></div><div class="dots"><b></b><b></b><b></b><b></b><b></b><b></b></div><i class="sb bt"></i></div>
@@ -278,21 +326,877 @@ const I=(c,v,x="")=>`<input class="${c}" value="${esc(v)}" ${RO?"disabled":""} $
 function linked(o,k,id){if(!LINK.includes(id)||!o.order)return "";for(let j=o.order.indexOf(k)-1;j>=0;j--){const x=o.order[j],v=((o.stages[x]||{}).d||{})[id];if(v&&canViewS(o,x))return v}return ""}
 function fld(o,k,p,d,f){let[a,ty]=f.split("|"),[id,lb]=a.split(":");const M=id.startsWith("m."),n=M?id.slice(2):id,dis=RO||(M&&k!=="PLANNING");if(ty==="n")ty="number";
   return `<label>${lb}<input id="${p}${M?"m_":"f_"}${n}" type="${ty||"text"}" value="${esc(M?o[n]:(d[id]||(RO?"":linked(o,k,id))))}" ${dis?"disabled":""}></label>`}
+/* ---- Excel-like Reusable Grid Engine (WOSGrid) ---- */
+const WOSClip={cell:null,tbl:null};
+const WOSGrid=(()=>{
+  const specs={},snaps={};
+  const colLet=c=>{let n=c+1,s="";while(n>0){const r=(n-1)%26;s=String.fromCharCode(65+r)+s;n=Math.floor((n-1)/26)}return s};
+  const letCol=s=>{let u=s.toUpperCase(),n=0;for(let i=0;i<u.length;i++)n=n*26+(u.charCodeAt(i)-64);return n-1};
+  const parseRef=t=>{const m=/^(\$?)([A-Za-z]+)(\$?)(\d+)$/.exec(String(t||"").trim());if(!m)return null;const r=+m[4]-1,c=letCol(m[2]);return r<0||c<0?null:{r,c,ar:m[1]==="$",ac:m[2]&&m[3]==="$",acCol:m[1]==="$",arRow:m[3]==="$"}};
+  const fmtRef=(r,c,ar,ac)=>`${ac?"$":""}${colLet(c)}${ar?"$":""}${r+1}`;
+  const isFml=v=>typeof v==="string"&&v.trim().startsWith("=")&&v.trim().length>1;
+  const toNum=v=>{if(typeof v==="number")return isFinite(v)?v:0;if(typeof v==="boolean")return v?1:0;const s=asciiDig(String(v??"")).replace(/,/g,"").trim();if(!s)return 0;const n=Number(s);return isFinite(n)?n:NaN};
+  const strictNum=v=>{const s=asciiDig(String(v??"")).replace(/,/g,"").trim();if(!s)return null;const n=Number(s);return isFinite(n)?n:null};
+  const fmtNumCell=n=>{if(!isFinite(n))return"#VALUE!";const r=Math.round(n*1e6)/1e6;return String(r)};
+  function mapRefs(fml,fn){
+    let out="",i=0,inStr=false;
+    while(i<fml.length){
+      const ch=fml[i];
+      if(ch==='"'){out+=ch;i++;while(i<fml.length){out+=fml[i];if(fml[i]==='"'){if(fml[i+1]==='"'){out+=fml[i+1];i+=2;continue}i++;break}i++}continue}
+      const sub=fml.slice(i),rm=/^(\$?[A-Za-z]{1,3}\$?\d+)(?!\s*\()/.exec(sub);
+      if(rm){const prev=i>0?fml[i-1]:"";if(!/[A-Za-z0-9_$]/.test(prev)){const p=parseRef(rm[1]);if(p){out+=fn(p,rm[1]);i+=rm[1].length;continue}}}
+      out+=ch;i++;
+    }
+    return out;
+  }
+  const shiftFml=(fml,dr,dc)=>!isFml(fml)?fml:mapRefs(fml,p=>{const nr=p.arRow?p.r:p.r+dr,nc=p.acCol?p.c:p.c+dc;return(nr<0||nc<0)?"#REF!":fmtRef(nr,nc,p.arRow,p.acCol)});
+  const shiftStruct=(fml,axis,at,dl)=>!isFml(fml)?fml:mapRefs(fml,p=>{let r=p.r,c=p.c;if(axis==="r"){if(dl<0&&r>=at&&r<at-dl)return"#REF!";if(r>=at)r+=dl}else{if(dl<0&&c>=at&&c<at-dl)return"#REF!";if(c>=at)c+=dl}return(r<0||c<0)?"#REF!":fmtRef(r,c,p.arRow,p.acCol)});
+  function pointAt(val,pos){
+    if(typeof val!=="string"||!val.startsWith("="))return null;
+    const p=Math.max(1,Math.min(val.length,pos));
+    let q=false;for(let i=0;i<p;i++)if(val[i]==='"')q=!q;if(q)return null;
+    let s=p,e=p;while(s>1&&/[A-Za-z0-9$:]/.test(val[s-1]))s--;while(e<val.length&&/[A-Za-z0-9$:]/.test(val[e]))e++;
+    const tok=val.slice(s,e),prev=val.slice(1,s).trimEnd(),lc=prev?prev[prev.length-1]:"=";
+    if(!tok)return"=+-*/^&=<>(,:".includes(lc)?{s,e}:null;
+    if(/^(\$?[A-Za-z]{1,3}\$?\d+)(:\$?[A-Za-z]{1,3}\$?\d+)?$/.test(tok)&&"=+-*/^&=<>(,:".includes(lc)){
+      const ci=tok.indexOf(":");return ci>=0&&p>s+ci?{s:s+ci+1,e}:{s,e};
+    }
+    return null;
+  }
+  function evalAll(raw,nr,nc){
+    const memo=new Map(),vis=new Set();
+    const getCell=(r,c)=>{
+      if(r<0||c<0||r>=nr||c>=nc)return"";
+      const k=r+","+c;if(memo.has(k))return memo.get(k);
+      if(vis.has(k))return"#CYCLE!";
+      const rv=String((raw[r]&&raw[r][c])??"");
+      if(!isFml(rv)){memo.set(k,rv);return rv}
+      vis.add(k);
+      let res;try{res=evalExpr(rv.trim().slice(1),getCell)}catch(e){res=String(e&&e.message||"#ERROR!")}
+      vis.delete(k);
+      const disp=typeof res==="number"?fmtNumCell(res):typeof res==="boolean"?(res?"TRUE":"FALSE"):String(res??"");
+      memo.set(k,disp);return disp;
+    };
+    const out=[];for(let r=0;r<nr;r++){const row=[];for(let c=0;c<nc;c++)row.push(getCell(r,c));out.push(row)}
+    return out;
+  }
+  function tokenize(s){
+    const tks=[];let i=0;
+    while(i<s.length){
+      const ch=s[i];if(/\s/.test(ch)){i++;continue}
+      if(ch==='"'){let v="",j=i+1;while(j<s.length){if(s[j]==='"'){if(s[j+1]==='"'){v+='"';j+=2;continue}j++;break}v+=s[j++]}tks.push({t:"s",v});i=j;continue}
+      if(s.slice(i,i+2)==="<>"||s.slice(i,i+2)==="<="||s.slice(i,i+2)===">="){tks.push({t:"op",v:s.slice(i,i+2)});i+=2;continue}
+      if("+-*/^&=<>(),:%".includes(ch)){tks.push({t:"op",v:ch});i++;continue}
+      if(/[0-9.]/.test(ch)){let j=i;while(j<s.length&&/[0-9.]/.test(s[j]))j++;tks.push({t:"n",v:parseFloat(s.slice(i,j))});i=j;continue}
+      if(s.slice(i,i+5)==="#REF!"){tks.push({t:"err",v:"#REF!"});i+=5;continue}
+      if(/[A-Za-z$_]/.test(ch)){let j=i;while(j<s.length&&/[A-Za-z0-9$_.]/.test(s[j]))j++;tks.push({t:"id",v:s.slice(i,j)});i=j;continue}
+      throw new Error("#ERROR!");
+    }
+    return tks;
+  }
+  function evalExpr(src,getCell){
+    const tks=tokenize(src);let p=0;
+    const pk=()=>tks[p],nx=()=>tks[p++];
+    const errOf=v=>typeof v==="string"&&/^#(REF!|DIV\/0!|VALUE!|NAME\?|CYCLE!|ERROR!)$/.test(v)?v:null;
+    const flat=args=>{const o=[];args.forEach(a=>{if(Array.isArray(a))a.forEach(x=>o.push(x));else o.push(a)});return o};
+    const cmp=()=>{let l=concat();while(pk()&&pk().t==="op"&&["=","<>","<","<=",">",">="].includes(pk().v)){const op=nx().v,r=concat();const e=errOf(l)||errOf(r);if(e)return e;const nl=strictNum(l),nr_=strictNum(r);let c=0;if(nl!==null&&nr_!==null)c=nl-nr_;else c=String(l??"").toLowerCase().localeCompare(String(r??"").toLowerCase());l=op==="="?c===0:op==="<>"?c!==0:op==="<"?c<0:op==="<="?c<=0:op===">"?c>0:c>=0}return l};
+    const concat=()=>{let l=add();while(pk()&&pk().t==="op"&&pk().v==="&"){nx();const r=add(),e=errOf(l)||errOf(r);if(e)return e;l=String(l??"")+String(r??"")}return l};
+    const add=()=>{let l=mul();while(pk()&&pk().t==="op"&&(pk().v==="+"||pk().v==="-")){const op=nx().v,r=mul(),e=errOf(l)||errOf(r);if(e)return e;const nl=toNum(l),nr_=toNum(r);if(isNaN(nl)||isNaN(nr_))return"#VALUE!";l=op==="+"?nl+nr_:nl-nr_}return l};
+    const mul=()=>{let l=pow();while(pk()&&pk().t==="op"&&(pk().v==="*"||pk().v==="/")){const op=nx().v,r=pow(),e=errOf(l)||errOf(r);if(e)return e;const nl=toNum(l),nr_=toNum(r);if(isNaN(nl)||isNaN(nr_))return"#VALUE!";if(op==="/"&&nr_===0)return"#DIV/0!";l=op==="*"?nl*nr_:nl/nr_}return l};
+    const pow=()=>{let l=una();while(pk()&&pk().t==="op"&&pk().v==="^"){nx();const r=una(),e=errOf(l)||errOf(r);if(e)return e;const nl=toNum(l),nr_=toNum(r);if(isNaN(nl)||isNaN(nr_))return"#VALUE!";l=Math.pow(nl,nr_)}return l};
+    const una=()=>{if(pk()&&pk().t==="op"&&(pk().v==="+"||pk().v==="-")){const op=nx().v,v=una(),e=errOf(v);if(e)return e;const n=toNum(v);return isNaN(n)?"#VALUE!":op==="-"?-n:n}let v=pri();while(pk()&&pk().t==="op"&&pk().v==="%"){nx();const e=errOf(v);if(e)return e;const n=toNum(v);v=isNaN(n)?"#VALUE!":n/100}return v};
+    const pri=()=>{
+      const t=pk();if(!t)return 0;
+      if(t.t==="n"){nx();return t.v}
+      if(t.t==="s"||t.t==="err"){nx();return t.v}
+      if(t.t==="op"&&t.v==="("){nx();const v=cmp();if(pk()&&pk().v===")")nx();return v}
+      if(t.t==="id"){
+        nx();const u=t.v.toUpperCase();
+        if(u==="TRUE")return true;if(u==="FALSE")return false;
+        if(pk()&&pk().t==="op"&&pk().v==="("){
+          nx();const args=[];
+          if(!(pk()&&pk().v===")")){while(true){args.push(argOrRange());if(pk()&&pk().v===","){nx();continue}break}}
+          if(pk()&&pk().v===")")nx();
+          return callFn(u,args,flat,errOf);
+        }
+        const rf=parseRef(t.v);if(!rf)return"#NAME?";
+        const cv=getCell(rf.r,rf.c);if(errOf(cv))return cv;
+        const sn=strictNum(cv);return sn!==null?sn:cv;
+      }
+      throw new Error("#ERROR!");
+    };
+    const argOrRange=()=>{
+      if(pk()&&pk().t==="id"&&tks[p+1]&&tks[p+1].v===":"&&tks[p+2]&&tks[p+2].t==="id"){
+        const a=parseRef(nx().v);nx();const b=parseRef(nx().v);
+        if(!a||!b)return"#REF!";
+        const out=[];for(let r=Math.min(a.r,b.r);r<=Math.max(a.r,b.r);r++)for(let c=Math.min(a.c,b.c);c<=Math.max(a.c,b.c);c++){const v=getCell(r,c);const sn=strictNum(v);out.push(sn!==null?sn:v)}
+        return out;
+      }
+      return cmp();
+    };
+    const res=cmp();if(p<tks.length)return"#ERROR!";return res;
+  }
+  function callFn(fn,args,flat,errOf){
+    if(fn==="IFERROR"){const v=args[0];return errOf(v)?(args[1]??""):v}
+    if(fn==="IF"){const c=args[0],ec=errOf(c);if(ec)return ec;const ok=typeof c==="boolean"?c:Boolean(toNum(c));return ok?(args[1]??true):(args[2]??false)}
+    if(fn==="IFS"){for(let i=0;i<args.length;i+=2){const c=args[i],ec=errOf(c);if(ec)return ec;if(typeof c==="boolean"?c:Boolean(toNum(c)))return args[i+1]??""}return"#VALUE!"}
+    const fl=flat(args);for(const x of fl){const e=errOf(x);if(e)return e}
+    const nums=fl.map(x=>typeof x==="number"?x:strictNum(x)).filter(x=>x!==null);
+    if(fn==="SUM")return nums.reduce((a,b)=>a+b,0);
+    if(fn==="AVERAGE"||fn==="AVG")return nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:"#DIV/0!";
+    if(fn==="MIN")return nums.length?Math.min(...nums):0;
+    if(fn==="MAX")return nums.length?Math.max(...nums):0;
+    if(fn==="COUNT")return nums.length;
+    if(fn==="COUNTA")return fl.filter(x=>String(x??"").trim()!=="").length;
+    if(fn==="ROUND"){const a=toNum(args[0]),b=args.length>1?toNum(args[1]):0;if(isNaN(a)||isNaN(b))return"#VALUE!";const f=Math.pow(10,Math.round(b));return Math.round(a*f)/f}
+    if(fn==="ROUNDUP"){const a=toNum(args[0]),b=args.length>1?toNum(args[1]):0;const f=Math.pow(10,Math.round(b));return(a>=0?Math.ceil(Math.abs(a)*f):Math.ceil(Math.abs(a)*f)*-1)*(a<0?-1:1)/f}
+    if(fn==="ROUNDDOWN"){const a=toNum(args[0]),b=args.length>1?toNum(args[1]):0;const f=Math.pow(10,Math.round(b));return Math.trunc(a*f)/f}
+    if(fn==="INT")return Math.floor(toNum(args[0]));
+    if(fn==="ABS")return Math.abs(toNum(args[0]));
+    if(fn==="SQRT"){const n=toNum(args[0]);return n<0?"#VALUE!":Math.sqrt(n)}
+    if(fn==="MOD"){const a=toNum(args[0]),b=toNum(args[1]);return b===0?"#DIV/0!":a%b}
+    if(fn==="POWER")return Math.pow(toNum(args[0]),toNum(args[1]));
+    if(fn==="AND")return fl.every(x=>typeof x==="boolean"?x:Boolean(toNum(x)));
+    if(fn==="OR")return fl.some(x=>typeof x==="boolean"?x:Boolean(toNum(x)));
+    if(fn==="NOT")return!(typeof args[0]==="boolean"?args[0]:Boolean(toNum(args[0])));
+    if(fn==="LEN")return String(args[0]??"").length;
+    if(fn==="UPPER")return String(args[0]??"").toUpperCase();
+    if(fn==="LOWER")return String(args[0]??"").toLowerCase();
+    if(fn==="TRIM")return String(args[0]??"").trim();
+    if(fn==="CONCAT"||fn==="CONCATENATE")return fl.map(x=>String(x??"")).join("");
+    if(fn==="TODAY")return today();
+    return"#NAME?";
+  }
+  const normR=s=>({r1:Math.min(s.r1,s.r2),c1:Math.min(s.c1,s.c2),r2:Math.max(s.r1,s.r2),c2:Math.max(s.c1,s.c2)});
+  function buildMergeIdx(merges){
+    const master=new Map(),cov=new Map();
+    (merges||[]).forEach(m=>{if(m.rs<=1&&m.cs<=1)return;master.set(m.r+","+m.c,m);for(let r=m.r;r<m.r+m.rs;r++)for(let c=m.c;c<m.c+m.cs;c++)if(r!==m.r||c!==m.c)cov.set(r+","+c,m)});
+    return{master,cov};
+  }
+  function parseExtClip(html,txt){
+    if(html&&/<table/i.test(html)){
+      try{
+        const doc=new DOMParser().parseFromString(html,"text/html"),tb=doc.querySelector("table");
+        if(tb){
+          const trs=[...tb.querySelectorAll("tr")];if(trs.length){
+            const grid=[],occ=[],merges=[],styles={};
+            trs.forEach((tr,r)=>{
+              if(!grid[r])grid[r]=[];if(!occ[r])occ[r]=[];let c=0;
+              [...tr.children].filter(x=>x.tagName==="TD"||x.tagName==="TH").forEach(td=>{
+                while(occ[r][c])c++;
+                const rs=Math.max(1,+td.getAttribute("rowspan")||1),cs=Math.max(1,+td.getAttribute("colspan")||1);
+                const fml=td.getAttribute("data-formula")||td.getAttribute("x:fmla")||"";
+                const raw=fml?(fml.startsWith("=")?fml:"="+fml):(td.textContent||"").replace(/\r?\n/g," ").trim();
+                const stAttr=(td.getAttribute("style")||"").toLowerCase();
+                if(td.querySelector("b,strong")||/font-weight:\s*(bold|[6-9]00)/.test(stAttr))styles[r+","+c]={b:true};
+                if(rs>1||cs>1)merges.push({r,c,rs,cs});
+                for(let dr=0;dr<rs;dr++)for(let dc=0;dc<cs;dc++){
+                  if(!grid[r+dr])grid[r+dr]=[];if(!occ[r+dr])occ[r+dr]=[];
+                  occ[r+dr][c+dc]=true;grid[r+dr][c+dc]=(dr===0&&dc===0)?raw:"";
+                }
+                c+=cs;
+              });
+            });
+            const nc=Math.max(1,...grid.map(r=>r.length));
+            const cells=grid.map(r=>{const a=[];for(let i=0;i<nc;i++)a.push(r[i]??"");return a});
+            return{mode:"copy",r0:0,c0:0,nr:cells.length,nc,cells,merges,styles,ext:true};
+          }
+        }
+      }catch(e){}
+    }
+    if(txt){
+      const lines=String(txt).replace(/\r\n/g,"\n").replace(/\r/g,"\n").split("\n");
+      if(lines.length>1&&lines[lines.length-1]==="")lines.pop();
+      if(lines.length){const cells=lines.map(l=>l.split("\t")),nc=Math.max(1,...cells.map(r=>r.length));return{mode:"copy",r0:0,c0:0,nr:cells.length,nc,cells:cells.map(r=>{const a=[];for(let i=0;i<nc;i++)a.push(r[i]??"");return a}),merges:[],styles:{},ext:true}}
+    }
+    return null;
+  }
+  function fillSeries(srcVals,len,stepDir){
+    const n=srcVals.length;if(!n||len<=0)return[];
+    const nums=srcVals.map(v=>!isFml(v)?strictNum(v):null);
+    if(nums.every(x=>x!==null)){
+      const step=n>=2?(nums[1]-nums[0]):0,base=stepDir>0?nums[n-1]:nums[0];
+      const out=[];for(let i=1;i<=len;i++)out.push(fmtNumCell(base+(stepDir>0?step*i:-step*i)));
+      return stepDir<0?out.reverse():out;
+    }
+    const dm=srcVals.map(v=>/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v||"").trim()));
+    if(dm.every(Boolean)){
+      const ts=dm.map(m=>Date.UTC(+m[1],+m[2]-1,+m[3])),step=n>=2?(ts[1]-ts[0]):86400000,base=stepDir>0?ts[n-1]:ts[0];
+      const out=[];for(let i=1;i<=len;i++)out.push(new Date(base+(stepDir>0?step*i:-step*i)).toISOString().slice(0,10));
+      return stepDir<0?out.reverse():out;
+    }
+    const tm=srcVals.map(v=>/^(.*?)(\d+)$/.exec(String(v||"").trim()));
+    if(tm.every(Boolean)&&tm.every(m=>m[1]===tm[0][1])){
+      const ns=tm.map(m=>+m[2]),step=n>=2?(ns[1]-ns[0]):1,base=stepDir>0?ns[n-1]:ns[0],pf=tm[0][1];
+      const out=[];for(let i=1;i<=len;i++)out.push(pf+String(Math.max(0,base+(stepDir>0?step*i:-step*i))));
+      return stepDir<0?out.reverse():out;
+    }
+    const out=[];for(let i=0;i<len;i++)out.push(srcVals[i%n]);return out;
+  }
+  let ctxEl=null;
+  const closeCtx=()=>{if(ctxEl){ctxEl.remove();ctxEl=null}};
+  addEventListener("click",closeCtx);addEventListener("scroll",closeCtx,true);
+
+  function createInst(host,sp){
+    const meta=Object.assign({},((sp.d||{})["_grid_"+sp.sec.id])||{});
+    const fmls=meta.formulas||{};
+    let merges=Array.isArray(meta.merges)?JSON.parse(JSON.stringify(meta.merges)):[];
+    let styles=meta.styles?JSON.parse(JSON.stringify(meta.styles)):{};
+    let extraCols=Array.isArray(meta.extraCols)?JSON.parse(JSON.stringify(meta.extraCols)):[];
+    const canDup=sp.kind==="t"&&sp.sec.c.length===4&&(sp.sec.id==="ai"||(sp.dept==="ACCESSORIES"&&sp.sec.id==="pi"));
+    let dup=canDup?(meta.dupSideBySide!==undefined?!!meta.dupSideBySide:sp.sec.id==="ai"):false;
+    let hiddenR=[];
+    let sz=(sp.o.sz||["S","M","L","XL","","","",""]).slice(0,8);while(sz.length<8)sz.push("");
+    let rt=(sp.o.rt||["1","1","1","1","","","",""]).slice(0,8);while(rt.length<8)rt.push("");
+    const edPlan=!sp.ro&&sp.dept==="PLANNING"&&sp.kind==="m";
+
+    const getCols=()=>{
+      if(sp.kind==="m"){
+        const base=[{id:"c1",lb:"Color 1"},{id:"c2",lb:"Color 2"},{id:"ct",lb:"QTY",n:true,ro:!edPlan}];
+        for(let i=0;i<8;i++)base.push({id:"q"+i,lb:sz[i]||("S"+(i+1)),n:true,szIdx:i});
+        return base.concat(extraCols);
+      }
+      const bCols=sp.sec.c.map(c=>{let[a,ty]=c.split("|"),[id,lb]=a.split(":");return{id,lb,n:ty==="n"}});
+      if(dup){
+        const rCols=bCols.map((c,i)=>({id:c.id+"__2",lb:c.lb,n:c.n,div:i===0}));
+        return bCols.concat(rCols,extraCols);
+      }
+      return bCols.concat(extraCols);
+    };
+
+    let raw=[];
+    if(sp.kind==="m"){
+      const v=Array.isArray(sp.d[sp.sec.id])?sp.d[sp.sec.id]:[],pcl=sp.o.colors||[];
+      let cl=sp.dept==="PLANNING"?(pcl.length?pcl:(sp.ro?[]:[{},{}])):(()=>{const cnt=Math.max(v.length,pcl.length,sp.ro?0:2),a=[];for(let i=0;i<cnt;i++){const sv=v[i]||{},pc=pcl[i]||{};a.push({c1:sv.c1!==undefined?sv.c1:(pc.c1||pc.name||""),c2:sv.c2!==undefined?sv.c2:(pc.c2||""),t:sv.t||"",q:rq(sv)})}return a})();
+      const cols=getCols();
+      raw=cl.map((c,r)=>{
+        const q=qa(c),rowSum=q.reduce((a,b)=>a+N(b),0);
+        const row=[String(c.c1||c.name||""),String(c.c2||""),edPlan?String(c.t||(rowSum?rowSum:"")):(rowSum?String(rowSum):"")];
+        for(let j=0;j<8;j++)row.push(String(q[j]??""));
+        for(let j=11;j<cols.length;j++)row.push(String((c[cols[j].id])??""));
+        cols.forEach((_,ci)=>{if(fmls[r+","+ci])row[ci]=fmls[r+","+ci]});
+        return row;
+      });
+    }else{
+      const bCols=sp.sec.c.map(c=>c.split("|")[0].split(":")[0]);
+      let sRows=sp.d[sp.sec.id];
+      if(!sRows||!sRows.length)sRows=sp.sec.pre?sp.sec.pre.map(x=>({[bCols[0]]:x})):[{},{},{}];
+      const cols=getCols();
+      raw=sRows.map((rObj,r)=>{
+        hiddenR[r]={};bCols.forEach(id=>{if(rObj&&rObj[id+"__2"]!==undefined)hiddenR[r][id+"__2"]=String(rObj[id+"__2"])});
+        return cols.map((col,ci)=>fmls[r+","+ci]?fmls[r+","+ci]:String((rObj&&rObj[col.id])??""));
+      });
+    }
+    if(!raw.length)raw=[new Array(getCols().length).fill("")];
+
+    let act={r:0,c:0},sels=[{r1:0,c1:0,r2:0,c2:0}],ed=null,undoSt=[],redoSt=[],cbar=null,drag=null,fillDrag=null,fillPrev=null;
+    const snapKey=(sp.oid||view)+"|"+sp.dept+"|"+sp.sid+"|"+(sp.ro?1:0);
+    if(snaps[snapKey]){const snp=snaps[snapKey];raw=snp.raw;merges=snp.merges;styles=snp.styles;extraCols=snp.extraCols;dup=snp.dup;sz=snp.sz;rt=snp.rt;act=snp.act;sels=snp.sels;undoSt=snp.undoSt;redoSt=snp.redoSt;delete snaps[snapKey]}
+
+    const pushUndo=()=>{undoSt.push(JSON.stringify({raw,merges,styles,extraCols,dup,sz,rt}));if(undoSt.length>50)undoSt.shift();redoSt=[]};
+    const syncMatrixRowSums=nextRaw=>{
+      if(sp.kind!=="m")return;
+      const ev=evalAll(nextRaw,nextRaw.length,getCols().length);
+      nextRaw.forEach((r,ri)=>{
+        if(isFml(r[2]))return;
+        if(!edPlan){
+          let s=0;for(let j=3;j<11;j++)s+=N(ev[ri][j]);
+          r[2]=s?String(s):"";
+        }
+      });
+    };
+    const commit=(nextRaw,nextM,nextS,nextEx,nextDup)=>{
+      pushUndo();
+      raw=nextRaw;if(nextM!==undefined)merges=nextM;if(nextS!==undefined)styles=nextS;if(nextEx!==undefined)extraCols=nextEx;if(nextDup!==undefined)dup=nextDup;
+      syncMatrixRowSums(raw);
+      inst.render();
+    };
+    const applyMatrixQtyDist=(rIdx,valStr,nextRaw)=>{
+      if(!edPlan||isFml(valStr))return;
+      const T=N(valStr),ws=rt.map(x=>N(x)),S=ws.reduce((a,b)=>a+b,0);
+      if(!S||T<=0)return;
+      const a=ws.map(w=>Math.floor(T*w/S));let rem=T-a.reduce((x,y)=>x+y,0);
+      for(let i=0;rem>0&&i<8;i++)if(ws[i]>0){a[i]++;rem--}
+      for(let i=0;i<8;i++)nextRaw[rIdx][3+i]=a[i]?String(a[i]):"";
+    };
+    const finishEdit=(save,moveDr=0,moveDc=0,wrapTab=false)=>{
+      if(!ed)return;
+      const{r,c,val}=ed;ed=null;
+      if(save&&!sp.ro){
+        const cols=getCols();
+        if(!cols[c]?.ro&&raw[r]&&raw[r][c]!==val){
+          const next=raw.map(x=>[...x]);next[r][c]=val;
+          if(sp.kind==="m"&&c===2)applyMatrixQtyDist(r,val,next);
+          else if(sp.kind==="m"&&edPlan&&c>=3&&c<11&&!isFml(next[r][2])){
+            const ev=evalAll(next,next.length,cols.length);
+            let s=0;for(let j=3;j<11;j++)s+=N(ev[r][j]);next[r][2]=s?String(s):"";
+          }
+          pushUndo();raw=next;syncMatrixRowSums(raw);
+        }
+      }
+      if(moveDr||moveDc)moveBy(moveDr,moveDc,false,wrapTab);
+      else inst.render(true);
+    };
+    const moveBy=(dr,dc,extend,wrapTab)=>{
+      const nr=raw.length,nc=getCols().length;if(!nr||!nc)return;
+      if(wrapTab){
+        let r=act.r,c=act.c+dc;
+        if(c>=nc){c=0;r=Math.min(nr-1,r+1)}else if(c<0){c=nc-1;r=Math.max(0,r-1)}
+        act={r,c};sels=[{r1:r,c1:c,r2:r,c2:c}];inst.render(true);return;
+      }
+      if(extend){
+        const last=sels[sels.length-1]||{r1:act.r,c1:act.c,r2:act.r,c2:act.c};
+        const r2=Math.max(0,Math.min(nr-1,last.r2+dr)),c2=Math.max(0,Math.min(nc-1,last.c2+dc));
+        sels=[...sels.slice(0,-1),{r1:last.r1,c1:last.c1,r2,c2}];inst.render(true);return;
+      }
+      const mi=buildMergeIdx(merges),m=mi.master.get(act.r+","+act.c);
+      let r=act.r+(dr>0&&m?m.rs:dr),c=act.c+(dc>0&&m?m.cs:dc);
+      r=Math.max(0,Math.min(nr-1,r));c=Math.max(0,Math.min(nc-1,c));
+      const cm=mi.cov.get(r+","+c);if(cm){r=cm.r;c=cm.c}
+      act={r,c};sels=[{r1:r,c1:c,r2:r,c2:c}];inst.render(true);
+    };
+    const ctrlJump=(dr,dc)=>{
+      const nr=raw.length,nc=getCols().length;let r=act.r,c=act.c;
+      const ne=(rr,cc)=>String((raw[rr]&&raw[rr][cc])??"").trim()!=="";
+      const inB=(rr,cc)=>rr>=0&&cc>=0&&rr<nr&&cc<nc;
+      if(!inB(r+dr,c+dc))return;
+      if(ne(r,c)&&ne(r+dr,c+dc)){while(inB(r+dr,c+dc)&&ne(r+dr,c+dc)){r+=dr;c+=dc}}
+      else{r+=dr;c+=dc;while(inB(r+dr,c+dc)&&!ne(r,c)){r+=dr;c+=dc}}
+      act={r,c};sels=[{r1:r,c1:c,r2:r,c2:c}];inst.render(true);
+    };
+
+    const doCopy=isCut=>{
+      const b=normR(sels[sels.length-1]||{r1:act.r,c1:act.c,r2:act.r,c2:act.c});
+      const cells=[];for(let r=b.r1;r<=b.r2;r++){const row=[];for(let c=b.c1;c<=b.c2;c++)row.push(raw[r]?.[c]??"");cells.push(row)}
+      const subM=merges.filter(m=>m.r>=b.r1&&m.c>=b.c1&&m.r+m.rs-1<=b.r2&&m.c+m.cs-1<=b.c2).map(m=>({r:m.r-b.r1,c:m.c-b.c1,rs:m.rs,cs:m.cs}));
+      const subS={};Object.entries(styles).forEach(([k,st])=>{const[r,c]=k.split(",").map(Number);if(r>=b.r1&&r<=b.r2&&c>=b.c1&&c<=b.c2)subS[(r-b.r1)+","+(c-b.c1)]=st});
+      WOSClip.cell={mode:isCut&&!sp.ro?"cut":"copy",srcSid:sp.sid,r0:b.r1,c0:b.c1,nr:b.r2-b.r1+1,nc:b.c2-b.c1+1,cells,merges:subM,styles:subS,srcInst:inst};
+      const ev=evalAll(raw,raw.length,getCols().length);
+      const tsv=[];for(let r=b.r1;r<=b.r2;r++){const row=[];for(let c=b.c1;c<=b.c2;c++)row.push(ev[r]?.[c]??"");tsv.push(row.join("\t"))}
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(tsv.join("\n")).catch(()=>{});
+      toast(isCut?"Cut ✓":"Copied ✓");inst.render(true);
+    };
+
+    const applyPaste=(clip,mode="all")=>{
+      if(sp.ro||!clip)return;
+      let pCells=clip.cells.map(r=>[...r]),pNr=clip.nr,pNc=clip.nc,pM=clip.merges||[],pS=clip.styles||{};
+      if(mode==="transpose"){
+        const tr=[];for(let c=0;c<pNc;c++){const row=[];for(let r=0;r<pNr;r++)row.push(pCells[r][c]??"");tr.push(row)}
+        pCells=tr;pNr=tr.length;pNc=tr[0]?.length||1;pM=[];
+      }
+      const sel=normR(sels[sels.length-1]||{r1:act.r,c1:act.c,r2:act.r,c2:act.c});
+      const selR=sel.r2-sel.r1+1,selC=sel.c2-sel.c1+1;
+      const tileR=(selR>=pNr&&selR%pNr===0)?selR/pNr:1,tileC=(selC>=pNc&&selC%pNc===0)?selC/pNc:1;
+      const r0=(tileR>1||tileC>1)?sel.r1:act.r,c0=(tileR>1||tileC>1)?sel.c1:act.c;
+      const needR=r0+pNr*tileR,needC=c0+pNc*tileC;
+      let nextEx=[...extraCols];
+      while(getCols().length+nextEx.length-extraCols.length<needC){
+        const idx=getCols().length+nextEx.length-extraCols.length;
+        nextEx.push({id:"ex_"+idx,lb:colLet(idx)});
+      }
+      const finalCols=(()=>{const old=extraCols;extraCols=nextEx;const c=getCols();extraCols=old;return c})();
+      const next=raw.map(r=>{const cp=[...r];while(cp.length<finalCols.length)cp.push("");return cp});
+      while(next.length<needR)next.push(new Array(finalCols.length).fill(""));
+      const nextS=Object.assign({},styles);
+      let nextM=merges.filter(m=>!(m.r+m.rs-1>=r0&&m.r<needR&&m.c+m.cs-1>=c0&&m.c<needC));
+
+      if(clip.mode==="cut"&&clip.srcInst===inst){
+        for(let r=clip.r0;r<clip.r0+clip.nr;r++)for(let c=clip.c0;c<clip.c0+clip.nc;c++)if(next[r]&&!finalCols[c]?.ro)next[r][c]="";
+      }else if(clip.mode==="cut"&&clip.srcInst&&clip.srcInst!==inst){
+        clip.srcInst.clearRect(clip.r0,clip.c0,clip.nr,clip.nc);
+      }
+
+      const evSrc=mode==="values"?evalAll(pCells,pNr,pNc):null;
+      for(let tr_=0;tr_<tileR;tr_++)for(let tc_=0;tc_<tileC;tc_++){
+        const br=r0+tr_*pNr,bc=c0+tc_*pNc;
+        for(let r=0;r<pNr;r++)for(let c=0;c<pNc;c++){
+          const rr=br+r,cc=bc+c;if(finalCols[cc]?.ro)continue;
+          if(mode!=="formats"){
+            let v=pCells[r][c]??"";
+            if(mode==="values"&&evSrc)v=evSrc[r][c]??"";
+            else if(isFml(v)&&clip.mode!=="cut")v=shiftFml(v,rr-(clip.ext?0:clip.r0),cc-(clip.ext?0:clip.c0));
+            next[rr][cc]=v;
+          }
+          if(mode==="all"||mode==="formats"){if(pS[r+","+c])nextS[rr+","+cc]=Object.assign({},pS[r+","+c])}
+        }
+        if(mode==="all")pM.forEach(m=>nextM.push({r:br+m.r,c:bc+m.c,rs:m.rs,cs:m.cs}));
+      }
+      if(clip.mode==="cut")WOSClip.cell=null;
+      sels=[{r1:r0,c1:c0,r2:needR-1,c2:needC-1}];
+      commit(next,nextM,nextS,nextEx);
+    };
+
+    const toggleMerge=()=>{
+      if(sp.ro)return;
+      const b=normR(sels[sels.length-1]||{r1:act.r,c1:act.c,r2:act.r,c2:act.c});
+      const hit=merges.filter(m=>!(m.r+m.rs-1<b.r1||m.r>b.r2||m.c+m.cs-1<b.c1||m.c>b.c2));
+      if(hit.length){commit(raw,merges.filter(m=>!hit.includes(m)));return}
+      if(b.r1===b.r2&&b.c1===b.c2)return;
+      const next=raw.map(r=>[...r]);let keep="";
+      for(let r=b.r1;r<=b.r2;r++)for(let c=b.c1;c<=b.c2;c++){if(!keep&&String(next[r][c]??"").trim())keep=next[r][c];if(r!==b.r1||c!==b.c1)next[r][c]=""}
+      next[b.r1][b.c1]=keep;
+      commit(next,[...merges,{r:b.r1,c:b.c1,rs:b.r2-b.r1+1,cs:b.c2-b.c1+1}]);
+    };
+
+    const insRow=at=>{
+      if(sp.ro)return;
+      const idx=Math.max(0,Math.min(raw.length,at)),nc=getCols().length;
+      const next=raw.map(r=>r.map(v=>shiftStruct(v,"r",idx,1)));
+      next.splice(idx,0,new Array(nc).fill(""));
+      const nextM=merges.map(m=>m.r>=idx?{...m,r:m.r+1}:(m.r+m.rs>idx?{...m,rs:m.rs+1}:m));
+      commit(next,nextM);act={r:idx,c:act.c};sels=[{r1:idx,c1:act.c,r2:idx,c2:act.c}];inst.render(true);
+    };
+    const execDelRows=rowsIdx=>{
+      const desc=[...new Set(rowsIdx)].sort((a,b)=>b-a);
+      let next=raw.map(r=>[...r]),nextM=[...merges];
+      for(const dr of desc){
+        if(next.length<=1){next=[new Array(getCols().length).fill("")];nextM=[];break}
+        next.splice(dr,1);
+        next=next.map(r=>r.map(v=>shiftStruct(v,"r",dr,-1)));
+        nextM=nextM.map(m=>{if(m.r===dr)return null;if(m.r>dr)return{...m,r:m.r-1};if(m.r<dr&&m.r+m.rs>dr)return m.rs-1>=2?{...m,rs:m.rs-1}:null;return m}).filter(Boolean);
+      }
+      cbar=null;act={r:Math.min(act.r,next.length-1),c:act.c};sels=[{r1:act.r,c1:act.c,r2:act.r,c2:act.c}];
+      commit(next,nextM);
+    };
+    const insCol=at=>{
+      if(sp.ro)return;
+      const baseLen=getCols().length-extraCols.length,exIdx=Math.max(0,at-baseLen),colAt=baseLen+exIdx;
+      const nextEx=[...extraCols];nextEx.splice(exIdx,0,{id:"ex_"+Date.now().toString(36),lb:colLet(colAt)});
+      const next=raw.map(r=>{const nr_=r.map(v=>shiftStruct(v,"c",colAt,1));nr_.splice(colAt,0,"");return nr_});
+      commit(next,merges,styles,nextEx);
+    };
+    const delCol=cIdx=>{
+      if(sp.ro)return;
+      const baseLen=getCols().length-extraCols.length;
+      if(cIdx<baseLen){const next=raw.map(r=>{const cp=[...r];if(!getCols()[cIdx]?.ro)cp[cIdx]="";return cp});commit(next);return}
+      const exIdx=cIdx-baseLen,nextEx=[...extraCols];nextEx.splice(exIdx,1);
+      const next=raw.map(r=>{const cp=r.map(v=>shiftStruct(v,"c",cIdx,-1));cp.splice(cIdx,1);return cp});
+      act={r:act.r,c:Math.max(0,cIdx-1)};sels=[{r1:act.r,c1:act.c,r2:act.r,c2:act.c}];
+      commit(next,merges,styles,nextEx);
+    };
+    const toggleDup=()=>{
+      if(!canDup||sp.ro)return;
+      if(!dup){
+        const bCols=sp.sec.c.map(c=>c.split("|")[0].split(":")[0]);
+        const next=raw.map((r,ri)=>{const left=r.slice(0,4),rest=r.slice(4),hr=hiddenR[ri]||{},right=bCols.map(id=>hr[id+"__2"]||"");return[...left,...right,...rest]});
+        commit(next,merges,styles,extraCols,true);
+      }else{
+        const bCols=sp.sec.c.map(c=>c.split("|")[0].split(":")[0]);
+        const next=raw.map((r,ri)=>{hiddenR[ri]=hiddenR[ri]||{};bCols.forEach((id,i)=>{hiddenR[ri][id+"__2"]=r[4+i]||""});return[...r.slice(0,4),...r.slice(8)]});
+        act={r:act.r,c:Math.min(act.c,3+extraCols.length)};sels=[{r1:act.r,c1:act.c,r2:act.r,c2:act.c}];
+        commit(next,merges.filter(m=>m.c+m.cs<=4),styles,extraCols,false);
+      }
+    };
+    const getOtherTables=()=>{
+      const o=sp.oid?(orders.find(x=>x.id===sp.oid)||sp.o):(view==="new"?newDraftObj():sp.o);
+      const out=[];
+      (o.order||[]).forEach(dk_=>{
+        if(sp.oid&&!canViewS(o,dk_))return;
+        const stD=((o.stages||{})[dk_]||{}).d||{};
+        (SCH[dk_]||[]).forEach(sc=>{
+          if(dk_===sp.dept&&sc.id===sp.sec.id)return;
+          if(sc.t==="t"&&Array.isArray(stD[sc.id])&&stD[sc.id].length){
+            const cDefs=sc.c.map(c=>c.split("|")[0].split(":")[0]);
+            const gm=stD["_grid_"+sc.id]||{};
+            const useDup=cDefs.length===4&&(gm.dupSideBySide!==undefined?!!gm.dupSideBySide:sc.id==="ai");
+            const ids=useDup?[...cDefs,...cDefs.map(x=>x+"__2")]:cDefs;
+            const rows=stD[sc.id].map((ro_,ri)=>ids.map((id,ci)=>(gm.formulas&&gm.formulas[ri+","+ci])||String(ro_[id]??"")));
+            out.push({key:dk_+":"+sc.id,lbl:tr(sn(dk_))+" — "+tr(sc.ti),rows,merges:gm.merges||[],styles:gm.styles||{}});
+          }else if(sc.t==="m"){
+            const pcl=dk_==="PLANNING"?(o.colors||[]):stD[sc.id];
+            if(Array.isArray(pcl)&&pcl.length){
+              const gm=stD["_grid_"+sc.id]||{};
+              const rows=pcl.map((c,ri)=>{const q=qa(c),s=q.reduce((a,b)=>a+N(b),0);const r=[c.c1||c.name||"",c.c2||"",String(c.t||s||""),... [0,1,2,3,4,5,6,7].map(j=>String(q[j]??""))];return r.map((v,ci)=>(gm.formulas&&gm.formulas[ri+","+ci])||v)});
+              out.push({key:dk_+":"+sc.id,lbl:tr(sn(dk_))+" — "+tr(sc.ti),rows,merges:gm.merges||[],styles:gm.styles||{}});
+            }
+          }
+        });
+      });
+      return out;
+    };
+    const applyWholeTable=(tbl,mode)=>{
+      const nc=Math.max(getCols().length,...tbl.rows.map(r=>r.length));
+      let nextEx=[...extraCols];
+      while(getCols().length+nextEx.length-extraCols.length<nc){const idx=getCols().length+nextEx.length-extraCols.length;nextEx.push({id:"ex_"+idx,lb:colLet(idx)})}
+      const pad=tbl.rows.map(r=>{const a=[...r];while(a.length<nc)a.push("");return a});
+      if(mode==="append"){
+        const nonEmpty=raw.filter(r=>r.some(x=>String(x||"").trim()!==""));
+        const base=nonEmpty.map(r=>{const a=[...r];while(a.length<nc)a.push("");return a});
+        const off=base.length;
+        const shifted=pad.map(r=>r.map(v=>isFml(v)?shiftFml(v,off,0):v));
+        cbar=null;commit([...base,...shifted],[...merges,...(tbl.merges||[]).map(m=>({...m,r:m.r+off}))],styles,nextEx);
+      }else{
+        cbar=null;act={r:0,c:0};sels=[{r1:0,c1:0,r2:0,c2:0}];
+        commit(pad.length?pad:[new Array(nc).fill("")],tbl.merges||[],tbl.styles||{},nextEx);
+      }
+      toast("Table pasted ✓");
+    };
+
+    host.tabIndex=sp.ro?-1:0;
+    const onKey=e=>{
+      if(e.target&&(e.target.classList.contains("wos-fbi")||e.target.classList.contains("wos-sz")||e.target.classList.contains("wos-rt")))return;
+      const rtl=document.documentElement.dir==="rtl";
+      const mod=e.ctrlKey||e.metaKey;
+      if(ed){
+        const inp=host.querySelector("input.wos-ed");
+        if(e.key==="Escape"){e.preventDefault();finishEdit(false);host.focus();return}
+        if(e.key==="Enter"){e.preventDefault();finishEdit(true,e.shiftKey?-1:1,0);host.focus();return}
+        if(e.key==="Tab"){e.preventDefault();finishEdit(true,0,e.shiftKey?-1:1,true);host.focus();return}
+        if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)){
+          const pos=inp?(inp.selectionStart??ed.val.length):ed.val.length;
+          const pt=pointAt(ed.val,pos);
+          if(pt){
+            e.preventDefault();
+            const curTok=ed.val.slice(pt.s,pt.e),pr=parseRef(curTok)||{r:act.r,c:act.c};
+            const dr=e.key==="ArrowUp"?-1:e.key==="ArrowDown"?1:0;
+            const dc=e.key==="ArrowLeft"?(rtl?1:-1):e.key==="ArrowRight"?(rtl?-1:1):0;
+            const nr_=Math.max(0,Math.min(raw.length-1,pr.r+dr)),nc_=Math.max(0,Math.min(getCols().length-1,pr.c+dc));
+            const refStr=colLet(nc_)+(nr_+1);
+            ed.val=ed.val.slice(0,pt.s)+refStr+ed.val.slice(pt.e);
+            if(inp){inp.value=ed.val;const np=pt.s+refStr.length;inp.setSelectionRange(np,np)}
+            const fbi=host.querySelector("input.wos-fbi");if(fbi)fbi.value=ed.val;
+            return;
+          }
+          if(ed.mode==="quick"){
+            e.preventDefault();
+            const dr=e.key==="ArrowUp"?-1:e.key==="ArrowDown"?1:0;
+            const dc=e.key==="ArrowLeft"?(rtl?1:-1):e.key==="ArrowRight"?(rtl?-1:1):0;
+            finishEdit(true,dr,dc);host.focus();return;
+          }
+        }
+        return;
+      }
+      if(mod&&(e.key==="z"||e.key==="Z")&&!e.shiftKey){if(!sp.ro&&undoSt.length){e.preventDefault();redoSt.push(JSON.stringify({raw,merges,styles,extraCols,dup,sz,rt}));const st=JSON.parse(undoSt.pop());raw=st.raw;merges=st.merges;styles=st.styles;extraCols=st.extraCols;dup=st.dup;sz=st.sz;rt=st.rt;inst.render(true)}return}
+      if(mod&&(e.key==="y"||e.key==="Y"||(e.shiftKey&&(e.key==="z"||e.key==="Z")))){if(!sp.ro&&redoSt.length){e.preventDefault();undoSt.push(JSON.stringify({raw,merges,styles,extraCols,dup,sz,rt}));const st=JSON.parse(redoSt.pop());raw=st.raw;merges=st.merges;styles=st.styles;extraCols=st.extraCols;dup=st.dup;sz=st.sz;rt=st.rt;inst.render(true)}return}
+      if(mod&&(e.key==="a"||e.key==="A")){e.preventDefault();sels=[{r1:0,c1:0,r2:raw.length-1,c2:getCols().length-1}];inst.render(true);return}
+      if(mod&&(e.key==="b"||e.key==="B")&&!sp.ro){e.preventDefault();const nextS=Object.assign({},styles),curB=!!(nextS[act.r+","+act.c]?.b);sels.forEach(s=>{const b=normR(s);for(let r=b.r1;r<=b.r2;r++)for(let c=b.c1;c<=b.c2;c++)nextS[r+","+c]=Object.assign({},nextS[r+","+c],{b:!curB})});commit(raw,merges,nextS);return}
+      if(mod&&(e.key==="c"||e.key==="C")){e.preventDefault();doCopy(false);return}
+      if(mod&&(e.key==="x"||e.key==="X")){e.preventDefault();doCopy(true);return}
+      if(e.ctrlKey&&e.key===" "){e.preventDefault();sels=[{r1:0,c1:act.c,r2:raw.length-1,c2:act.c}];inst.render(true);return}
+      if(e.shiftKey&&e.key===" "){e.preventDefault();sels=[{r1:act.r,c1:0,r2:act.r,c2:getCols().length-1}];inst.render(true);return}
+      if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)){
+        e.preventDefault();
+        const dr=e.key==="ArrowUp"?-1:e.key==="ArrowDown"?1:0;
+        const dc=e.key==="ArrowLeft"?(rtl?1:-1):e.key==="ArrowRight"?(rtl?-1:1):0;
+        if(mod)ctrlJump(dr,dc);else moveBy(dr,dc,e.shiftKey,false);return;
+      }
+      if(e.key==="Tab"){
+        if((!e.shiftKey&&act.r===raw.length-1&&act.c===getCols().length-1)||(e.shiftKey&&act.r===0&&act.c===0))return;
+        e.preventDefault();moveBy(0,e.shiftKey?-1:1,false,true);return;
+      }
+      if(e.key==="Enter"){e.preventDefault();moveBy(e.shiftKey?-1:1,0,false,false);return}
+      if(e.key==="Home"){e.preventDefault();act={r:mod?0:act.r,c:0};sels=[{r1:act.r,c1:0,r2:act.r,c2:0}];inst.render(true);return}
+      if(e.key==="End"){e.preventDefault();act={r:mod?raw.length-1:act.r,c:getCols().length-1};sels=[{r1:act.r,c1:act.c,r2:act.r,c2:act.c}];inst.render(true);return}
+      if(e.key==="PageDown"){e.preventDefault();moveBy(10,0,e.shiftKey,false);return}
+      if(e.key==="PageUp"){e.preventDefault();moveBy(-10,0,e.shiftKey,false);return}
+      if((e.key==="Delete"||e.key==="Backspace")&&!sp.ro){
+        e.preventDefault();const next=raw.map(r=>[...r]),cols=getCols();
+        sels.forEach(s=>{const b=normR(s);for(let r=b.r1;r<=b.r2;r++)for(let c=b.c1;c<=b.c2;c++)if(!cols[c]?.ro)next[r][c]=""});
+        commit(next);return;
+      }
+      if(e.key==="F2"&&!sp.ro&&!getCols()[act.c]?.ro){e.preventDefault();ed={r:act.r,c:act.c,val:raw[act.r]?.[act.c]??"",mode:"full"};inst.render(true);return}
+      if(!sp.ro&&!mod&&!e.altKey&&e.key.length===1&&!getCols()[act.c]?.ro){
+        e.preventDefault();ed={r:act.r,c:act.c,val:e.key,mode:"quick"};inst.render(true);
+      }
+    };
+    host.onkeydown=onKey;
+    host.oncopy=e=>{if(ed)return;e.preventDefault();doCopy(false);if(WOSClip.cell&&e.clipboardData){const b=WOSClip.cell,ev=evalAll(raw,raw.length,getCols().length);const tsv=[],htr=[];for(let r=0;r<b.nr;r++){const tr_=[],td_=[];for(let c=0;c<b.nc;c++){const rv=b.cells[r][c]??"",dv=ev[b.r0+r]?.[b.c0+c]??"";tr_.push(dv);td_.push(`<td${isFml(rv)?` data-formula="${esc(rv)}" x:fmla="${esc(rv)}"`:""}>${esc(dv)}</td>`)}tsv.push(tr_.join("\t"));htr.push("<tr>"+td_.join("")+"</tr>")}e.clipboardData.setData("text/plain",tsv.join("\n"));e.clipboardData.setData("text/html","<table>"+htr.join("")+"</table>")}};
+    host.oncut=e=>{if(ed||sp.ro)return;e.preventDefault();doCopy(true)};
+    host.onpaste=e=>{if(ed||sp.ro)return;const dt=e.clipboardData;let ext=dt?parseExtClip(dt.getData("text/html"),dt.getData("text/plain")):null;if(WOSClip.cell&&!ext){e.preventDefault();applyPaste(WOSClip.cell,"all");return}if(ext){if(WOSClip.cell){const ev=evalAll(WOSClip.cell.cells,WOSClip.cell.nr,WOSClip.cell.nc);if(ev.map(r=>r.join("\t")).join("\n")===(dt.getData("text/plain")||"").replace(/\r\n/g,"\n").trim()){e.preventDefault();applyPaste(WOSClip.cell,"all");return}}e.preventDefault();applyPaste(ext,"all")}};
+
+    const onWinMove=e=>{
+      if(!drag&&!fillDrag)return;
+      const td=document.elementFromPoint(e.clientX,e.clientY)?.closest?.("td.wos-c");
+      if(!td||!host.contains(td))return;
+      const r=+td.dataset.r,c=+td.dataset.c;if(isNaN(r)||isNaN(c))return;
+      if(drag){
+        const last=sels[sels.length-1];if(last&&last.r2===r&&last.c2===c)return;
+        sels=[...sels.slice(0,-1),{r1:drag.r,c1:drag.c,r2:r,c2:c}];inst.render(false);
+      }else if(fillDrag){
+        const b=fillDrag.base;let pr=null;
+        const dr=r>b.r2?r-b.r2:(r<b.r1?b.r1-r:0),dc=c>b.c2?c-b.c2:(c<b.c1?b.c1-c:0);
+        if(dr>=dc&&dr>0)pr=r>b.r2?{r1:b.r2+1,c1:b.c1,r2:r,c2:b.c2,dir:"down"}:{r1:r,c1:b.c1,r2:b.r1-1,c2:b.c2,dir:"up"};
+        else if(dc>0)pr=c>b.c2?{r1:b.r1,c1:b.c2+1,r2:b.r2,c2:c,dir:"right"}:{r1:b.r1,c1:c,r2:b.r2,c2:b.c1-1,dir:"left"};
+        fillPrev=pr;inst.render(false);
+      }
+    };
+    const onWinUp=()=>{
+      if(drag){drag=null;removeEventListener("pointermove",onWinMove);removeEventListener("pointerup",onWinUp)}
+      if(fillDrag){
+        const b=fillDrag.base,pr=fillPrev;fillDrag=null;fillPrev=null;
+        removeEventListener("pointermove",onWinMove);removeEventListener("pointerup",onWinUp);
+        if(pr&&!sp.ro){
+          const next=raw.map(r=>[...r]),cols=getCols();
+          if(pr.dir==="down"||pr.dir==="up"){
+            const len=pr.r2-pr.r1+1,sLen=b.r2-b.r1+1;
+            for(let c=b.c1;c<=b.c2;c++){
+              if(cols[c]?.ro)continue;
+              const sv=[];for(let r=b.r1;r<=b.r2;r++)sv.push(raw[r][c]??"");
+              if(sv.some(isFml)){for(let i=0;i<len;i++){const tr_=pr.dir==="down"?b.r2+1+i:pr.r1+i,sr=b.r1+(i%sLen);next[tr_][c]=isFml(raw[sr][c])?shiftFml(raw[sr][c],tr_-sr,0):raw[sr][c]}}
+              else{const gen=fillSeries(sv,len,pr.dir==="down"?1:-1);for(let i=0;i<len;i++)next[pr.r1+i][c]=gen[i]}
+            }
+            sels=[{r1:Math.min(b.r1,pr.r1),c1:b.c1,r2:Math.max(b.r2,pr.r2),c2:b.c2}];
+          }else{
+            const len=pr.c2-pr.c1+1,sLen=b.c2-b.c1+1;
+            for(let r=b.r1;r<=b.r2;r++){
+              const sv=[];for(let c=b.c1;c<=b.c2;c++)sv.push(raw[r][c]??"");
+              if(sv.some(isFml)){for(let i=0;i<len;i++){const tc=pr.dir==="right"?b.c2+1+i:pr.c1+i,sc=b.c1+(i%sLen);if(!cols[tc]?.ro)next[r][tc]=isFml(raw[r][sc])?shiftFml(raw[r][sc],0,tc-sc):raw[r][sc]}}
+              else{const gen=fillSeries(sv,len,pr.dir==="right"?1:-1);for(let i=0;i<len;i++)if(!cols[pr.c1+i]?.ro)next[r][pr.c1+i]=gen[i]}
+            }
+            sels=[{r1:b.r1,c1:Math.min(b.c1,pr.c1),r2:b.r2,c2:Math.max(b.c2,pr.c2)}];
+          }
+          commit(next);return;
+        }
+        inst.render(false);
+      }
+    };
+
+    const openContextMenu=(x,y)=>{
+      closeCtx();if(sp.ro)return;
+      const m=document.createElement("div");m.className="wos-cmenu";
+      const items=[
+        [tr("Insert row above"),()=>insRow(act.r)],[tr("Insert row below"),()=>insRow(act.r+1)],
+        [tr("Delete row"),()=>{const rs=new Set();sels.forEach(s=>{const b=normR(s);for(let r=b.r1;r<=b.r2;r++)rs.add(r)});cbar={type:"delRows",rows:[...rs]};inst.render(true)}],
+        "-",
+        [tr("Insert column left"),()=>insCol(act.c)],[tr("Insert column right"),()=>insCol(act.c+1)],[tr("Delete column"),()=>delCol(act.c)],
+        "-",
+        [tr("Merge / Unmerge"),toggleMerge],[tr("Bold")+" (Ctrl+B)",()=>{const nextS=Object.assign({},styles),cb=!!(nextS[act.r+","+act.c]?.b);sels.forEach(s=>{const b=normR(s);for(let r=b.r1;r<=b.r2;r++)for(let c=b.c1;c<=b.c2;c++)nextS[r+","+c]=Object.assign({},nextS[r+","+c],{b:!cb})});commit(raw,merges,nextS)}],
+        "-",
+        [tr("Copy")+" (Ctrl+C)",()=>doCopy(false)],[tr("Cut")+" (Ctrl+X)",()=>doCopy(true)],
+        [tr("Paste")+" (Ctrl+V)",()=>{if(WOSClip.cell)applyPaste(WOSClip.cell,"all");else if(navigator.clipboard?.readText)navigator.clipboard.readText().then(t=>{const p=parseExtClip("",t);if(p)applyPaste(p,"all")}).catch(()=>{})}],
+        [tr("Paste Special: Values"),()=>{if(WOSClip.cell)applyPaste(WOSClip.cell,"values")}],
+        [tr("Paste Special: Formulas"),()=>{if(WOSClip.cell)applyPaste(WOSClip.cell,"formulas")}],
+        [tr("Paste Special: Transpose"),()=>{if(WOSClip.cell)applyPaste(WOSClip.cell,"transpose")}],
+        "-",
+        [tr("Clear contents"),()=>{const next=raw.map(r=>[...r]),cols=getCols();sels.forEach(s=>{const b=normR(s);for(let r=b.r1;r<=b.r2;r++)for(let c=b.c1;c<=b.c2;c++)if(!cols[c]?.ro)next[r][c]=""});commit(next)}]
+      ];
+      items.forEach(it=>{
+        if(it==="-"){m.appendChild(document.createElement("hr"));return}
+        const b=document.createElement("button");b.type="button";b.textContent=it[0];
+        b.onclick=ev=>{ev.stopPropagation();closeCtx();it[1]()};m.appendChild(b);
+      });
+      document.body.appendChild(m);
+      const vw=innerWidth,vh=innerHeight,rc=m.getBoundingClientRect();
+      m.style.left=Math.max(8,Math.min(x,vw-rc.width-8))+"px";
+      m.style.top=Math.max(8,Math.min(y,vh-rc.height-8))+"px";
+      ctxEl=m;
+    };
+
+    const inst={
+      sp,
+      snap(){snaps[snapKey]={raw,merges,styles,extraCols,dup,sz,rt,act,sels,undoSt,redoSt}},
+      clearRect(r0,c0,nr_,nc_){const next=raw.map(r=>[...r]),cols=getCols();for(let r=r0;r<r0+nr_;r++)for(let c=c0;c<c0+nc_;c++)if(next[r]&&!cols[c]?.ro)next[r][c]="";raw=next;inst.render(false)},
+      setFromCopy(newRows,gm){
+        const f=gm?.formulas||{};
+        raw=newRows.map((r,ri)=>r.map((v,ci)=>f[ri+","+ci]||String(v??"")));
+        merges=Array.isArray(gm?.merges)?JSON.parse(JSON.stringify(gm.merges)):[];
+        styles=gm?.styles?JSON.parse(JSON.stringify(gm.styles)):{};
+        syncMatrixRowSums(raw);inst.render(false);
+      },
+      fillPlan(){
+        const o=sp.sid.startsWith("nd_")?newDraftObj():(orders.find(x=>x.id===sp.oid)||sp.o),cl=o.colors||[];
+        if(!cl.length)return;
+        const next=raw.map(r=>[...r]);while(next.length<cl.length)next.push(new Array(getCols().length).fill(""));
+        cl.forEach((c,i)=>{next[i][0]=c.c1||c.name||next[i][0]||"";next[i][1]=c.c2||next[i][1]||"";const q=qa(c);for(let j=0;j<8;j++)next[i][3+j]=String(q[j]??"")});
+        commit(next);
+      },
+      collect(){
+        if(ed)finishEdit(true);
+        const cols=getCols(),ev=evalAll(raw,raw.length,cols.length),formulas={};
+        raw.forEach((r,ri)=>r.forEach((v,ci)=>{if(isFml(v))formulas[ri+","+ci]=v}));
+        const hasMeta=Object.keys(formulas).length>0||merges.length>0||Object.keys(styles).length>0||extraCols.length>0||(canDup&&dup!==(sp.sec.id==="ai"));
+        const gridMeta=hasMeta?{formulas,merges,styles,extraCols,...(canDup?{dupSideBySide:dup}:{})}:null;
+        if(sp.kind==="m"){
+          if(sp.dept==="PLANNING"){
+            const colors=ev.map((r,ri)=>({c1:(r[0]||"").trim(),c2:(r[1]||"").trim(),t:r[2]||"",q:[0,1,2,3,4,5,6,7].map(j=>r[3+j]||"")})).filter((c,ri)=>c.c1||c.c2||c.t||c.q.some(x=>N(x)>0)||(raw[ri]&&raw[ri].some(isFml)));
+            return{sz:[...sz],rt:[...rt],colors,gridMeta};
+          }
+          const rows=ev.map(r=>({c1:(r[0]||"").trim(),c2:(r[1]||"").trim(),q:[0,1,2,3,4,5,6,7].map(j=>r[3+j]||"")}));
+          return{rows,gridMeta};
+        }
+        const outRows=ev.map((r,ri)=>{
+          const x={};if(!dup&&hiddenR[ri])Object.assign(x,hiddenR[ri]);
+          cols.forEach((c,ci)=>{x[c.id]=r[ci]||""});
+          return x;
+        }).filter((x,ri)=>Object.values(x).some(v=>String(v||"").trim()!=="")||(raw[ri]&&raw[ri].some(isFml)));
+        return{rows:outRows,gridMeta};
+      },
+      render(focusHost){
+        const cols=getCols(),nr=raw.length,nc=cols.length,ev=evalAll(raw,nr,nc),mi=buildMergeIdx(merges);
+        const selCheck=(r,c)=>sels.some(s=>{const b=normR(s);return r>=b.r1&&r<=b.r2&&c>=b.c1&&c<=b.c2});
+        const antsB=WOSClip.cell&&WOSClip.cell.srcSid===sp.sid?WOSClip.cell:null;
+        const fhCell=(()=>{const b=normR(sels[sels.length-1]||{r1:act.r,c1:act.c,r2:act.r,c2:act.c});return{r:b.r2,c:b.c2}})();
+        const actRef=colLet(act.c)+(act.r+1),actVal=ed?ed.val:(raw[act.r]?.[act.c]??"");
+        const otherTbls=sp.ro?[]:getOtherTables();
+
+        let h="";
+        if(!sp.ro){
+          h+=`<div class="wos-gbar noprint"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">`+
+            `<button type="button" data-ga="undo" ${undoSt.length?"":"disabled"} title="${esc(tr("Undo"))}">↶</button>`+
+            `<button type="button" data-ga="redo" ${redoSt.length?"":"disabled"} title="${esc(tr("Redo"))}">↷</button>`+
+            `<button type="button" data-ga="bold" class="${styles[act.r+","+act.c]?.b?"on":""}"><b>B</b></button>`+
+            `<button type="button" data-ga="merge">${esc(tr("Merge / Unmerge"))}</button>`+
+            (canDup?`<button type="button" data-ga="dup" class="${dup?"on":""}">${esc(tr(dup?"8 cols (side-by-side)":"Duplicate columns side by side"))}</button>`:"")+
+            `</div><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">`+
+            `<button type="button" data-ga="cptbl">⧉ ${esc(tr("Copy table"))}</button>`+
+            (WOSClip.tbl?`<button type="button" data-ga="psttbl">📋 ${esc(tr("Paste table"))}</button>`:"")+
+            (otherTbls.length?`<select data-ga="cpfrom"><option value="">${esc(tr("Copy from…"))}</option>${otherTbls.map((t,i)=>`<option value="${i}">${esc(t.lbl)}</option>`).join("")}</select>`:"")+
+            `</div></div>`;
+          if(cbar&&cbar.type==="delRows"){
+            h+=`<div class="wos-cbar noprint"><span style="font-weight:700;color:#d9534f">${esc(tr("Delete selected rows?"))} (${cbar.rows.length})</span><div style="display:flex;gap:5px"><button type="button" class="b2" style="margin:0;padding:3px 9px" data-ga="cno">${esc(tr("Cancel"))}</button><button type="button" class="b2" style="margin:0;padding:3px 9px;background:#d9534f;color:#fff;border-color:#d9534f" data-ga="cdel">${esc(tr("Confirm delete"))}</button></div></div>`;
+          }else if(cbar&&cbar.type==="pasteTbl"){
+            h+=`<div class="wos-cbar info noprint"><span style="font-weight:700;color:var(--pri)">${esc(tr("Target table already has data:"))}</span><div style="display:flex;gap:5px"><button type="button" class="b1 b2" style="margin:0;padding:3px 9px" data-ga="prep">${esc(tr("Replace"))}</button><button type="button" class="b2" style="margin:0;padding:3px 9px" data-ga="papp">${esc(tr("Append to end"))}</button><button type="button" class="b2" style="margin:0;padding:3px 9px" data-ga="cno">${esc(tr("Cancel"))}</button></div></div>`;
+          }
+          h+=`<div class="wos-fbar noprint"><span class="wos-ref">${actRef}</span><span class="wos-fx">fx</span><input class="wos-fbi" value="${esc(actVal)}" placeholder="${esc(tr("Formula (=SUM(A1:A5)) or value..."))}"></div>`;
+        }
+
+        h+=`<div class="sc wos-sc ${sp.ro?"ro":""}"><table class="${sp.kind==="m"?"mx":"tb"}"><thead>`;
+        if(!sp.ro){
+          h+=`<tr class="noprint"><th class="wos-rn"></th>`+cols.map((c,ci)=>`<th class="wos-cl ${c.div?"wo-dup-divider":""} ${act.c===ci?"hi":""}" data-ch="${ci}">${colLet(ci)}</th>`).join("")+`</tr>`;
+        }
+        h+=`<tr>${sp.ro?"":'<th class="wos-rn noprint">#</th>'}`+cols.map(c=>{
+          if(sp.kind==="m"&&c.szIdx!==undefined&&edPlan)return `<th><input class="wos-sz" data-szi="${c.szIdx}" value="${esc(sz[c.szIdx])}" placeholder="${esc("S"+(c.szIdx+1))}" style="min-width:48px;padding:3px 4px;font-weight:700"></th>`;
+          return `<th class="${c.div?"wo-dup-divider":""}">${esc(tr(c.lb))}</th>`;
+        }).join("")+`</tr>`;
+        if(sp.kind==="m"){
+          h+=`<tr>${sp.ro?"":'<td class="wos-rn noprint">R</td>'}<td colspan="3"><b>${esc(tr("RATIO"))}</b></td>`+[0,1,2,3,4,5,6,7].map(i=>`<td>${edPlan?`<input class="wos-rt" data-rti="${i}" type="number" value="${esc(rt[i])}" style="min-width:48px;padding:3px 4px">`:esc(rt[i])}</td>`).join("")+extraCols.map(()=>"<td></td>").join("")+`</tr>`;
+        }
+        h+=`</thead><tbody>`;
+        for(let r=0;r<nr;r++){
+          h+=`<tr>${sp.ro?"":`<td class="wos-rn noprint ${act.r===r?"hi":""}" data-rh="${r}">${r+1}</td>`}`;
+          for(let c=0;c<nc;c++){
+            if(mi.cov.has(r+","+c))continue;
+            const mg=mi.master.get(r+","+c),rs=mg?mg.rs:1,cs_=mg?mg.cs:1;
+            const isAct=!sp.ro&&act.r===r&&act.c===c,isSel=!sp.ro&&selCheck(r,c);
+            const isFill=fillPrev&&r>=fillPrev.r1&&r<=fillPrev.r2&&c>=fillPrev.c1&&c<=fillPrev.c2;
+            const isAnts=antsB&&r>=antsB.r0&&r<antsB.r0+antsB.nr&&c>=antsB.c0&&c<antsB.c0+antsB.nc;
+            const st=styles[r+","+c]||{};
+            const cls=["wos-c",cols[c]?.div?"wo-dup-divider":"",isSel?"sel":"",isAct?"act":"",isFill?"ffill":"",isAnts?"ants":""].filter(Boolean).join(" ");
+            const isEditing=ed&&ed.r===r&&ed.c===c;
+            const showFh=!sp.ro&&!ed&&fhCell.r===r+rs-1&&fhCell.c===c+cs_-1;
+            const disp=ev[r]?.[c]??"";
+            h+=`<td class="${cls}" data-r="${r}" data-c="${c}" ${rs>1?`rowspan="${rs}"`:""} ${cs_>1?`colspan="${cs_}"`:""}>`+
+              (isEditing?`<input class="wos-ed" value="${esc(ed.val)}" dir="auto">`:`<div class="wos-cv" style="${st.b?"font-weight:700;":""}${st.al?`justify-content:${st.al==="left"?"flex-start":st.al==="right"?"flex-end":"center"};`:""}">${esc(disp)}</div>`)+
+              (showFh?`<span class="wos-fh noprint" data-fh="1"></span>`:"")+
+              `</td>`;
+          }
+          h+=`</tr>`;
+        }
+        h+=`</tbody><tfoot>`;
+        if(sp.kind==="m"){
+          let grand=0;const cSums=new Array(8).fill(0);
+          for(let r=0;r<nr;r++){for(let j=0;j<8;j++){const v=N(ev[r]?.[3+j]);cSums[j]+=v;grand+=v}}
+          h+=`<tr class="mt">${sp.ro?"":'<td class="wos-rn noprint">∑</td>'}<td colspan="2">${esc(tr("TOTAL"))}</td><td class="cT">${grand||""}</td>`+cSums.map(x=>`<td class="cq">${x||""}</td>`).join("")+extraCols.map((_,i)=>{let s=0;for(let r=0;r<nr;r++)s+=N(ev[r]?.[11+i]);return`<td>${s||""}</td>`}).join("")+`</tr>`;
+        }else{
+          h+=`<tr>${sp.ro?"":'<td class="wos-rn noprint">∑</td>'}`+cols.map((c,ci)=>{
+            if(c.n){let s=0;for(let r=0;r<nr;r++)s+=N(ev[r]?.[ci]);return `<td class="ft ${c.div?"wo-dup-divider":""}">${s?fmtNumCell(s):""}</td>`}
+            const isLbl=ci===0||(dup&&ci===4);
+            return `<td class="${c.div?"wo-dup-divider":""}">${isLbl?esc(tr("TOTAL")):""}</td>`;
+          }).join("")+`</tr>`;
+        }
+        h+=`</tfoot></table></div>`;
+        if(!sp.ro){
+          h+=`<div class="wos-bbar noprint"><button type="button" class="b2" style="margin:0" data-ga="addrow">${esc(tr("+ Add row"))}</button>`+
+            `<button type="button" class="b2" style="margin:0" data-ga="insabove">${esc(tr("+ Row above"))}</button>`+
+            `<button type="button" class="b2" style="margin:0" data-ga="insbelow">${esc(tr("+ Row below"))}</button>`+
+            `<button type="button" class="b2" style="margin:0;color:#d9534f;border-color:rgba(217,83,79,.35)" data-ga="delrow">${esc(tr("Delete row"))}</button>`+
+            (sp.kind==="m"&&!edPlan&&(sp.o.colors||[]).length?`<button type="button" class="b2" style="margin:0" data-ga="fillplan">${esc(tr("Fill from plan"))}</button>`:"")+
+            `</div>`;
+        }
+        host.innerHTML=h;
+
+        if(ed){
+          const inp=host.querySelector("input.wos-ed");
+          if(inp){inp.focus();const ln=inp.value.length;try{inp.setSelectionRange(ln,ln)}catch(e){}inp.oninput=()=>{ed.val=inp.value;const fbi=host.querySelector("input.wos-fbi");if(fbi)fbi.value=ed.val};inp.onblur=ev=>{if(ev.relatedTarget&&host.contains(ev.relatedTarget))return;finishEdit(true)}}
+        }else if(focusHost){
+          try{host.focus({preventScroll:true})}catch(e){}
+          const acEl=host.querySelector("td.wos-c.act");if(acEl&&acEl.scrollIntoView)acEl.scrollIntoView({block:"nearest",inline:"nearest"});
+        }
+        const fbi=host.querySelector("input.wos-fbi");
+        if(fbi){
+          fbi.onfocus=()=>{if(!ed&&!getCols()[act.c]?.ro)ed={r:act.r,c:act.c,val:raw[act.r]?.[act.c]??"",mode:"full"}};
+          fbi.oninput=()=>{if(!ed&&!getCols()[act.c]?.ro)ed={r:act.r,c:act.c,val:fbi.value,mode:"full"};if(ed)ed.val=fbi.value};
+          fbi.onkeydown=ev=>{if(ev.key==="Enter"){ev.preventDefault();finishEdit(true,1,0);host.focus()}else if(ev.key==="Escape"){ev.preventDefault();finishEdit(false);host.focus()}};
+          fbi.onblur=ev=>{if(ev.relatedTarget&&host.contains(ev.relatedTarget))return;if(ed)finishEdit(true)};
+        }
+        host.querySelectorAll("input.wos-sz").forEach(inp=>{inp.onkeydown=e=>e.stopPropagation();inp.oninput=()=>{sz[+inp.dataset.szi]=inp.value}});
+        host.querySelectorAll("input.wos-rt").forEach(inp=>{inp.onkeydown=e=>e.stopPropagation();inp.oninput=()=>{rt[+inp.dataset.rti]=inp.value}});
+        host.querySelectorAll("[data-ga]").forEach(el=>{
+          const ga=el.dataset.ga;
+          if(ga==="cpfrom"){
+            el.onchange=()=>{const idx=+el.value;el.value="";if(isNaN(idx)||!otherTbls[idx])return;const hasD=raw.some(r=>r.some(v=>String(v||"").trim()!==""));if(hasD){cbar={type:"pasteTbl",clip:otherTbls[idx]};inst.render(true)}else applyWholeTable(otherTbls[idx],"replace")};
+            return;
+          }
+          el.onclick=ev=>{
+            ev.stopPropagation();
+            if(ga==="undo"&&undoSt.length){redoSt.push(JSON.stringify({raw,merges,styles,extraCols,dup,sz,rt}));const st=JSON.parse(undoSt.pop());raw=st.raw;merges=st.merges;styles=st.styles;extraCols=st.extraCols;dup=st.dup;sz=st.sz;rt=st.rt;inst.render(true)}
+            else if(ga==="redo"&&redoSt.length){undoSt.push(JSON.stringify({raw,merges,styles,extraCols,dup,sz,rt}));const st=JSON.parse(redoSt.pop());raw=st.raw;merges=st.merges;styles=st.styles;extraCols=st.extraCols;dup=st.dup;sz=st.sz;rt=st.rt;inst.render(true)}
+            else if(ga==="bold"){const nextS=Object.assign({},styles),cb=!!(nextS[act.r+","+act.c]?.b);sels.forEach(s=>{const b=normR(s);for(let r=b.r1;r<=b.r2;r++)for(let c=b.c1;c<=b.c2;c++)nextS[r+","+c]=Object.assign({},nextS[r+","+c],{b:!cb})});commit(raw,merges,nextS)}
+            else if(ga==="merge")toggleMerge();
+            else if(ga==="dup")toggleDup();
+            else if(ga==="cptbl"){WOSClip.tbl={rows:raw.map(r=>[...r]),merges:JSON.parse(JSON.stringify(merges)),styles:JSON.parse(JSON.stringify(styles))};toast("Table copied ✓");inst.render(true)}
+            else if(ga==="psttbl"&&WOSClip.tbl){const hasD=raw.some(r=>r.some(v=>String(v||"").trim()!==""));if(hasD){cbar={type:"pasteTbl",clip:WOSClip.tbl};inst.render(true)}else applyWholeTable(WOSClip.tbl,"replace")}
+            else if(ga==="cno"){cbar=null;inst.render(true)}
+            else if(ga==="cdel"&&cbar?.rows)execDelRows(cbar.rows);
+            else if(ga==="prep"&&cbar?.clip)applyWholeTable(cbar.clip,"replace");
+            else if(ga==="papp"&&cbar?.clip)applyWholeTable(cbar.clip,"append");
+            else if(ga==="addrow")insRow(raw.length);
+            else if(ga==="insabove")insRow(act.r);
+            else if(ga==="insbelow")insRow(act.r+1);
+            else if(ga==="delrow"){const rs=new Set();sels.forEach(s=>{const b=normR(s);for(let r=b.r1;r<=b.r2;r++)rs.add(r)});cbar={type:"delRows",rows:[...rs]};inst.render(true)}
+            else if(ga==="fillplan")inst.fillPlan();
+          };
+        });
+        host.querySelectorAll("[data-ch]").forEach(th=>{th.onclick=ev=>{const c=+th.dataset.ch;act={r:0,c};sels=ev.shiftKey?[{r1:0,c1:Math.min(act.c,c),r2:nr-1,c2:Math.max(act.c,c)}]:[{r1:0,c1:c,r2:nr-1,c2:c}];inst.render(true)}});
+        host.querySelectorAll("[data-rh]").forEach(td=>{td.onclick=ev=>{const r=+td.dataset.rh;act={r,c:0};sels=ev.shiftKey?[{r1:Math.min(act.r,r),c1:0,r2:Math.max(act.r,r),c2:nc-1}]:[{r1:r,c1:0,r2:r,c2:nc-1}];inst.render(true)}});
+        const fh=host.querySelector("[data-fh]");
+        if(fh){fh.onpointerdown=ev=>{ev.preventDefault();ev.stopPropagation();fillDrag={base:normR(sels[sels.length-1]||{r1:act.r,c1:act.c,r2:act.r,c2:act.c})};addEventListener("pointermove",onWinMove);addEventListener("pointerup",onWinUp)}}
+        host.querySelectorAll("td.wos-c").forEach(td=>{
+          const r=+td.dataset.r,c=+td.dataset.c;
+          td.onpointerdown=ev=>{
+            if(ev.button===2||sp.ro||ev.target.dataset.fh)return;
+            if(ed){
+              if(ed.r===r&&ed.c===c)return;
+              const inp=host.querySelector("input.wos-ed")||host.querySelector("input.wos-fbi");
+              const pos=inp?(inp.selectionStart??ed.val.length):ed.val.length,pt=pointAt(ed.val,pos);
+              if(pt){
+                ev.preventDefault();const rf=colLet(c)+(r+1);
+                ed.val=ed.val.slice(0,pt.s)+rf+ed.val.slice(pt.e);
+                if(inp){inp.value=ed.val;inp.focus();const np=pt.s+rf.length;try{inp.setSelectionRange(np,np)}catch(e){}}
+                return;
+              }
+              finishEdit(true);
+            }
+            ev.preventDefault();
+            if(ev.shiftKey){const last=sels[sels.length-1]||{r1:act.r,c1:act.c,r2:act.r,c2:act.c};sels=[...sels.slice(0,-1),{r1:last.r1,c1:last.c1,r2:r,c2:c}]}
+            else if(ev.ctrlKey||ev.metaKey){act={r,c};sels=[...sels,{r1:r,c1:c,r2:r,c2:c}]}
+            else{act={r,c};sels=[{r1:r,c1:c,r2:r,c2:c}];drag={r,c};addEventListener("pointermove",onWinMove);addEventListener("pointerup",onWinUp)}
+            inst.render(true);
+          };
+          td.ondblclick=()=>{if(!sp.ro&&!cols[c]?.ro){ed={r,c,val:raw[r]?.[c]??"",mode:"full"};inst.render(true)}};
+          td.oncontextmenu=ev=>{if(sp.ro)return;ev.preventDefault();if(!selCheck(r,c)){act={r,c};sels=[{r1:r,c1:c,r2:r,c2:c}];inst.render(true)}openContextMenu(ev.clientX,ev.clientY)};
+        });
+      }
+    };
+    host._wg=inst;inst.render(false);
+    return inst;
+  }
+
+  return{
+    reg(sp){specs[sp.sid]=sp;return `<div class="wos-grid-host" id="gh_${esc(sp.sid)}" data-s="${esc(sp.sid)}"></div>`},
+    snapAll(){document.querySelectorAll(".wos-grid-host").forEach(h=>{if(h._wg)h._wg.snap()})},
+    mountAll(){document.querySelectorAll(".wos-grid-host").forEach(h=>{const sid=h.dataset.s;if(sid&&specs[sid]&&!h._wg)createInst(h,specs[sid])})},
+    get(sid){const h=document.querySelector(`.wos-grid-host[data-s="${sid}"]`);return h?h._wg:null}
+  };
+})();
 function mxH(o,k,p,sec,d){
-  const ed=!RO&&k==="PLANNING",sz=o.sz||["S","M","L","XL","","","",""],rt=o.rt||["1","1","1","1","","","",""];
-  const v=Array.isArray(d[sec.id])?d[sec.id]:[],pcl=o.colors||[],r8=[0,1,2,3,4,5,6,7];
-  let cl=k==="PLANNING"?(pcl.length?pcl:(RO?[]:[{},{}])):(()=>{const cnt=Math.max(v.length,pcl.length,RO?0:2),a=[];for(let i=0;i<cnt;i++){const sv=v[i]||{},pc=pcl[i]||{};a.push({c1:sv.c1!==undefined?sv.c1:(pc.c1||pc.name||""),c2:sv.c2!==undefined?sv.c2:(pc.c2||""),q:rq(sv)})}return a})();
-  if(!cl.length)return '<div class="mut">No colors defined in Planning yet.</div>';
-  const rows=cl.map((c,i)=>ed?`<tr class="mr"><td>${I("c1",c.c1||c.name)}</td><td>${I("c2",c.c2)}</td><td>${I("ct",c.t,'type="number" onchange="dist(this)"')}</td>${r8.map(j=>`<td>${I("q",qa(c)[j],'type="number"')}</td>`).join("")}</tr>`
-   :`<tr class="mr"><td>${RO?esc(c.c1):I("c1",c.c1)}</td><td>${RO?esc(c.c2):I("c2",c.c2)}</td><td class="ct"></td>${r8.map(j=>`<td>${I("q",(c.q||[])[j],'type="number"')}</td>`).join("")}</tr>`).join("");
-  return `<div class="sc"><table class="mx" data-s="${p}${sec.id}" oninput="if(event.target.classList.contains('q'))rc(this,true)"><tr><th>Color 1</th><th>Color 2</th><th>QTY</th>${sz.map(z=>`<th>${ed?I("sz",z):esc(z)}</th>`).join("")}</tr>
-  <tr><td colspan="3"><b>RATIO</b></td>${rt.map(r=>`<td>${ed?I("rt",r,'type="number"'):esc(r)}</td>`).join("")}</tr>${rows}<tr class="mt"><td colspan="2">TOTAL</td><td class="cT"></td>${r8.map(()=>'<td class="cq"></td>').join("")}</tr></table></div>`+(!RO?`<button class="b2" onclick="addRow(this)">+ Add row</button>`:"")+(!RO&&!ed&&pcl.length?`<button class="b2" onclick="fillPlan('${p}${sec.id}')">Fill from plan</button>`:"");
+  const pcl=o.colors||[],v=Array.isArray(d[sec.id])?d[sec.id]:[];
+  if(RO&&k==="PLANNING"&&!pcl.length)return '<div class="mut">No colors defined in Planning yet.</div>';
+  if(RO&&k!=="PLANNING"&&!pcl.length&&!v.length)return '<div class="mut">No colors defined in Planning yet.</div>';
+  return WOSGrid.reg({kind:"m",sid:p+sec.id,oid:o.id||"",dept:k,prefix:p,sec,ro:RO,o,d});
 }
 function tbH(o,k,p,sec,d){
-  const cols=sec.c.map(c=>{let[a,ty]=c.split("|"),[id,lb]=a.split(":");return{id,lb,n:ty==="n"}});
-  let rows=d[sec.id];if(!rows||!rows.length)rows=sec.pre?sec.pre.map(x=>({[cols[0].id]:x})):[{},{},{}];
-  const R=r=>`<tr class="tr">${cols.map(c=>`<td>${I("tc",r[c.id],`data-c="${c.id}" ${c.n?'type="number"':""}`)}</td>`).join("")}</tr>`;
-  return `<div class="sc"><table class="tb" data-s="${p}${sec.id}" oninput="ft(this)"><thead><tr>${cols.map(c=>`<th>${c.lb}</th>`).join("")}</tr></thead><tbody>${rows.map(R).join("")}</tbody><tfoot><tr>${cols.map((c,i)=>c.n?`<td class="ft" data-c="${c.id}"></td>`:`<td>${i?"":"TOTAL"}</td>`).join("")}</tr></tfoot></table></div>`+(RO?"":`<button class="b2" onclick="addRow(this)">+ Add row</button>`);
+  return WOSGrid.reg({kind:"t",sid:p+sec.id,oid:o.id||"",dept:k,prefix:p,sec,ro:RO,o,d});
 }
 function form(o,k,p,ro){
   RO=ro;const s=o.stages[k]||{},d=s.d||{};
@@ -305,24 +1209,18 @@ function form(o,k,p,ro){
     const r=sigRole(c,A[i-1]),g=r==="DEPT"?d["sig_"+c.id]:((o["sg_"+r]||{})[k]||{})[c.id],rl=r==="DEPT"?sn(k)+" staff":(SR.find(x=>x[0]===r)||[])[1],live=isOwner||(o.id&&(s.done||isActS(o,k)));return `<div class="sig"><b>${c.lb||"Signature"}</b><span class="mut">(${rl})</span>${g?`<span>✍ ${esc(g.by)||"-"} • ${fmt(g.at)}</span>${(isOwner||(canEdit&&o.id))?`<button class="b2" style="margin:0" onclick="unsign('${o.id||""}','${k}','${c.id}')">Clear</button>`:""}`:live&&canSign(k,r)?`<button class="b2" style="margin:0" onclick="sign('${o.id||""}','${k}','${p}','${c.id}')">Sign</button>`:'<span class="mut">not signed</span>'}</div>`;
   }).join("");
 }
-function post(){document.querySelectorAll("table.mx").forEach(rc);document.querySelectorAll("table.tb").forEach(ft)}
-function addRow(b){const t=b.previousElementSibling.querySelector("table"),r=t.querySelector(t.classList.contains("mx")?"tr.mr:last-of-type":"tbody tr:last-child");const n=(t.classList.contains("mx")?[...t.querySelectorAll("tr.mr")].pop():r).cloneNode(true);n.querySelectorAll("input").forEach(i=>i.value="");if(t.classList.contains("mx"))t.querySelector("tr.mt").before(n);else t.querySelector("tbody").appendChild(n)}
-function dist(el){const t=el.closest("table"),r=el.closest("tr"),w=[...t.querySelectorAll(".rt")].map(i=>N(i.value)),S=w.reduce((a,b)=>a+b,0),T=N(el.value);if(!S)return;const a=w.map(x=>Math.floor(T*x/S));let rem=T-a.reduce((x,y)=>x+y,0);for(let i=0;rem>0&&i<a.length;i++)if(w[i]){a[i]++;rem--}r.querySelectorAll(".q").forEach((e,i)=>e.value=a[i]||"");rc(t)}
-function rc(t,fromQ){const cs=new Array(8).fill(0);let T=0;t.querySelectorAll("tr.mr").forEach(r=>{let s=0;r.querySelectorAll(".q").forEach((e,i)=>{const v=N(e.value);s+=v;cs[i]+=v});const c=r.querySelector(".ct");if(c){if(c.tagName==="INPUT"){if(s||fromQ===true)c.value=s||""}else c.textContent=s||""}T+=s});const f=t.querySelector("tr.mt");if(f){f.querySelectorAll(".cq").forEach((e,i)=>e.textContent=cs[i]||"");f.querySelector(".cT").textContent=T||""}}
-function ft(t){t.querySelectorAll("td.ft").forEach(td=>{td.textContent=[...t.querySelectorAll(`tbody input[data-c="${td.dataset.c}"]`)].reduce((a,i)=>a+N(i.value),0)||""})}
-function fillPlan(sid){if(view==="new")syncNewDraft();const t=document.querySelector(`[data-s="${sid}"]`);if(!t)return;const mm=sid.match(/^d(.+?)_/),o=sid.startsWith("nd_")?newDraftObj():(orders.find(x=>x.id===(mm?mm[1]:cur))||{});const cl=o.colors||[];t.querySelectorAll("tr.mr").forEach((r,i)=>r.querySelectorAll(".q").forEach((e,j)=>e.value=qa(cl[i]||{})[j]||""));rc(t)}
+function post(){WOSGrid.mountAll()}
+function fillPlan(sid){const g=WOSGrid.get(sid);if(g)g.fillPlan()}
 function collect(o,k,p){
   const d={...((o.stages[k]||{}).d||{})},m={};const g=id=>{const e=E(id);return e?e.value:""};
   SCH[k].forEach(c=>{
     if(c.t==="h"||c.t==="k")c.f.forEach(f=>{const id=f.split("|")[0].split(":")[0];if(id.startsWith("m.")){if(k==="PLANNING")m[id.slice(2)]=g(p+"m_"+id.slice(2))}else d[id]=g(p+"f_"+id)});
     else if(c.t==="n")d[c.id]=g(p+"n_"+c.id);
-    else if(c.t==="m"){const t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!t)return;
-      const rows=[...t.querySelectorAll("tr.mr")];
-      if(k==="PLANNING"){m.sz=[...t.querySelectorAll(".sz")].map(i=>i.value);m.rt=[...t.querySelectorAll(".rt")].map(i=>i.value);
-        m.colors=rows.map(r=>({c1:r.querySelector(".c1").value.trim(),c2:r.querySelector(".c2").value.trim(),t:r.querySelector(".ct").value,q:[...r.querySelectorAll(".q")].map(i=>i.value)})).filter(c=>c.c1||c.c2||c.t||c.q.some(x=>N(x)>0))}
-      else d[c.id]=rows.map(r=>({c1:(r.querySelector(".c1")||{value:""}).value.trim(),c2:(r.querySelector(".c2")||{value:""}).value.trim(),q:[...r.querySelectorAll(".q")].map(i=>i.value)}))}
-    else if(c.t==="t"){const t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!t)return;
-      d[c.id]=[...t.querySelectorAll("tbody tr")].map(r=>{const x={};r.querySelectorAll("input").forEach(i=>x[i.dataset.c]=i.value);return x}).filter(x=>Object.values(x).some(v=>v))}
+    else if(c.t==="m"){const wg=WOSGrid.get(p+c.id);if(!wg)return;const res=wg.collect();
+      if(res.gridMeta)d["_grid_"+c.id]=res.gridMeta;else delete d["_grid_"+c.id];
+      if(k==="PLANNING"){m.sz=res.sz;m.rt=res.rt;m.colors=res.colors}else d[c.id]=res.rows}
+    else if(c.t==="t"){const wg=WOSGrid.get(p+c.id);if(!wg)return;const res=wg.collect();
+      d[c.id]=res.rows;if(res.gridMeta)d["_grid_"+c.id]=res.gridMeta;else delete d["_grid_"+c.id]}
   });
   return{d,m};
 }
@@ -378,7 +1276,7 @@ function qmatch(o){
   for(const[k,f]of[["se","season"],["ca","cat"],["ge","gender"],["ty","type"]])if(Q[k]&&o[f]!==Q[k])return false;
   if(Q.f&&(o.date||"")<Q.f)return false;if(Q.to&&(o.date||"")>Q.to)return false;return true}
 const curList=()=>orders.filter(o=>!flt||(flt==="sign"?pend(o)>0:flt==="mine"?myD().includes(cs(o)):cs(o)===flt)).filter(qmatch);
-function listHtml(){const L=curList();if(!orders.length)return '<div class="card mut">No orders yet. Tap "+ New order" to start.</div>';const doneCnt=statL("done").length,canDel=canEdit||isOwner;return `<div class="row" style="margin:2px 2px 8px;flex-wrap:wrap;gap:8px"><div class="mut">${L.length} of ${orders.length} orders</div>`+(canDel&&doneCnt>0?`<button class="b2" style="margin:0;padding:5px 10px;font-size:12px;font-weight:600;color:#d9534f;border-color:rgba(217,83,79,.4);display:inline-flex;align-items:center;gap:5px" onclick="delDoneConf=!delDoneConf;render()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg><span>Delete completed (${doneCnt})</span></button>`:``)+`</div>`+(canDel&&doneCnt>0&&delDoneConf?`<div class="card" style="border:1px solid rgba(217,83,79,.45)"><div class="row" style="flex-wrap:wrap;gap:8px"><span style="font-size:13px;font-weight:600;color:#d9534f">Delete all ${doneCnt} completed orders?</span><div style="display:flex;gap:6px"><button class="b2" style="margin:0" onclick="delDoneConf=false;render()">Cancel</button><button class="b2" style="margin:0;background:#d9534f;color:#fff;border-color:#d9534f" onclick="delCompletedOrders()">Confirm delete all</button></div></div></div>`:``)+(L.length?L.map(oCard).join(""):'<div class="card mut">No orders match your search.</div>')}
+function listHtml(){const L=curList();if(!orders.length)return '<div class="card mut">No orders yet. Tap "+ New order" to start.</div>';const doneCnt=statL("done").length,canDel=canEdit||isOwner;return `<div class="row" style="margin:2px 2px 8px;flex-wrap:wrap;gap:8px"><div class="mut">${L.length} of ${orders.length} orders</div>`+(canDel&&doneCnt>0?`<button class="b2" style="margin:0;padding:5px 10px;font-size:12px;font-weight:600;color:#d9534f;border-color:rgba(217,83,79,.4);display:inline-flex;align-items:center;gap:5px" onclick="delDoneConf=!delDoneConf;render()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg><span>Delete completed (${doneCnt})</span></button>`:``)+`</div>`+(canDel&&doneCnt>0&&delDoneConf?`<div class="card" style="border:1px solid rgba(217,83,79,.45)"><div class="row" style="flex-wrap:wrap;gap:8px"><span style="font-size:13px;font-weight:600;color:#d9534f">Delete all ${doneCnt} completed orders?</span><div style="display:flex;gap:6px"><button class="b2" style="margin:0" onclick="delDoneConf=false;render()">Cancel</button><button class="b2" style="margin:0;background:#d9534f;color:#fff;border-color:#d9534f" onclick="delCompletedOrders()">Confirm delete all</button></div></div></div>`:``)+(L.length?`<div class="olist-grid">${L.map(oCard).join("")}</div>`:'<div class="card mut">No orders match your search.</div>')}
 const showList=()=>{const e=E("ol");if(e){e.innerHTML=listHtml();if(typeof trDOM==="function")trDOM(e)}};
 const clearQ=()=>{Q={t:"",by:"all",st:"",dp:"",se:"",ca:"",ge:"",ty:"",f:"",to:"",on:true};render()};
 const sel=(k,l,opts,all)=>`<label>${l}<select onchange="Q.${k}=this.value;render()">${all===false?"":'<option value="">All</option>'}${opts.map(o=>`<option value="${esc(o[0])}" ${Q[k]===o[0]?"selected":""}>${esc(o[1])}</option>`).join("")}</select></label>`;
@@ -386,7 +1284,7 @@ function searchV(){return `<div class="card" style="padding:10px 12px"><div clas
 function alertsV(){
   const ts=seenTs(),perm="Notification" in window?Notification.permission:"unsupported",allCnt=Object.keys(NM).length||notifs.length;
   return `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px"><div>`+(notifs.length?`<button class="b2" style="margin:0;display:inline-flex;align-items:center;gap:6px;color:#d9534f;border-color:rgba(217,83,79,.4);font-weight:600" onclick="clrNotifConf=!clrNotifConf;render()"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg><span>Clear all (${allCnt})</span></button>`:``)+`</div><button class="b2" style="margin:0;display:inline-flex;align-items:center;gap:6px" onclick="beep();toast('Sound played \u2713')">🔊 <span>Test sound</span></button></div>`+(notifs.length&&clrNotifConf?`<div class="card" style="border:1px solid rgba(217,83,79,.45)"><div class="row" style="flex-wrap:wrap;gap:8px"><span style="font-size:13px;font-weight:600;color:#d9534f">Delete all ${allCnt} alerts?</span><div style="display:flex;gap:6px"><button class="b2" style="margin:0" onclick="clrNotifConf=false;render()">Cancel</button><button class="b2" style="margin:0;background:#d9534f;color:#fff;border-color:#d9534f" onclick="clearAllNotifs()">Confirm delete all</button></div></div></div>`:``)+((perm==="default"?'<div class="card"><b>Get alerts on this device</b><div class="mut">Allow notifications to be alerted when an order reaches your department, even while the app is in the background.</div><button class="b1 b2" onclick="askNotif()">Enable notifications</button></div>':perm==="denied"?'<div class="mut" style="margin-bottom:8px">Notifications are blocked in your browser settings.</div>':""))
-  +(notifs.length?notifs.map(n=>`<div class="card ${(n.at||"")>ts?"shot new":""}"><div class="row" style="align-items:flex-start;gap:8px"><div class="click" style="flex:1;min-width:0" onclick="${n.kind==="shot"?"go('shots')":`openOrder('${n.oid}')`}"><div class="row"><b>${esc(n.text)}</b>${(n.at||"")>ts?'<span class="tag cur">New</span>':""}</div><div class="mut">From ${sn(n.from)} \u2022 ${esc(n.by)} \u2022 ${fmt(n.at)}</div></div><button class="b2" aria-label="Delete notification" style="margin:0;padding:6px 8px;color:#d9534f;border-color:rgba(217,83,79,.35);flex-shrink:0" onclick="event.stopPropagation();delNotif('${n.id}')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></div></div>`).join(""):'<div class="card mut">No alerts yet. You will see a message here whenever an order reaches your department.</div>')}
+  +(notifs.length?`<div class="olist-grid">${notifs.map(n=>`<div class="card ${(n.at||"")>ts?"shot new":""}"><div class="row" style="align-items:flex-start;gap:8px"><div class="click" style="flex:1;min-width:0" onclick="${n.kind==="shot"?"go('shots')":`openOrder('${n.oid}')`}"><div class="row"><b>${esc(n.text)}</b>${(n.at||"")>ts?'<span class="tag cur">New</span>':""}</div><div class="mut">From ${sn(n.from)} \u2022 ${esc(n.by)} \u2022 ${fmt(n.at)}</div></div><button class="b2" aria-label="Delete notification" style="margin:0;padding:6px 8px;color:#d9534f;border-color:rgba(217,83,79,.35);flex-shrink:0" onclick="event.stopPropagation();delNotif('${n.id}')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></div></div>`).join("")}</div>`:'<div class="card mut">No alerts yet. You will see a message here whenever an order reaches your department.</div>')}
 function dur(a,b){if(!a||!b)return "";const m=Math.max(0,Math.round((new Date(b)-new Date(a))/60000));if(m<60)return m+"m";const h=Math.floor(m/60);return h<24?h+"h "+(m%60)+"m":Math.floor(h/24)+"d "+(h%24)+"h"}
 function timelineH(o){let prev=o.created;const c0=cs(o),last=o.stages[o.order[o.order.length-1]]||{};
   return `<div class="card"><h3>Progress timeline</h3>${o.order.map(k=>{const s=o.stages[k]||{},rp=isReop(s),x=`<div class="row" style="padding:4px 0;align-items:flex-start"><span>${s.done?"\u2705":(k===c0||rp)?"\ud83d\udd35":"\u23f3"} <b>${sn(k)}</b></span><span class="mut" style="text-align:end">${s.done?`${esc(s.by)||"-"} \u2022 ${fmt(s.at)}<br>took ${dur(prev,s.at)}`:rp?"reopened":k===c0?"in progress"+(s.plan?" \u2022 planned "+esc(s.plan):""):"waiting"}</span></div>`;if(s.done)prev=s.at;return x}).join("")}<div class="mut" style="margin-top:6px">${c0?`Currently at <b>${sn(c0)}</b>`:`Completed ${fmt(last.at)} \u2022 total ${dur(o.created,last.at)}`}</div></div>`}
@@ -397,8 +1295,8 @@ function copyFrom(oid,k,p){
   SCH[k].forEach(c=>{
     if(c.t==="h"||c.t==="k")c.f.forEach(f=>{const id=f.split("|")[0].split(":")[0];if(!id.startsWith("m.")&&!/^(plan|act|rd|dd|di|do|ti|to)$/.test(id))put(p+"f_"+id,sd[id])});
     else if(c.t==="n")put(p+"n_"+c.id,sd[c.id]);
-    else if(c.t==="t"){const o2=SCH[src].find(x=>x.t==="t"&&x.id===c.id),rows=sd[c.id]||[],t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!o2||ids(c)!==ids(o2)||!t||!rows.length)return;const tb=t.querySelector("tbody");while(tb.children.length<rows.length){const r=tb.lastElementChild.cloneNode(true);r.querySelectorAll("input").forEach(i=>i.value="");tb.appendChild(r)}[...tb.children].forEach((r,i)=>r.querySelectorAll("input").forEach(inp=>{const v=(rows[i]||{})[inp.dataset.c];if(v!==undefined&&v!==""){inp.value=v;n++}}));ft(t)}
-    else if(c.t==="m"&&k!=="PLANNING"){const rows=sd[c.id],t=document.querySelector(`[data-s="${p}${c.id}"]`);if(!rows||!t||!SCH[src].some(x=>x.t==="m"&&x.id===c.id))return;t.querySelectorAll("tr.mr").forEach((r,i)=>r.querySelectorAll(".q").forEach((e,j)=>{const v=rq(rows[i])[j];if(v!==undefined&&v!==""){e.value=v;n++}}));rc(t)}
+    else if(c.t==="t"){const o2=SCH[src].find(x=>x.t==="t"&&x.id===c.id),rows=sd[c.id]||[],wg=WOSGrid.get(p+c.id);if(!o2||ids(c)!==ids(o2)||!wg||!rows.length)return;const cIds=c.c.map(x=>x.split("|")[0].split(":")[0]);const gm=sd["_grid_"+c.id]||{},useDup=cIds.length===4&&(c.id==="ai"||(k==="ACCESSORIES"&&c.id==="pi"&&gm.dupSideBySide));const allIds=useDup?[...cIds,...cIds.map(x=>x+"__2")]:cIds;wg.setFromCopy(rows.map(r=>allIds.map(id=>r[id]??"")),gm);n+=rows.length}
+    else if(c.t==="m"&&k!=="PLANNING"){const rows=src==="PLANNING"?(o.colors||[]):sd[c.id],wg=WOSGrid.get(p+c.id);if(!rows||!wg||!(src==="PLANNING"||SCH[src].some(x=>x.t==="m"&&x.id===c.id)))return;wg.setFromCopy(rows.map(r=>{const q=qa(r),s=q.reduce((a,b)=>a+N(b),0);return[r.c1||r.name||"",r.c2||"",s?String(s):"",...[0,1,2,3,4,5,6,7].map(j=>String(q[j]??""))]}),sd["_grid_"+c.id]||{});n+=rows.length}
   });
   toast(n?"Copied "+n+" values from "+sn(src)+". Review and save.":"Nothing to copy from "+sn(src))}
 const fitImg=cv=>{let c=cv;for(let a=0;a<5;a++){for(let q=.8;q>=.4;q-=.1){const u=c.toDataURL("image/jpeg",q);if(u.length<900000)return u}const n=document.createElement("canvas");n.width=Math.round(c.width*.75);n.height=Math.round(c.height*.75);n.getContext("2d").drawImage(c,0,0,n.width,n.height);c=n}return null};
@@ -409,10 +1307,11 @@ async function sendTab(oid,k,p){if(!activeGuard())return;const o=orders.find(x=>
     wrap=document.createElement("div");wrap.id="wo-h2c-sheet";wrap.dir=document.documentElement.dir||"ltr";
     wrap.style.cssText="position:fixed;left:-99999px;top:0;width:"+tw+"px;padding:24px 28px;background:#ffffff;color:#1f2d36;box-sizing:border-box;z-index:-1";
     const cln=el.cloneNode(true);cln.style.width="100%";cln.style.overflow="visible";
-    cln.querySelectorAll(".sc").forEach(x=>{x.style.overflow="visible";x.style.direction="ltr";x.style.maxWidth="none"});
+    cln.querySelectorAll(".sc").forEach(x=>{x.style.overflow="visible";x.style.maxWidth="none"});
     cln.querySelectorAll("table").forEach(t=>{t.style.width="100%";t.style.minWidth="0";t.style.tableLayout="auto"});
     const oIn=[...el.querySelectorAll("input,textarea")],cIn=[...cln.querySelectorAll("input,textarea")];
     cIn.forEach((cf,idx)=>{const of=oIn[idx];if(!of)return;if(of.type==="checkbox"){cf.checked=of.checked;return}const inTb=!!cf.closest("td,th"),isTa=of.tagName==="TEXTAREA",dv=document.createElement("div");dv.textContent=of.value||"";dv.style.cssText=inTb?"min-height:28px;padding:4px 6px;line-height:1.4;font-size:12px;color:#1f2d36;text-align:center;white-space:nowrap;box-sizing:border-box":(isTa?"min-height:68px;":"min-height:36px;")+"margin-top:4px;padding:7px 10px;line-height:1.45;font-size:13.5px;color:#1f2d36;background:#f5f7f8;border:1px solid #cfd7dc;border-radius:10px;"+(isTa?"white-space:pre-wrap;align-items:flex-start;":"white-space:normal;align-items:center;")+"word-break:break-word;display:flex;box-sizing:border-box";cf.replaceWith(dv)});
+    cln.querySelectorAll(".noprint").forEach(x=>x.remove());
     cln.querySelectorAll("button").forEach(b=>{const tx=(b.textContent||"").trim();if(tx.startsWith("+")||tx.includes("Fill"))b.style.display="none"});
     wrap.appendChild(cln);document.body.appendChild(wrap);
     const sc=Math.min(1.35,2200/tw);
@@ -473,20 +1372,20 @@ function copyBar(o,k,p){const src=(o.order||[]).slice(0,(o.order||[]).indexOf(k)
 const btns=(o,p,k)=>{k=k||cs(o);const s=(o.stages||{})[k]||{},rp=isReop(s),canOk=isActS(o,k);return copyBar(o,k,p)+`<div class="row" style="margin-top:10px"><button onclick="saveStage(false,'${o.id}','${p}',null,'${k}')">Save draft</button>${canOk?`<button class="ok" onclick="saveStage(true,'${o.id}','${p}',null,'${k}')">${rp?"Approve \u2713":"Approve &amp; send to next \u2713"}</button>`:""}</div>`+capBtn(o,k,p)};
 function dCard(o,k,t){
   const s=o.stages[k]||{},rp=isReop(s);
-  if(t==="act"&&can(k))return `<div class="card"><div class="row"><b>${esc(o.item||o.po)}</b><span class="tag ${late(o)&&!rp?"late":"cur"}">${rp?"Reopened":late(o)?"Late":"In progress"}</span></div><div class="mut">PO: ${esc(o.po)} • ${tot(o)} pcs</div><div class="mut click" style="margin:4px 0 8px;color:var(--pri)" onclick="openOrder('${o.id}')">View order →</div>${capWrap(o,k,"d"+o.id+"_",false)}${btns(o,"d"+o.id+"_",k)}${shotBox(o,k)}</div>`;
+  if(t==="act"&&can(k))return `<div class="card dcard-full"><div class="row"><b>${esc(o.item||o.po)}</b><span class="tag ${late(o)&&!rp?"late":"cur"}">${rp?"Reopened":late(o)?"Late":"In progress"}</span></div><div class="mut">PO: ${esc(o.po)} • ${tot(o)} pcs</div><div class="mut click" style="margin:4px 0 8px;color:var(--pri)" onclick="openOrder('${o.id}')">View order →</div>${capWrap(o,k,"d"+o.id+"_",false)}${btns(o,"d"+o.id+"_",k)}${shotBox(o,k)}</div>`;
   const ropLbl=["FABRIC","ACCESSORIES"].includes(k)?"↺ Reopen tab":"↺ Reopen for corrections";
   const rop=t==="done"&&canReopen(k,s)?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)"><button class="b2" style="margin:0" onclick="event.stopPropagation();reopen('${k}','${o.id}')">${ropLbl}</button></div>`:"";
   return `<div class="card click" onclick="openOrder('${o.id}','${k}')"><div class="row"><b>${esc(o.item||o.po)}</b><span class="tag ${t==="done"?"dn":"cur"}">${t==="done"?"Done":t==="act"?"In progress":"Upcoming"}</span></div><div class="mut">PO: ${esc(o.po)} • ${tot(o)} pcs</div><div class="mut">${t==="done"?`Approved by ${esc(s.by)||"-"} • ${fmt(s.at)}`:t==="next"?"Currently at: "+sn(cs(o))+(hasDraftData(s.d)?" \u2022 \ud83d\udcdd pre-filled":""):"View only"}</div>${rop}</div>`}
 function deptV(k){
   const r=dInfo(k),lt=r.act.filter(late),M={act:r.act,late:lt,done:r.done,next:r.next},L=M[dtab]||r.act,T={act:"In progress",done:"Completed",next:"Upcoming"};
   return `<div class="stats"><div class="stat click ${dtab==="act"?"sel":""}" onclick="dtab='act';render()"><b>${r.act.length}</b><span>In progress</span></div><div class="stat click ${dtab==="late"?"sel":""}" onclick="dtab='late';render()"><b style="color:var(--bad)">${lt.length}</b><span>Late</span></div><div class="stat click ${dtab==="done"?"sel":""}" onclick="dtab='done';render()"><b>${r.done.length}</b><span>Completed</span></div><div class="stat click ${dtab==="next"?"sel":""}" onclick="dtab='next';render()"><b>${r.next.length}</b><span>Upcoming</span></div></div>
-  <div class="chips">${Object.keys(T).map(t=>`<button class="chip ${dtab===t?"on":""}" onclick="dtab='${t}';render()">${T[t]} (${r[t].length})</button>`).join("")}${dtab==="late"?`<button class="chip on" onclick="dtab='act';render()">Late (${lt.length}) \u2715</button>`:""}</div>`+(L.length?L.map(o=>dCard(o,k,dtab==="late"?"act":dtab)).join(""):'<div class="card mut">Nothing here.</div>');
+  <div class="chips">${Object.keys(T).map(t=>`<button class="chip ${dtab===t?"on":""}" onclick="dtab='${t}';render()">${T[t]} (${r[t].length})</button>`).join("")}${dtab==="late"?`<button class="chip on" onclick="dtab='act';render()">Late (${lt.length}) \u2715</button>`:""}</div>`+(L.length?`<div class="olist-grid">${L.map(o=>dCard(o,k,dtab==="late"?"act":dtab)).join("")}</div>`:'<div class="card mut">Nothing here.</div>');
 }
 const defNewDepts=()=>ST.slice(1).map(s=>s[0]).filter(k=>!OPT.includes(k));
 let newDraft=null;
 function resetNewDraft(){newDraft={fromId:"",fromPo:"",fromItem:"",m:{date:today(),sz:["S","M","L","XL","","","",""],rt:["1","1","1","1","","","",""],colors:[]},depts:defNewDepts(),st:{PLANNING:{}},sg:{},open:{},saved:{}};return newDraft}
 resetNewDraft();
-function hasDraftData(d){if(!d||typeof d!=="object")return false;return Object.entries(d).some(([k,v])=>{if(v===null||v===undefined||v==="")return false;if(Array.isArray(v))return v.some(r=>{if(Array.isArray(r))return r.some(x=>String(x??"").trim()!=="");if(r&&typeof r==="object"){if(Array.isArray(r.q))return r.q.some(x=>Number(x)>0);return Object.values(r).some(x=>String(x??"").trim()!=="")}return String(r??"").trim()!==""});if(typeof v==="object")return Object.keys(v).length>0;return String(v).trim()!==""})}
+function hasDraftData(d){if(!d||typeof d!=="object")return false;return Object.entries(d).some(([k,v])=>{if(v===null||v===undefined||v==="")return false;if(k.startsWith("_grid_"))return!!(v&&typeof v==="object"&&((v.formulas&&Object.keys(v.formulas).length>0)||(Array.isArray(v.merges)&&v.merges.length>0)));if(Array.isArray(v))return v.some(r=>{if(Array.isArray(r))return r.some(x=>String(x??"").trim()!=="");if(r&&typeof r==="object"){if(Array.isArray(r.q))return r.q.some(x=>Number(x)>0);return Object.values(r).some(x=>String(x??"").trim()!=="")}return String(r??"").trim()!==""});if(typeof v==="object")return Object.keys(v).length>0;return String(v).trim()!==""})}
 function cleanStageForCopy(d){if(!d||typeof d!=="object")return{};const out={},cln=v=>JSON.parse(JSON.stringify(v));Object.entries(d).forEach(([k,v])=>{if(k.startsWith("sig_")||/^(plan|act|rd|dd|di|do|ti|to)$/.test(k))return;out[k]=cln(v)});return out}
 function newDraftObj(){const stg={};["PLANNING",...(newDraft.depts||[])].forEach(k=>{stg[k]={done:false,d:newDraft.st[k]||{}}});return{id:"",...newDraft.m,...newDraft.sg,order:["PLANNING",...(newDraft.depts||[])],stages:stg}}
 function syncNewDraft(){if(!newDraft||!E("n_m_po"))return;const o=newDraftObj(),{d:pd,m:pm}=collect(o,"PLANNING","n_");newDraft.m={...newDraft.m,...pm};newDraft.st.PLANNING=pd;Object.keys(newDraft.open||{}).forEach(k=>{if(!newDraft.open[k])return;const marker=document.querySelector(`[id^="nd_${k}_"],[data-s^="nd_${k}_"]`);if(marker){const r=collect(newDraftObj(),k,"nd_"+k+"_");newDraft.st[k]=r.d}})}
@@ -522,7 +1421,7 @@ function orderV(o){
     else if(isOpen&&act_)body=form(o,k,"o_",true)+'<div class="mut">🔒 This department is not assigned to you. View only.</div>';
     else if(isOpen&&canPreFill())body='<div class="mut" style="margin-bottom:6px">\ud83d\udcdd Pre-fill: this department has not started. Data you save here is kept as a draft for them.</div>'+capWrap(o,k,"o_",false)+btns(o,"o_",k);else if(isOpen&&can(k)&&hasDraftData(s.d))body='<div class="mut" style="margin-bottom:6px">Not your turn yet. The data below was pre-filled for you.</div>'+form(o,k,"o_",true);else if(isOpen)body='<div class="mut">Not this department\u2019s turn yet.</div>';
     return `<div class="st ${s.done?"d":act_?"c":""} ${!s.done&&!act_?"wait":""}"><div class="row click" onclick="opn=opn==='${k}'?null:'${k}';render()"><b>${s.done?"✅":act_?"🔵":"⏳"} ${sn(k)}</b><span class="mut">${s.done?"Done":reop_?"Reopened":cur_?"Current":"Waiting"}</span></div>${body}</div>`}).join("");
-  const canDel=canEdit||isOwner,canCp=!k0&&canNew();return `<div class="row" style="margin-bottom:8px;flex-wrap:wrap;gap:8px"><button onclick="go(ret)" style="margin:0">← Back</button><div style="display:flex;flex-wrap:wrap;gap:6px">`+(canCp?`<button class="b1 b2" style="margin:0;display:inline-flex;align-items:center;gap:6px;font-weight:600" onclick="copyOrderAsNew('${o.id}')"><span>\u29c9 Copy as new order</span></button>`:"")+(canDel?`<button class="b2" style="margin:0;display:inline-flex;align-items:center;gap:6px;color:#d9534f;border-color:rgba(217,83,79,.4);font-weight:600" onclick="delId=delId==='${o.id}'?null:'${o.id}';render()"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg><span>Delete order</span></button>`:"")+`</div></div>`+(canDel&&delId===o.id?`<div class="card" style="border:1px solid rgba(217,83,79,.45)"><div class="row" style="flex-wrap:wrap;gap:8px"><span style="font-weight:600;color:#d9534f">Delete this order permanently?</span><div style="display:flex;gap:6px"><button class="b2" style="margin:0" onclick="delId=null;render()">Cancel</button><button class="b2" style="margin:0;background:#d9534f;color:#fff;border-color:#d9534f" onclick="delOrder('${o.id}')">Confirm delete</button></div></div></div>`:"")+`<div class="card"><div class="row"><h3 style="margin:0">${esc(o.item||o.po)}</h3><span class="tag ${k0?(late(o)?"late":"cur"):"dn"}">${k0?sn(k0)+(late(o)?" • late":""):"Done ✓"}</span></div><div class="mut">PO: ${esc(o.po)} • CO: ${esc(o.co)} • ${tot(o)} pcs</div><div class="bar"><i style="width:${prog(o)}%"></i></div><div class="mut">${prog(o)}% complete</div></div>${timelineH(o)}<div class="card"><h3>Order stages</h3>${sts}</div>`;
+  const canDel=canEdit||isOwner,canCp=!k0&&canNew();return `<div class="row" style="margin-bottom:8px;flex-wrap:wrap;gap:8px"><button onclick="go(ret)" style="margin:0">← Back</button><div style="display:flex;flex-wrap:wrap;gap:6px">`+(canCp?`<button class="b1 b2" style="margin:0;display:inline-flex;align-items:center;gap:6px;font-weight:600" onclick="copyOrderAsNew('${o.id}')"><span>\u29c9 Copy as new order</span></button>`:"")+(canDel?`<button class="b2" style="margin:0;display:inline-flex;align-items:center;gap:6px;color:#d9534f;border-color:rgba(217,83,79,.4);font-weight:600" onclick="delId=delId==='${o.id}'?null:'${o.id}';render()"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg><span>Delete order</span></button>`:"")+`</div></div>`+(canDel&&delId===o.id?`<div class="card" style="border:1px solid rgba(217,83,79,.45)"><div class="row" style="flex-wrap:wrap;gap:8px"><span style="font-weight:600;color:#d9534f">Delete this order permanently?</span><div style="display:flex;gap:6px"><button class="b2" style="margin:0" onclick="delId=null;render()">Cancel</button><button class="b2" style="margin:0;background:#d9534f;color:#fff;border-color:#d9534f" onclick="delOrder('${o.id}')">Confirm delete</button></div></div></div>`:"")+`<div class="ord-top-grid"><div class="card"><div class="row"><h3 style="margin:0">${esc(o.item||o.po)}</h3><span class="tag ${k0?(late(o)?"late":"cur"):"dn"}">${k0?sn(k0)+(late(o)?" • late":""):"Done ✓"}</span></div><div class="mut">PO: ${esc(o.po)} • CO: ${esc(o.co)} • ${tot(o)} pcs</div><div class="bar"><i style="width:${prog(o)}%"></i></div><div class="mut">${prog(o)}% complete</div></div>${timelineH(o)}</div><div class="card"><h3>Order stages</h3>${sts}</div>`;
 }
 const roleOf=(k,id)=>{const A=SCH[k],i=A.findIndex(c=>c.t==="s"&&c.id===id);return sigRole(A[i],A[i-1])};
 async function sign(oid,k,p,id){if(!activeGuard())return;const r=roleOf(k,id),v={by:me.name||"",at:new Date().toISOString()};if(!oid){syncNewDraft();newDraft.st[k]=newDraft.st[k]||{};if(r==="DEPT")newDraft.st[k]["sig_"+id]=v;else{newDraft.sg["sg_"+r]=newDraft.sg["sg_"+r]||{};newDraft.sg["sg_"+r][k]=newDraft.sg["sg_"+r][k]||{};newDraft.sg["sg_"+r][k][id]=v}toast("Signed \u2713");render();return}const o=orders.find(x=>x.id===oid);if(r==="DEPT"&&isActS(o,k)&&can(k))return saveStage(false,oid,p,id,k);return sigWrite(oid,k,id,v,r)}
@@ -871,7 +1770,7 @@ function prodV(){
       const addHallBox=canMng&&pDept==="SEWING"&&pAddHallOpen?`<div class="card noprint"><div class="row" style="flex-wrap:wrap;gap:8px"><label style="flex:1;min-width:180px">Hall name<input id="nh_nm" placeholder="Hall 4"></label><div style="display:flex;gap:6px;align-self:flex-end"><button class="b1 b2" style="margin:0" onclick="addSewHall()">Add hall</button><button class="b2" style="margin:0" onclick="pAddHallOpen=false;render()">Cancel</button></div></div></div>`:"";
       const hallOpts=["Hall 1","Hall 2","Hall 3",...halls.map(h=>h.hall).filter(h=>h&&h!=="UNASSIGNED")].filter((v,i,a)=>a.indexOf(v)===i);
       const addLineBox=canMng&&pAddLineOpen?`<div class="card noprint"><div class="g"><label>Line<input id="nl_nm" placeholder="${pDept==="SEWING"?"Swing 7":pDept==="CUTTING"?"Cutting 3":"Print 4"}"></label>${pDept==="SEWING"?`<label>Hall (for Sewing)<select id="nl_hl">${hallOpts.map(h=>`<option value="${esc(h)}">${esc(h)}</option>`).join("")}</select></label>`:""}<label>Target points<input id="nl_tg" type="number" inputmode="numeric" placeholder="500000"></label></div><div class="row" style="justify-content:flex-start;gap:6px;margin-top:8px"><button class="b1 b2" style="margin:0" onclick="saveLineTgt('${pDept}',E('nl_nm').value,E('nl_tg').value,${pDept==="SEWING"?"E('nl_hl').value":"''"})">Save target</button><button class="b2" style="margin:0" onclick="pAddLineOpen=false;render()">Cancel</button></div></div>`:"";
-      const linesSection=pDept==="SEWING"?(halls.length?halls.map(hl=>{const hc=pClr(hl.achievementPct),hLbl=hl.hall==="UNASSIGNED"?"Without hall":hl.hall;return `<div class="phall"><div class="phall-hd"><span class="phall-nm">${esc(hLbl)}</span><span class="phall-pct" style="color:${hc}">${hl.achievementPct==null?"—":Math.round(hl.achievementPct)+"%"}</span></div>${hl.lines.length?`<div class="ptiles">${hl.lines.map(renderLineTile).join("")}</div>`:'<div class="mut">No lines in this hall yet.</div>'}</div>`}).join(""):'<div class="card mut">No lines or closed models in this month yet.</div>'):(s.lines.length?`<div class="ptiles">${s.lines.map(renderLineTile).join("")}</div>`:'<div class="card mut">No lines or closed models in this month yet.</div>');
+      const linesSection=pDept==="SEWING"?(halls.length?`<div class="phalls-grid">${halls.map(hl=>{const hc=pClr(hl.achievementPct),hLbl=hl.hall==="UNASSIGNED"?"Without hall":hl.hall;return `<div class="phall"><div class="phall-hd"><span class="phall-nm">${esc(hLbl)}</span><span class="phall-pct" style="color:${hc}">${hl.achievementPct==null?"—":Math.round(hl.achievementPct)+"%"}</span></div>${hl.lines.length?`<div class="ptiles">${hl.lines.map(renderLineTile).join("")}</div>`:'<div class="mut">No lines in this hall yet.</div>'}</div>`}).join("")}</div>`:'<div class="card mut">No lines or closed models in this month yet.</div>'):(s.lines.length?`<div class="ptiles">${s.lines.map(renderLineTile).join("")}</div>`:'<div class="card mut">No lines or closed models in this month yet.</div>');
       body=`<div class="row noprint" style="justify-content:flex-start;gap:8px;margin-bottom:10px"><button class="b2" style="margin:0" onclick="pDept=null;pLine=null;render()">← Back</button><span class="mut"><span class="click" onclick="pDept=null;render()">Production dashboard</span> / <b>${sn(pDept)}</b></span></div><div class="pkpis"><div class="pkpi"><div class="kl">Achievement</div><div class="kv" style="color:${c}">${s.achievementPct==null?"No target":s.achievementPct+"%"}</div><div class="pbar"><i style="width:${dw}%;background:${bc}"></i></div></div><div class="pkpi"><div class="kl">Total points</div><div class="kv">${fmtNum(s.points)}</div></div><div class="pkpi"><div class="kl">Target</div><div class="kv">${fmtNum(s.target)}</div></div><div class="pkpi"><div class="kl">Closed models</div><div class="kv">${fmtNum(s.modelsCount)}</div></div></div>${mngBar}${deptTgtBox}${addHallBox}${addLineBox}${linesSection}`;
     }else{
       const s=mp[pDept],l=(s.lines||[]).find(x=>x.lineNo===pLine)||{lineNo:pLine,hall:defHallFor(pDept,pLine),points:0,bonusPoints:0,bonuses:[],target:0,achievementPct:null,modelsCount:0,closedModels:[]},lc=pClr(l.achievementPct),lbc=pBarClr(l.achievementPct),lw=l.achievementPct==null?0:Math.max(0,Math.min(100,l.achievementPct)),lLbl=l.lineNo==="UNASSIGNED"?"Unassigned":l.lineNo;
@@ -901,7 +1800,7 @@ function prodV(){
 }
 
 function rb(){ALL_ORD=RAW.filter(o=>o.order&&o.st).map(o=>{const stages={},sd_=SD;o.order.forEach(k=>{const t=o.st[k]||{},sdoc=sd_[o.id+"_"+k]||{};stages[k]={done:!!t.done,reopened:!!(t.reopened||sdoc.reopened||(!t.done&&t.at)),by:t.by,at:t.at,closed_at:t.closed_at||sdoc.closed_at||t.at||sdoc.at,closed_by:t.closed_by||sdoc.closed_by||t.by||sdoc.by,plan:t.plan,d:sdoc.d||{}}});return{...o,stages}});orders=ALL_ORD.filter(vis).sort((a,b)=>(b.created||"").localeCompare(a.created||""))}
-function paint(){rb();badge();if(pendingOpen&&orders.some(x=>x.id===pendingOpen)){cur=pendingOpen;ret="home";view="order";opn=null;pendingOpen=null}const ae=document.activeElement;if(ae&&/INPUT|TEXTAREA/.test(ae.tagName)&&(view!=="home"||ae.id==="qt"))return;if(ae&&ae.tagName==="SELECT")return;render()}
+function paint(){rb();badge();if(pendingOpen&&orders.some(x=>x.id===pendingOpen)){cur=pendingOpen;ret="home";view="order";opn=null;pendingOpen=null}const ae=document.activeElement;if(ae&&(/INPUT|TEXTAREA|SELECT/.test(ae.tagName)||(ae.closest&&ae.closest(".wos-grid-host")))&&(view!=="home"||ae.id==="qt"))return;render()}
 function startData(){
   const key=canEdit+"|"+myD().join()+"|"+mySig().join();if(key===lastKey)return;lastKey=key;unsubs.forEach(f=>f());unsubs=[];RAW=[];SD={};shots=[];BONS=[];
   const er=e=>toast("Connection error: "+e.code);
@@ -934,14 +1833,14 @@ function shotsV(){
   if(active){
     const ttl=active.po?"PO "+esc(active.po):"Without PO",cnt=active.shots.length===1?"1 screenshot":active.shots.length+" screenshots";
     return `<div class="row" style="margin-bottom:10px;flex-wrap:wrap;gap:8px"><button class="b2" style="margin:0" onclick="shotPo=null;render()">← All PO folders</button>${active.unseen?`<button class="b2 ok" style="margin:0" onclick="seenFolder('${esc(active.key)}')">Mark folder as seen</button>`:""}</div>
-    <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><div style="display:flex;align-items:center;gap:10px"><span style="width:42px;height:42px;border-radius:11px;background:rgba(47,86,104,.12);color:var(--pri);display:inline-flex;align-items:center;justify-content:center;font-size:20px">📂</span><div><b>${ttl}</b><div class="mut">${active.items.length?esc(active.items.join(" \u2022 "))+" \u2022 ":""}${cnt}</div></div></div>${active.oid?`<button class="b2" style="margin:0" onclick="openOrder('${active.oid}')">Open order</button>`:""}</div>`+
-    active.shots.map(x=>`<div class="card shot ${x.seen?"":"new"}"><div class="row"><b>${sn(x.from)}${x.item?" \u2022 "+esc(x.item):""}</b><span class="tag ${x.seen?"dn":"cur"}">${x.seen?"Seen":"New"}</span></div><div class="mut">${esc(x.by)} \u2022 ${fmt(x.at)}${x.note?"<br>"+esc(x.note):""}</div><img class="th" src="${x.img}" onclick="lb=this.src;render()"><div class="row" style="justify-content:flex-start;margin-top:8px"><button class="b2" onclick="openOrder('${x.oid}')">Open order</button>${x.seen?"":`<button class="b2 ok" onclick="seen('${x.id}')">Mark as seen</button>`}${canEdit?`<button class="b2" onclick="delShot('${x.id}')">Delete</button>`:""}</div></div>`).join("");
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><div style="display:flex;align-items:center;gap:10px"><span style="width:42px;height:42px;border-radius:11px;background:rgba(47,86,104,.12);color:var(--pri);display:inline-flex;align-items:center;justify-content:center;font-size:20px">📂</span><div><b>${ttl}</b><div class="mut">${active.items.length?esc(active.items.join(" \u2022 "))+" \u2022 ":""}${cnt}</div></div></div>${active.oid?`<button class="b2" style="margin:0" onclick="openOrder('${active.oid}')">Open order</button>`:""}</div><div class="olist-grid">`+
+    active.shots.map(x=>`<div class="card shot ${x.seen?"":"new"}"><div class="row"><b>${sn(x.from)}${x.item?" \u2022 "+esc(x.item):""}</b><span class="tag ${x.seen?"dn":"cur"}">${x.seen?"Seen":"New"}</span></div><div class="mut">${esc(x.by)} \u2022 ${fmt(x.at)}${x.note?"<br>"+esc(x.note):""}</div><img class="th" src="${x.img}" onclick="lb=this.src;render()"><div class="row" style="justify-content:flex-start;margin-top:8px"><button class="b2" onclick="openOrder('${x.oid}')">Open order</button>${x.seen?"":`<button class="b2 ok" onclick="seen('${x.id}')">Mark as seen</button>`}${canEdit?`<button class="b2" onclick="delShot('${x.id}')">Delete</button>`:""}</div></div>`).join("")+`</div>`;
   }
   const q=shotQ.trim().toLowerCase(),visF=q?folders.filter(f=>f.po.toLowerCase().includes(q)||f.items.some(i=>i.toLowerCase().includes(q))||f.depts.some(d=>sn(d).toLowerCase().includes(q))):folders;
   const fcnt=visF.length===1?"1 folder":visF.length+" folders";
   return `<div class="mut" style="margin-bottom:8px">Each PO has its own folder collecting all screenshots sent from any department.</div>
   <div class="card" style="padding:10px 12px;margin-bottom:10px"><div class="row" style="gap:8px"><input id="sq_po" value="${esc(shotQ)}" oninput="updShotQ(this.value)" placeholder="Search PO folder or item..." style="margin:0;flex:1"><span class="mut" style="white-space:nowrap">${fcnt}</span></div></div>`+
-  (visF.length?visF.map(f=>{const ttl=f.po?"PO "+esc(f.po):"Without PO",cnt=f.shots.length===1?"1 screenshot":f.shots.length+" screenshots",dps=f.depts.map(sn).join(" \u2022 ");return `<div class="card click ${f.unseen?"shot new":""}" onclick="shotPo='${esc(f.key)}';render();scrollTo(0,0)"><div class="row"><span style="display:flex;align-items:center;gap:10px"><span style="width:42px;height:42px;border-radius:11px;background:${f.unseen?"var(--pri)":"rgba(47,86,104,.12)"};color:${f.unseen?"#fff":"var(--pri)"};display:inline-flex;align-items:center;justify-content:center;font-size:20px">📁</span><span><b>${ttl}</b>${f.items.length?`<div class="mut">${esc(f.items.join(" \u2022 "))}</div>`:""}</span></span><span class="tag ${f.unseen?"cur":"dn"}">${f.unseen?f.unseen+" new":"Seen"}</span></div>${dps?`<div class="mut" style="margin-top:6px">${dps}</div>`:""}<div class="mut" style="margin-top:4px">${cnt} \u2022 ${fmt(f.at)}</div></div>`}).join(""):'<div class="card mut">No matching PO folders.</div>');
+  (visF.length?`<div class="olist-grid">${visF.map(f=>{const ttl=f.po?"PO "+esc(f.po):"Without PO",cnt=f.shots.length===1?"1 screenshot":f.shots.length+" screenshots",dps=f.depts.map(sn).join(" \u2022 ");return `<div class="card click ${f.unseen?"shot new":""}" onclick="shotPo='${esc(f.key)}';render();scrollTo(0,0)"><div class="row"><span style="display:flex;align-items:center;gap:10px"><span style="width:42px;height:42px;border-radius:11px;background:${f.unseen?"var(--pri)":"rgba(47,86,104,.12)"};color:${f.unseen?"#fff":"var(--pri)"};display:inline-flex;align-items:center;justify-content:center;font-size:20px">📁</span><span><b>${ttl}</b>${f.items.length?`<div class="mut">${esc(f.items.join(" \u2022 "))}</div>`:""}</span></span><span class="tag ${f.unseen?"cur":"dn"}">${f.unseen?f.unseen+" new":"Seen"}</span></div>${dps?`<div class="mut" style="margin-top:6px">${dps}</div>`:""}<div class="mut" style="margin-top:4px">${cnt} \u2022 ${fmt(f.at)}</div></div>`}).join("")}</div>`:'<div class="card mut">No matching PO folders.</div>');
 }
 const seen=id=>db.doc("shots/"+id).update({seen:true}),delShot=id=>db.doc("shots/"+id).delete();
 async function seenFolder(fkey){const f=groupShotsByPo().find(x=>x.key===fkey);if(!f)return;const u=f.shots.filter(s=>!s.seen);if(!u.length)return;try{await commitChunked(u.map(s=>b=>b.update(db.doc("shots/"+s.id),{seen:true})));toast("Saved \u2713")}catch(e){toast("Could not save: "+(e.message||e.code))}}
@@ -964,7 +1863,8 @@ function trDOM(root){if(LANG!=="ar")return;const w=document.createTreeWalker(roo
 new MutationObserver(ms=>{if(LANG!=="ar")return;ms.forEach(m=>m.addedNodes.forEach(a=>{if(a.nodeType===3)trNode(a);else if(a.nodeType===1)trDOM(a)}))}).observe(document.body,{childList:true,subtree:true});
 const toggleLangMenu=e=>{e.stopPropagation();$("#lgm").classList.toggle("open")};addEventListener("click",()=>{const m=$("#lgm");if(m)m.classList.remove("open")});
 function applyLang(){const ar=LANG==="ar";document.documentElement.lang=ar?"ar":"en";document.documentElement.dir=ar?"rtl":"ltr";$("#lgt").textContent=ar?"اللغة":"Language";$("#lgen").classList.toggle("sel",!ar);$("#lgar").classList.toggle("sel",ar);$("#lgm").classList.remove("open");$("#h1t").textContent="WOS"}
-function setLang(l){if(view==="new")syncNewDraft();LANG=l;try{localStorage.setItem("lang",l)}catch(e){}applyLang();if(typeof gate!=="undefined"&&gate)showInstall();else if(!meId&&isClosed()&&!mgr&&!window.__nohours)showClosed();else if(!meId)showLogin();else if(!(canEdit||roles[meId]!==undefined||sigs[meId]!==undefined))pendingV();else render();trDOM(document.body)}
+Object.assign(AR,{"Undo":"تراجع","Redo":"إعادة","Bold":"عريض","Merge / Unmerge":"دمج / إلغاء دمج","8 cols (side-by-side)":"8 أعمدة (جنب بعض)","Duplicate columns side by side":"تكرار الأعمدة جنبًا إلى جنب","Copy table":"نسخ الجدول","Paste table":"لصق الجدول","Copy from…":"نسخ من…","Delete selected rows?":"حذف الصفوف المحددة؟","Target table already has data:":"الجدول الحالي يحتوي على بيانات:","Replace":"استبدال","Append to end":"إضافة في النهاية","Formula (=SUM(A1:A5)) or value...":"معادلة (=SUM(A1:A5)) أو قيمة...","+ Row above":"+ صف لأعلى","+ Row below":"+ صف لأسفل","Delete row":"حذف صف","Insert row above":"إدراج صف لأعلى","Insert row below":"إدراج صف لأسفل","Insert column left":"إدراج عمود قبل","Insert column right":"إدراج عمود بعد","Delete column":"حذف عمود","Cut":"قص","Paste":"لصق","Paste Special: Values":"لصق خاص: القيم فقط","Paste Special: Formulas":"لصق خاص: المعادلات فقط","Paste Special: Transpose":"لصق خاص: تبديل الصفوف والأعمدة","Clear contents":"مسح المحتوى","Copied ✓":"تم النسخ ✓","Cut ✓":"تم القص ✓","Table copied ✓":"تم نسخ الجدول ✓","Table pasted ✓":"تم لصق الجدول ✓"});
+function setLang(l){WOSGrid.snapAll();if(view==="new")syncNewDraft();LANG=l;try{localStorage.setItem("lang",l)}catch(e){}applyLang();if(typeof gate!=="undefined"&&gate)showInstall();else if(!meId&&isClosed()&&!mgr&&!window.__nohours)showClosed();else if(!meId)showLogin();else if(!(canEdit||roles[meId]!==undefined||sigs[meId]!==undefined))pendingV();else render();trDOM(document.body)}
 applyLang();
 /* ---- working hours: closed on Friday, other days only 08:00-17:00 (Cairo time). Managers are exempt. ---- */
 const HRS={from:8,to:17,closedDays:[5]};   // closedDays: 0=Sunday ... 5=Friday ... 6=Saturday
