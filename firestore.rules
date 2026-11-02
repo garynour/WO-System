@@ -23,8 +23,9 @@ service cloud.firestore {
     // Owner = admin document created from Firebase Console without 'by' field (or empty 'by')
     function isOwner() {
       return isAdmin() && (
-        get(/databases/$(database)/documents/admins/$(myPhone())).data.get('by', '') == '' ||
-        get(/databases/$(database)/documents/admins/$(myPhone())).data.get('by', null) == null
+        !('by' in get(/databases/$(database)/documents/admins/$(myPhone())).data)
+        || get(/databases/$(database)/documents/admins/$(myPhone())).data.by == ''
+        || get(/databases/$(database)/documents/admins/$(myPhone())).data.by == null
       );
     }
 
@@ -72,21 +73,6 @@ service cloud.firestore {
 
     function hasDept(deptKey) {
       return isAdmin() || (isMember() && deptKey in myDepts());
-    }
-
-    function canReadOrderData(orderData) {
-      return isAdmin()
-        || isOwner()
-        || (
-          isMember()
-          && orderData.get('status', 'in_progress') == 'in_progress'
-          && (
-            !('stage' in orderData)
-            || (orderData.get('stage', '') in myDepts())
-            || (myPhone() in orderData.get('assignedTo', []))
-            || hasSigRole()
-          )
-        );
     }
 
     // Invites & Pending activations (backward-compatible with both /invites and /pending)
@@ -137,75 +123,100 @@ service cloud.firestore {
     // System & factory config (geofence, late threshold, productivity thresholds)
     match /config/{docId} {
       allow read: if userOk() || isAdmin();
-      allow write: if isAdmin() || isOwner()
+      allow write: if isAdmin()
         || (docId == 'productivity' && hasDept('PLANNING'))
         || (docId == 'bootstrapped' && isSignedIn() && !exists(/databases/$(database)/documents/config/bootstrapped));
     }
 
-    // Editable lookup lists (colors, fabrics, models, fits, designs, categories)
+    // Editable lookup lists & one-time season plan seed markers (admin only)
     match /settings/{docId} {
-      allow read: if isAdmin();
-      allow write: if isAdmin();
+      allow read, write: if isAdmin();
     }
 
     // Global PO uniqueness index (/poIndex/{normalizedPo})
     match /poIndex/{poKey} {
-      allow read: if isAdmin() || hasDept('PLANNING');
-      allow write: if isAdmin() || hasDept('PLANNING');
+      allow read, write: if isAdmin() || hasDept('PLANNING');
     }
 
-    // Work Orders & Season Plan unified collection (strict role isolation)
+    // Work Orders & Season Plan unified collection (strict role isolation + fast list validation)
     match /orders/{orderId} {
-      allow read: if canReadOrderData(resource.data);
+      allow list: if isAdmin()
+        || hasSigRole()
+        || (
+          isMember()
+          && resource.data.status == 'in_progress'
+          && resource.data.stage in myDepts()
+        );
+
+      allow get: if isAdmin()
+        || hasSigRole()
+        || (
+          isMember()
+          && resource.data.get('status', 'in_progress') == 'in_progress'
+          && (
+            !('stage' in resource.data)
+            || resource.data.stage == null
+            || (resource.data.stage in myDepts())
+            || (myPhone() in resource.data.get('assignedTo', []))
+          )
+        );
+
       allow create: if isAdmin() || hasDept('PLANNING');
+
       allow update: if isAdmin()
-        || isOwner()
         || hasDept('PLANNING')
         || (
           isMember()
-          && canReadOrderData(resource.data)
+          && resource.data.get('status', 'in_progress') == 'in_progress'
+          && (
+            !('stage' in resource.data)
+            || resource.data.stage == null
+            || (resource.data.stage in myDepts())
+            || hasSigRole()
+          )
           && request.resource.data.get('pos', resource.data.get('pos', [])) == resource.data.get('pos', [])
           && request.resource.data.get('po', resource.data.get('po', '')) == resource.data.get('po', '')
         );
-      allow delete: if isAdmin() || isOwner();
+
+      allow delete: if isAdmin();
 
       // Per-order change & undo audit history (admin only)
       match /history/{historyId} {
-        allow read, write: if isAdmin() || isOwner();
+        allow read, write: if isAdmin();
       }
     }
 
     // Detailed stage data documents
     match /stages/{stageDocId} {
-      allow read: if isAdmin() || isOwner() || isMember();
-      allow create, update: if isAdmin() || isOwner() || isMember();
-      allow delete: if isAdmin() || isOwner();
+      allow read: if isAdmin() || isMember();
+      allow create, update: if isAdmin() || isMember();
+      allow delete: if isAdmin();
     }
 
     // Productivity targets, bonuses, and automatic monthly snapshots
     match /line_targets/{targetId} {
-      allow read: if isMember();
-      allow write: if isAdmin() || isOwner() || hasDept('PLANNING');
+      allow read: if isAdmin() || isMember();
+      allow write: if isAdmin() || hasDept('PLANNING');
     }
 
     match /line_bonuses/{bonusId} {
-      allow read: if isMember();
-      allow write: if isAdmin() || isOwner() || hasDept('PLANNING');
+      allow read: if isAdmin() || isMember();
+      allow write: if isAdmin() || hasDept('PLANNING');
     }
 
     match /monthly_snapshots/{monthId} {
       allow read: if isAdmin() || isMember();
-      allow create, update: if isAdmin() || isOwner() || isMember();
-      allow delete: if isAdmin() || isOwner();
+      allow create, update: if isAdmin() || isMember();
+      allow delete: if isAdmin();
     }
 
     // Safe Productivity Resets & Previous-Period Snapshots (admin only)
     match /productivityResets/{resetId} {
-      allow read, write: if isAdmin() || isOwner();
+      allow read, write: if isAdmin();
     }
 
     match /productivitySnapshots/{snapId} {
-      allow read, write: if isAdmin() || isOwner();
+      allow read, write: if isAdmin();
     }
 
     // Department notifications
@@ -213,9 +224,7 @@ service cloud.firestore {
       allow read: if isAdmin() || (isMember() && resource.data.dept in myDepts());
       allow create: if isAdmin() || isMember();
       allow update: if isAdmin();
-      allow delete: if isAdmin()
-        || isOwner()
-        || (isMember() && resource.data.dept in myDepts());
+      allow delete: if isAdmin() || (isMember() && resource.data.dept in myDepts());
     }
 
     // Account screenshots
@@ -223,7 +232,7 @@ service cloud.firestore {
       allow read: if isAdmin() || hasDept('ACCOUNT') || (isMember() && resource.data.byId == myPhone());
       allow create: if isAdmin() || isMember();
       allow update: if isAdmin() || hasDept('ACCOUNT');
-      allow delete: if isAdmin() || isOwner() || hasDept('ACCOUNT');
+      allow delete: if isAdmin() || hasDept('ACCOUNT');
     }
   }
 }
