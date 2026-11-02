@@ -1,0 +1,29 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email != null;
+    }
+
+    function myPhone() {
+      return request.auth.token.email.split('@')[0];
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && firestore.exists(/databases/(default)/documents/admins/$(myPhone()));
+    }
+
+    // Model images: readable by authenticated WOS users so thumbnails render on assigned cards; writable only by admins
+    match /model-images/{imageFile} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin()
+        && request.resource.size < 6 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

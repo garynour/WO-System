@@ -1,211 +1,229 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Identity = phone number extracted from "<phone>@wo.app" or "<phone>@wo.factory"
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email != null;
+    }
 
-    // الهوية = رقم الموبايل (بيتحوّل داخليًا لإيميل رقم@wo.app)
-    function signedIn() { return request.auth != null && request.auth.token.email != null; }
-    function phone() { return request.auth.token.email.split('@')[0]; }
-    function userOk() { return signedIn() && exists(/databases/$(database)/documents/users/$(phone())); }
-    function isAdmin() { return userOk() && exists(/databases/$(database)/documents/admins/$(phone())); }
-    // صاحب البرنامج (المدير الرئيسي) = وثيقة admins اللي اتعملت من Firebase Console بدون حقل by
+    function myPhone() {
+      return request.auth.token.email.split('@')[0];
+    }
+
+    function userOk() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(myPhone()));
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(myPhone()));
+    }
+
+    // Owner = admin document created from Firebase Console without 'by' field (or empty 'by')
     function isOwner() {
       return isAdmin() && (
-        get(/databases/$(database)/documents/admins/$(phone())).data.get('by', '') == '' ||
-        get(/databases/$(database)/documents/admins/$(phone())).data.get('by', null) == null
+        get(/databases/$(database)/documents/admins/$(myPhone())).data.get('by', '') == '' ||
+        get(/databases/$(database)/documents/admins/$(myPhone())).data.get('by', null) == null
       );
     }
-    function hasCfg() { return exists(/databases/$(database)/documents/roles/map); }
-    function cfg() { return get(/databases/$(database)/documents/roles/map).data; }
-    function assign() { return cfg().get('assign', {}); }
-    function sigmap() { return cfg().get('sigs', {}); }
-    function myDepts() { return hasCfg() ? assign().get(phone(), []) : []; }
-    function mySigs() { return hasCfg() ? sigmap().get(phone(), []) : []; }
 
-    // ساعات العمل: السبت-الخميس من 8 ص لـ 5 م بتوقيت القاهرة، ومقفول يوم الجمعة.
-    // المدير وصاحب البرنامج فقط مستثنيان؛ باقي المستخدمين يتوقف الوصول لهم خارج ساعات العمل.
-    function dayNum() { return (math.floor(request.time.toMillis() / 86400000) + 4) % 7; }
-    function inHours() { return dayNum() != 5 && request.time.hours() >= 5 && request.time.hours() < 15; }
-    function isMember() {
-      return isAdmin() || (userOk() && inHours() && hasCfg() &&
-        (phone() in assign().keys() || phone() in sigmap().keys()));
+    function hasCfg() {
+      return exists(/databases/$(database)/documents/roles/map);
     }
-    function isAcc() { return isAdmin() || (isMember() && 'ACCOUNT' in myDepts()); }
-    function canPlanOrAdmin() { return isAdmin() || isOwner() || (isMember() && 'PLANNING' in myDepts()); }
 
-    // الدعوات (كود التفعيل): المدير وصاحب البرنامج فقط
+    function rolesData() {
+      return get(/databases/$(database)/documents/roles/map).data;
+    }
+
+    function myDepts() {
+      return hasCfg() && ('assign' in rolesData()) && (myPhone() in rolesData().assign)
+        ? rolesData().assign[myPhone()]
+        : [];
+    }
+
+    function mySigs() {
+      return hasCfg() && ('sigs' in rolesData()) && (myPhone() in rolesData().sigs)
+        ? rolesData().sigs[myPhone()]
+        : [];
+    }
+
+    function hasSigRole() {
+      return mySigs().size() > 0;
+    }
+
+    // Working hours: Sat-Thu 08:00-17:00 Cairo (05:00-15:00 UTC), closed Friday; Admins/Owner exempt
+    function dayNum() {
+      return (math.floor(request.time.toMillis() / 86400000) + 4) % 7;
+    }
+
+    function inHours() {
+      return dayNum() != 5 && request.time.hours() >= 5 && request.time.hours() < 15;
+    }
+
+    function isMember() {
+      return isAdmin() || (
+        userOk() && inHours() && hasCfg() && (
+          myPhone() in rolesData().get('assign', {}).keys() ||
+          myPhone() in rolesData().get('sigs', {}).keys()
+        )
+      );
+    }
+
+    function hasDept(deptKey) {
+      return isAdmin() || (isMember() && deptKey in myDepts());
+    }
+
+    function canReadOrderData(orderData) {
+      return isAdmin()
+        || isOwner()
+        || (
+          isMember()
+          && orderData.get('status', 'in_progress') == 'in_progress'
+          && (
+            !('stage' in orderData)
+            || (orderData.get('stage', '') in myDepts())
+            || (myPhone() in orderData.get('assignedTo', []))
+            || hasSigRole()
+          )
+        );
+    }
+
+    // Invites & Pending activations (backward-compatible with both /invites and /pending)
     match /invites/{id} {
       allow read, write: if isAdmin();
     }
 
-    // المستخدم: الحساب لا يتفعّل إلا بكود التفعيل الصحيح الذي أصدره المدير لرقمه
-    match /users/{id} {
-      allow read: if isAdmin() || (signedIn() && phone() == id);
-      allow update: if isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name']);
-      allow create, update: if signedIn() && phone() == id
-        && request.resource.data.keys().hasOnly(['name', 'phone', 'code'])
-        && request.resource.data.phone == id
-        && get(/databases/$(database)/documents/invites/$(id)).data.code == request.resource.data.code;
+    match /pending/{phone} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create, update: if isAdmin();
+      allow delete: if isAdmin() || (isSignedIn() && myPhone() == phone);
     }
 
-    // المديرين (Document ID = رقم الموبايل): صاحب البرنامج فقط يضيف أو يحذف مديرين آخرين
-    match /admins/{id} {
-      allow read: if signedIn() && (phone() == id || isAdmin());
-      allow create, update: if isOwner() && id != phone()
-        && request.resource.data.keys().hasOnly(['admin', 'by']) && request.resource.data.by == phone();
-      allow delete: if isOwner() && id != phone();
+    // Active users
+    match /users/{phone} {
+      allow get: if isSignedIn() && (myPhone() == phone || isAdmin());
+      allow list: if isAdmin();
+      allow create, update: if isAdmin() || (
+        isSignedIn() && myPhone() == phone && (
+          !exists(/databases/$(database)/documents/invites/$(phone))
+          || get(/databases/$(database)/documents/invites/$(phone)).data.code == request.resource.data.code
+        )
+      );
+      allow delete: if isAdmin();
     }
 
-    // خريطة الصلاحيات (بالموبايل): المدير وصاحب البرنامج فقط يكتبان
-    match /roles/{id} {
-      allow read: if userOk();
+    // Admins registry
+    match /admins/{phone} {
+      allow read: if isSignedIn() && (myPhone() == phone || isAdmin());
+      allow create: if (isOwner() && phone != myPhone() && request.resource.data.by == myPhone())
+        || (isSignedIn() && myPhone() == phone && !exists(/databases/$(database)/documents/config/bootstrapped));
+      allow update, delete: if isOwner() && phone != myPhone();
+    }
+
+    // Department & signature role assignments
+    match /roles/{docId} {
+      allow read: if userOk() || isAdmin();
       allow write: if isAdmin();
     }
 
-    // الأوردر: البيانات الأساسية + التوقيعات + تجهيز الأقسام للتخطيط + ختم الاكتمال completed_at + حذف الأوردر للمدير وصاحب البرنامج فقط
-    match /orders/{id} {
-      function dk() { return request.resource.data.diff(resource.data).affectedKeys(); }
-      function sk() { return request.resource.data.st.diff(resource.data.st).affectedKeys(); }
-      function master() {
-        return ['po','co','item','date','pattern','fitting','code','gender','type','size','cat','season','sz','rt','colors'];
-      }
-      function stStageSafe(k) {
-        return !(k in sk()) || k in myDepts() || (
-          resource.data.st.get(k, {}).get('done', false) == false &&
-          request.resource.data.st.get(k, {}).get('done', false) == false
+    // User profile photos & metadata
+    match /profiles/{phone} {
+      allow read: if userOk() || isAdmin();
+      allow write: if isAdmin() || (isSignedIn() && myPhone() == phone);
+    }
+
+    // System & factory config (geofence, late threshold, productivity thresholds)
+    match /config/{docId} {
+      allow read: if userOk() || isAdmin();
+      allow write: if isAdmin() || isOwner()
+        || (docId == 'productivity' && hasDept('PLANNING'))
+        || (docId == 'bootstrapped' && isSignedIn() && !exists(/databases/$(database)/documents/config/bootstrapped));
+    }
+
+    // Editable lookup lists (colors, fabrics, models, fits, designs, categories)
+    match /settings/{docId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Global PO uniqueness index (/poIndex/{normalizedPo})
+    match /poIndex/{poKey} {
+      allow read: if isAdmin() || hasDept('PLANNING');
+      allow write: if isAdmin() || hasDept('PLANNING');
+    }
+
+    // Work Orders & Season Plan unified collection (strict role isolation)
+    match /orders/{orderId} {
+      allow read: if canReadOrderData(resource.data);
+      allow create: if isAdmin() || hasDept('PLANNING');
+      allow update: if isAdmin()
+        || isOwner()
+        || hasDept('PLANNING')
+        || (
+          isMember()
+          && canReadOrderData(resource.data)
+          && request.resource.data.get('pos', resource.data.get('pos', [])) == resource.data.get('pos', [])
+          && request.resource.data.get('po', resource.data.get('po', '')) == resource.data.get('po', '')
         );
+      allow delete: if isAdmin() || isOwner();
+
+      // Per-order change & undo audit history (admin only)
+      match /history/{historyId} {
+        allow read, write: if isAdmin() || isOwner();
       }
-      function allStSafeForPlan() {
-        return sk().hasOnly(['PLANNING','PLANFAB','FABRIC','FABCUT','MARKER','CUTTING','ACCESSORIES','SORTING','DTF','PRINTING','EMBRO','WASHING','SEWING','PACKING','QUALITY','GRADEB','ACCOUNT'])
-          && stStageSafe('PLANFAB') && stStageSafe('FABRIC') && stStageSafe('FABCUT')
-          && stStageSafe('MARKER') && stStageSafe('CUTTING') && stStageSafe('ACCESSORIES')
-          && stStageSafe('SORTING') && stStageSafe('DTF') && stStageSafe('PRINTING')
-          && stStageSafe('EMBRO') && stStageSafe('WASHING') && stStageSafe('SEWING')
-          && stStageSafe('PACKING') && stStageSafe('QUALITY') && stStageSafe('GRADEB')
-          && stStageSafe('ACCOUNT');
-      }
+    }
+
+    // Detailed stage data documents
+    match /stages/{stageDocId} {
+      allow read: if isAdmin() || isOwner() || isMember();
+      allow create, update: if isAdmin() || isOwner() || isMember();
+      allow delete: if isAdmin() || isOwner();
+    }
+
+    // Productivity targets, bonuses, and automatic monthly snapshots
+    match /line_targets/{targetId} {
       allow read: if isMember();
-      allow create: if isAdmin() || (isMember() && 'PLANNING' in myDepts());
-      allow delete: if isAdmin() || isOwner();
-      allow update: if isAdmin() || isOwner() || (isMember() && (
-        (dk().hasOnly(['st', 'completed_at']) && sk().hasOnly(myDepts()))
-        || ('PLANNING' in myDepts() && dk().hasOnly(['st', 'completed_at'].concat(master())) && allStSafeForPlan())
-        || (canPlanOrAdmin() && dk().hasOnly(['archived', 'archived_at', 'archived_by']))
-        || (dk().hasOnly(['sz', 'rt', 'colors']))
-        || (dk().hasOnly(['sg_QFM']) && 'QFM' in mySigs())
-        || (dk().hasOnly(['sg_SFM']) && 'SFM' in mySigs())
-        || (dk().hasOnly(['sg_GM'])  && 'GM'  in mySigs())
-        || (dk().hasOnly(['sg_ACC']) && 'ACC' in mySigs())
-        || (dk().hasOnly(['sg_TECH']) && 'TECH' in mySigs())
-      ));
+      allow write: if isAdmin() || isOwner() || hasDept('PLANNING');
     }
 
-    // بيانات كل قسم (الجداول + الصفوف المضافة + التوقيعات + تاريخ الإغلاق closed_at + إعادة فتح التاب لقسمي FABRIC و ACCESSORIES + تعديل الجداول في أي وقت)
-    match /stages/{sid} {
-      allow read: if isAdmin() || isOwner() || (isMember() && (
-        resource.data.dept in myDepts()
-        || 'PLANNING' in myDepts()
-        || mySigs().size() > 0
-        || resource.data.done == true
-        || resource.data.dept in ['PLANNING', 'CUTTING']
-        || ('SEWING' in myDepts() && resource.data.dept == 'PACKING')
-      ));
-      allow create: if isAdmin() || isOwner() || (isMember()
-        && sid == request.resource.data.oid + '_' + request.resource.data.dept
-        && (
-          request.resource.data.dept in myDepts()
-          || (request.resource.data.get('done', false) == false && request.resource.data.get('reopened', false) == false)
-          || ('PLANNING' in myDepts() && request.resource.data.dept in ['SEWING', 'CUTTING', 'PRINTING', 'DTF'])
-        ));
-      allow update: if isAdmin() || isOwner() || (isMember()
-        && request.resource.data.dept == resource.data.dept && request.resource.data.oid == resource.data.oid
-        && (
-          (resource.data.dept in myDepts() && (resource.data.get('done', false) == false || request.resource.data.get('done', false) == true || resource.data.dept in ['FABRIC', 'ACCESSORIES']))
-          || (request.resource.data.get('done', false) == resource.data.get('done', false) && request.resource.data.get('reopened', false) == resource.data.get('reopened', false) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['d', 'closed_at', 'closed_by']))
-        ));
+    match /line_bonuses/{bonusId} {
+      allow read: if isMember();
+      allow write: if isAdmin() || isOwner() || hasDept('PLANNING');
+    }
+
+    match /monthly_snapshots/{monthId} {
+      allow read: if isAdmin() || isMember();
+      allow create, update: if isAdmin() || isOwner() || isMember();
       allow delete: if isAdmin() || isOwner();
     }
 
-    // إشعارات الانتقال بين الأقسام، إعادة فتح التاب (FABRIC / ACCESSORIES)، ولقطات الشاشة + حذف الإشعارات فرديًا أو جماعيًا
-    match /notifs/{id} {
+    // Safe Productivity Resets & Previous-Period Snapshots (admin only)
+    match /productivityResets/{resetId} {
+      allow read, write: if isAdmin() || isOwner();
+    }
+
+    match /productivitySnapshots/{snapId} {
+      allow read, write: if isAdmin() || isOwner();
+    }
+
+    // Department notifications
+    match /notifs/{notifId} {
       allow read: if isAdmin() || (isMember() && resource.data.dept in myDepts());
-      allow create: if isMember() && request.resource.data.byId == phone()
-        && request.resource.data.text.size() < 300
-        && (isAdmin() || request.resource.data.from in myDepts()
-          || (request.resource.data.dept in ['FABRIC', 'ACCESSORIES'] && request.resource.data.dept in myDepts())
-          || mySigs().size() > 0);
-      allow delete: if isAdmin() || isOwner() || (isMember() && resource.data.dept in myDepts());
+      allow create: if isAdmin() || isMember();
+      allow update: if isAdmin();
+      allow delete: if isAdmin()
+        || isOwner()
+        || (isMember() && resource.data.dept in myDepts());
     }
 
-    // الملف الشخصي (صورة + وظيفة + إدارة)
-    match /profiles/{id} {
-      allow read: if userOk();
-      allow create, update: if isAdmin() && request.resource.data.keys().hasOnly(['job', 'dept', 'photo'])
-        && request.resource.data.get('photo', '').size() < 120000
-        && request.resource.data.get('job', '').size() < 80 && request.resource.data.get('dept', '').size() < 80;
-      allow create: if userOk() && phone() == id && request.resource.data.keys().hasOnly(['photo', 'job', 'dept'])
-        && request.resource.data.get('job', '') == '' && request.resource.data.get('dept', '') == ''
-        && request.resource.data.get('photo', '').size() < 120000;
-      allow update: if userOk() && phone() == id
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['photo'])
-        && request.resource.data.get('photo', '').size() < 120000;
-      allow delete: if isAdmin() || isOwner();
-    }
-
-    // إعدادات المصنع (config/factory) + إعدادات نسب الإنتاجية (config/productivity) + حد تأخير الأوردرات بالأيام (config/orders)
-    match /config/{id} {
-      allow read: if userOk();
-      allow write: if isAdmin() || isOwner() || (id == 'productivity' && isMember() && 'PLANNING' in myDepts());
-    }
-
-    // تارجت الأقسام والصالات والخطوط الشهري لقسم الإنتاجية (الخياطة / القص / الطباعة)
-    match /line_targets/{id} {
-      allow read: if isMember();
-      allow create, update: if canPlanOrAdmin()
-        && request.resource.data.department in ['SEWING', 'CUTTING', 'PRINTING']
-        && request.resource.data.month is string
-        && request.resource.data.line_no is string
-        && request.resource.data.target_points is number
-        && request.resource.data.target_points >= 0
-        && (!('hall' in request.resource.data) || request.resource.data.hall is string);
-      allow delete: if canPlanOrAdmin();
-    }
-
-    // نقاط البونص الشهرية للخطوط تحت الأقسام والصالات (تُحسب مع إنتاجية الخط والصالة والقسم)
-    match /line_bonuses/{id} {
-      allow read: if isMember();
-      allow create, update: if canPlanOrAdmin()
-        && request.resource.data.department in ['SEWING', 'CUTTING', 'PRINTING']
-        && request.resource.data.month is string
-        && request.resource.data.line_no is string
-        && request.resource.data.points is number
-        && request.resource.data.points >= 0
-        && (!('hall' in request.resource.data) || request.resource.data.hall is string)
-        && (!('note' in request.resource.data) || request.resource.data.note is string);
-      allow delete: if canPlanOrAdmin();
-    }
-
-    // أرشيف لقطات الإنتاجية الشهرية (للقراءة فقط بعد الحفظ؛ إعادة الحساب متاحة للمدير/صاحب البرنامج فقط مع سبب مسجل في سجل المراجعة)
-    match /monthly_snapshots/{id} {
-      allow read: if isMember();
-      allow create: if isMember()
-        && request.resource.data.month == id
-        && request.resource.data.lines is list;
-      allow update: if (isAdmin() || isOwner())
-        && request.resource.data.month == id
-        && request.resource.data.lines is list
-        && request.resource.data.get('last_reason', '').size() > 0
-        && request.resource.data.get('audit_log', []).size() > 0;
-      allow delete: if isOwner();
-    }
-
-    // لقطات شاشة التاب المرسلة للحسابات
-    match /shots/{id} {
-      allow read: if isAcc() || (isMember() && resource.data.byId == phone());
-      allow create: if isMember() && request.resource.data.byId == phone()
-        && request.resource.data.img.size() < 950000
-        && (isAdmin() || request.resource.data.from in myDepts() || mySigs().size() > 0);
-      allow update: if isAcc() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['seen']);
-      allow delete: if isAdmin() || isOwner();
+    // Account screenshots
+    match /shots/{shotId} {
+      allow read: if isAdmin() || hasDept('ACCOUNT') || (isMember() && resource.data.byId == myPhone());
+      allow create: if isAdmin() || isMember();
+      allow update: if isAdmin() || hasDept('ACCOUNT');
+      allow delete: if isAdmin() || isOwner() || hasDept('ACCOUNT');
     }
   }
 }

@@ -1,0 +1,229 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Identity = phone number extracted from "<phone>@wo.app" or "<phone>@wo.factory"
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email != null;
+    }
+
+    function myPhone() {
+      return request.auth.token.email.split('@')[0];
+    }
+
+    function userOk() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(myPhone()));
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(myPhone()));
+    }
+
+    // Owner = admin document created from Firebase Console without 'by' field (or empty 'by')
+    function isOwner() {
+      return isAdmin() && (
+        get(/databases/$(database)/documents/admins/$(myPhone())).data.get('by', '') == '' ||
+        get(/databases/$(database)/documents/admins/$(myPhone())).data.get('by', null) == null
+      );
+    }
+
+    function hasCfg() {
+      return exists(/databases/$(database)/documents/roles/map);
+    }
+
+    function rolesData() {
+      return get(/databases/$(database)/documents/roles/map).data;
+    }
+
+    function myDepts() {
+      return hasCfg() && ('assign' in rolesData()) && (myPhone() in rolesData().assign)
+        ? rolesData().assign[myPhone()]
+        : [];
+    }
+
+    function mySigs() {
+      return hasCfg() && ('sigs' in rolesData()) && (myPhone() in rolesData().sigs)
+        ? rolesData().sigs[myPhone()]
+        : [];
+    }
+
+    function hasSigRole() {
+      return mySigs().size() > 0;
+    }
+
+    // Working hours: Sat-Thu 08:00-17:00 Cairo (05:00-15:00 UTC), closed Friday; Admins/Owner exempt
+    function dayNum() {
+      return (math.floor(request.time.toMillis() / 86400000) + 4) % 7;
+    }
+
+    function inHours() {
+      return dayNum() != 5 && request.time.hours() >= 5 && request.time.hours() < 15;
+    }
+
+    function isMember() {
+      return isAdmin() || (
+        userOk() && inHours() && hasCfg() && (
+          myPhone() in rolesData().get('assign', {}).keys() ||
+          myPhone() in rolesData().get('sigs', {}).keys()
+        )
+      );
+    }
+
+    function hasDept(deptKey) {
+      return isAdmin() || (isMember() && deptKey in myDepts());
+    }
+
+    function canReadOrderData(orderData) {
+      return isAdmin()
+        || isOwner()
+        || (
+          isMember()
+          && orderData.get('status', 'in_progress') == 'in_progress'
+          && (
+            !('stage' in orderData)
+            || (orderData.get('stage', '') in myDepts())
+            || (myPhone() in orderData.get('assignedTo', []))
+            || hasSigRole()
+          )
+        );
+    }
+
+    // Invites & Pending activations (backward-compatible with both /invites and /pending)
+    match /invites/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /pending/{phone} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create, update: if isAdmin();
+      allow delete: if isAdmin() || (isSignedIn() && myPhone() == phone);
+    }
+
+    // Active users
+    match /users/{phone} {
+      allow get: if isSignedIn() && (myPhone() == phone || isAdmin());
+      allow list: if isAdmin();
+      allow create, update: if isAdmin() || (
+        isSignedIn() && myPhone() == phone && (
+          !exists(/databases/$(database)/documents/invites/$(phone))
+          || get(/databases/$(database)/documents/invites/$(phone)).data.code == request.resource.data.code
+        )
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Admins registry
+    match /admins/{phone} {
+      allow read: if isSignedIn() && (myPhone() == phone || isAdmin());
+      allow create: if (isOwner() && phone != myPhone() && request.resource.data.by == myPhone())
+        || (isSignedIn() && myPhone() == phone && !exists(/databases/$(database)/documents/config/bootstrapped));
+      allow update, delete: if isOwner() && phone != myPhone();
+    }
+
+    // Department & signature role assignments
+    match /roles/{docId} {
+      allow read: if userOk() || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // User profile photos & metadata
+    match /profiles/{phone} {
+      allow read: if userOk() || isAdmin();
+      allow write: if isAdmin() || (isSignedIn() && myPhone() == phone);
+    }
+
+    // System & factory config (geofence, late threshold, productivity thresholds)
+    match /config/{docId} {
+      allow read: if userOk() || isAdmin();
+      allow write: if isAdmin() || isOwner()
+        || (docId == 'productivity' && hasDept('PLANNING'))
+        || (docId == 'bootstrapped' && isSignedIn() && !exists(/databases/$(database)/documents/config/bootstrapped));
+    }
+
+    // Editable lookup lists (colors, fabrics, models, fits, designs, categories)
+    match /settings/{docId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Global PO uniqueness index (/poIndex/{normalizedPo})
+    match /poIndex/{poKey} {
+      allow read: if isAdmin() || hasDept('PLANNING');
+      allow write: if isAdmin() || hasDept('PLANNING');
+    }
+
+    // Work Orders & Season Plan unified collection (strict role isolation)
+    match /orders/{orderId} {
+      allow read: if canReadOrderData(resource.data);
+      allow create: if isAdmin() || hasDept('PLANNING');
+      allow update: if isAdmin()
+        || isOwner()
+        || hasDept('PLANNING')
+        || (
+          isMember()
+          && canReadOrderData(resource.data)
+          && request.resource.data.get('pos', resource.data.get('pos', [])) == resource.data.get('pos', [])
+          && request.resource.data.get('po', resource.data.get('po', '')) == resource.data.get('po', '')
+        );
+      allow delete: if isAdmin() || isOwner();
+
+      // Per-order change & undo audit history (admin only)
+      match /history/{historyId} {
+        allow read, write: if isAdmin() || isOwner();
+      }
+    }
+
+    // Detailed stage data documents
+    match /stages/{stageDocId} {
+      allow read: if isAdmin() || isOwner() || isMember();
+      allow create, update: if isAdmin() || isOwner() || isMember();
+      allow delete: if isAdmin() || isOwner();
+    }
+
+    // Productivity targets, bonuses, and automatic monthly snapshots
+    match /line_targets/{targetId} {
+      allow read: if isMember();
+      allow write: if isAdmin() || isOwner() || hasDept('PLANNING');
+    }
+
+    match /line_bonuses/{bonusId} {
+      allow read: if isMember();
+      allow write: if isAdmin() || isOwner() || hasDept('PLANNING');
+    }
+
+    match /monthly_snapshots/{monthId} {
+      allow read: if isAdmin() || isMember();
+      allow create, update: if isAdmin() || isOwner() || isMember();
+      allow delete: if isAdmin() || isOwner();
+    }
+
+    // Safe Productivity Resets & Previous-Period Snapshots (admin only)
+    match /productivityResets/{resetId} {
+      allow read, write: if isAdmin() || isOwner();
+    }
+
+    match /productivitySnapshots/{snapId} {
+      allow read, write: if isAdmin() || isOwner();
+    }
+
+    // Department notifications
+    match /notifs/{notifId} {
+      allow read: if isAdmin() || (isMember() && resource.data.dept in myDepts());
+      allow create: if isAdmin() || isMember();
+      allow update: if isAdmin();
+      allow delete: if isAdmin()
+        || isOwner()
+        || (isMember() && resource.data.dept in myDepts());
+    }
+
+    // Account screenshots
+    match /shots/{shotId} {
+      allow read: if isAdmin() || hasDept('ACCOUNT') || (isMember() && resource.data.byId == myPhone());
+      allow create: if isAdmin() || isMember();
+      allow update: if isAdmin() || hasDept('ACCOUNT');
+      allow delete: if isAdmin() || isOwner() || hasDept('ACCOUNT');
+    }
+  }
+}
